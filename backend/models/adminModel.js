@@ -2,10 +2,15 @@
 const pool = require('../config/db');
 
 // Create Admin Function
-const createAdmin = async (name, email, password) => {
+const createAdmin = async (username, password, email) => {
     try {
-        const query = 'INSERT INTO administrators (name, email, password) VALUES ($1, $2, $3) RETURNING *';
-        const values = [name, email, password];
+        // Insert into users table with role = 'admin'
+        const query = `
+            INSERT INTO users (username, password_hash, email, role)
+            VALUES ($1, $2, $3, 'admin')
+            RETURNING *;
+        `;
+        const values = [username, password, email];
         const result = await pool.query(query, values);
         return result.rows[0];
     } catch (error) {

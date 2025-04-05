@@ -3,12 +3,12 @@ document.getElementById('adminForm').addEventListener('submit', async (event) =>
     event.preventDefault();
 
     // Get form data
-    const name = document.getElementById('name').value.trim();
+    const username = document.getElementById('username').value.trim();
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
 
     // Validate input
-    if (!name || !email || !password) {
+    if (!username || !email || !password) {
         document.getElementById('message').textContent = 'All fields are required';
         document.getElementById('message').style.color = 'red';
         return;
@@ -21,7 +21,7 @@ document.getElementById('adminForm').addEventListener('submit', async (event) =>
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ name, email, password }),
+            body: JSON.stringify({ username, email, password }),
         });
 
         const result = await response.json();

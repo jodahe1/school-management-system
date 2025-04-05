@@ -5,11 +5,11 @@ const { createAdmin, createStudent, createTeacher, createParent } = require('../
 // Add Admin Function
 const addAdmin = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
-        if (!name || !email || !password) {
+        const { username, password, email } = req.body;
+        if (!username || !password || !email) {
             return res.status(400).json({ message: 'All fields are required' });
         }
-        const newAdmin = await createAdmin(name, email, password);
+        const newAdmin = await createAdmin(username, password, email);
         res.status(201).json({ message: 'Administrator added successfully', admin: newAdmin });
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
