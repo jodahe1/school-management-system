@@ -1,6 +1,6 @@
 // backend/controllers/adminController.js
 const pool = require('../config/db');
-const { createAdmin, createStudent, createTeacher, createParent } = require('../models/adminModel');
+const { createAdmin, verifyAdmin, createStudent, createTeacher, createParent } = require('../models/adminModel');
 
 // Add Admin Function
 const addAdmin = async (req, res) => {
@@ -29,6 +29,26 @@ const getAnalytics = async (req, res) => {
         `;
         const result = await pool.query(query);
         res.status(200).json(result.rows[0]);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Admin Login Function
+const loginAdmin = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        const admin = await verifyAdmin(email, password);
+
+        if (!admin) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+
+        res.status(200).json({ message: 'Login successful', admin });
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
@@ -76,4 +96,4 @@ const addParent = async (req, res) => {
     }
 };
 
-module.exports = { addAdmin, getAnalytics, addStudent, addTeacher, addParent };
+module.exports = { addAdmin, getAnalytics, loginAdmin, addStudent, addTeacher, addParent };

@@ -1,0 +1,79 @@
+/* frontend/css/admin-dashboard.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.analytics {
+    margin-bottom: 30px;
+}
+
+.analytics h2 {
+    margin-bottom: 10px;
+}
+
+#analytics-data p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.add-section {
+    margin-bottom: 30px;
+}
+
+.add-section h2 {
+    margin-bottom: 10px;
+}
+
+.add-section form label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.add-section form input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.add-section form button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-section form button:hover {
+    background-color: #218838;
+}
+
+#student-message,
+#teacher-message,
+#parent-message {
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+}

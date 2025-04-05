@@ -18,6 +18,21 @@ const createAdmin = async (username, password, email) => {
     }
 };
 
+// Verify Admin Credentials
+const verifyAdmin = async (email, password) => {
+    try {
+        const query = `
+            SELECT * FROM users
+            WHERE email = $1 AND password_hash = $2 AND role = 'admin';
+        `;
+        const values = [email, password];
+        const result = await pool.query(query, values);
+        return result.rows[0]; // Returns the admin record if found, otherwise null
+    } catch (error) {
+        throw error;
+    }
+};
+
 // Create Student Function
 const createStudent = async (username, password, email, firstName, lastName, dob, classId, parentId) => {
     try {
@@ -105,4 +120,4 @@ const createParent = async (username, password, email, firstName, lastName, phon
     }
 };
 
-module.exports = { createAdmin, createStudent, createTeacher, createParent };
+module.exports = { createAdmin, verifyAdmin, createStudent, createTeacher, createParent };

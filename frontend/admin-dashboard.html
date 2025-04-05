@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="css/admin-dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, Admin!</h1>
+
+        <!-- Analytics Section -->
+        <section class="analytics">
+            <h2>System Analytics</h2>
+            <div id="analytics-data">
+                <p>Total Students: <span id="total-students">Loading...</span></p>
+                <p>Total Teachers: <span id="total-teachers">Loading...</span></p>
+                <p>Total Parents: <span id="total-parents">Loading...</span></p>
+                <p>Total Admins: <span id="total-admins">Loading...</span></p>
+            </div>
+        </section>
+
+        <!-- Add Student Section -->
+        <section class="add-section">
+            <h2>Add Student</h2>
+            <form id="add-student-form">
+                <label for="student-username">Username:</label>
+                <input type="text" id="student-username" name="username" required>
+
+                <label for="student-password">Password:</label>
+                <input type="password" id="student-password" name="password" required>
+
+                <label for="student-email">Email:</label>
+                <input type="email" id="student-email" name="email" required>
+
+                <label for="student-first-name">First Name:</label>
+                <input type="text" id="student-first-name" name="firstName" required>
+
+                <label for="student-last-name">Last Name:</label>
+                <input type="text" id="student-last-name" name="lastName" required>
+
+                <label for="student-dob">Date of Birth:</label>
+                <input type="date" id="student-dob" name="dob" required>
+
+                <label for="student-class-id">Class ID:</label>
+                <input type="number" id="student-class-id" name="classId" required>
+
+                <label for="student-parent-id">Parent ID:</label>
+                <input type="number" id="student-parent-id" name="parentId" required>
+
+                <button type="submit">Add Student</button>
+            </form>
+            <p id="student-message"></p>
+        </section>
+
+        <!-- Add Teacher Section -->
+        <section class="add-section">
+            <h2>Add Teacher</h2>
+            <form id="add-teacher-form">
+                <label for="teacher-username">Username:</label>
+                <input type="text" id="teacher-username" name="username" required>
+
+                <label for="teacher-password">Password:</label>
+                <input type="password" id="teacher-password" name="password" required>
+
+                <label for="teacher-email">Email:</label>
+                <input type="email" id="teacher-email" name="email" required>
+
+                <label for="teacher-first-name">First Name:</label>
+                <input type="text" id="teacher-first-name" name="firstName" required>
+
+                <label for="teacher-last-name">Last Name:</label>
+                <input type="text" id="teacher-last-name" name="lastName" required>
+
+                <label for="teacher-subject">Subject Teaches:</label>
+                <input type="text" id="teacher-subject" name="subjectTeaches" required>
+
+                <button type="submit">Add Teacher</button>
+            </form>
+            <p id="teacher-message"></p>
+        </section>
+
+        <!-- Add Parent Section -->
+        <section class="add-section">
+            <h2>Add Parent</h2>
+            <form id="add-parent-form">
+                <label for="parent-username">Username:</label>
+                <input type="text" id="parent-username" name="username" required>
+
+                <label for="parent-password">Password:</label>
+                <input type="password" id="parent-password" name="password" required>
+
+                <label for="parent-email">Email:</label>
+                <input type="email" id="parent-email" name="email" required>
+
+                <label for="parent-first-name">First Name:</label>
+                <input type="text" id="parent-first-name" name="firstName" required>
+
+                <label for="parent-last-name">Last Name:</label>
+                <input type="text" id="parent-last-name" name="lastName" required>
+
+                <label for="parent-phone">Phone Number:</label>
+                <input type="text" id="parent-phone" name="phoneNumber" required>
+
+                <button type="submit">Add Parent</button>
+            </form>
+            <p id="parent-message"></p>
+        </section>
+    </div>
+
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html>
