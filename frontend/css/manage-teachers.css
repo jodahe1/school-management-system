@@ -1,0 +1,119 @@
+/* frontend/css/manage-teachers.css */
+
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f6f8;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.teachers-list {
+    margin-top: 20px;
+}
+
+.teachers-list h2 {
+    margin-bottom: 10px;
+    color: #34495e;
+}
+
+#teachers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.teacher-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #ecf0f1;
+    border-radius: 4px;
+    border: 1px solid #bdc3c7;
+    transition: background-color 0.3s ease;
+}
+
+.teacher-item:hover {
+    background-color: #dfe6e9;
+}
+
+.teacher-item p {
+    margin: 0;
+    font-size: 16px;
+    color: #2c3e50;
+}
+
+.teacher-item button {
+    padding: 5px 10px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.edit-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #2980b9;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Loading State */
+#teachers-list p {
+    text-align: center;
+    font-size: 16px;
+    color: #7f8c8d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .teacher-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .teacher-item button {
+        margin-top: 10px;
+        width: 100%;
+    }
+}

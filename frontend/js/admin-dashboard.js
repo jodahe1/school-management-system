@@ -5,6 +5,16 @@ document.getElementById('edit-students-parents-btn').addEventListener('click', (
     window.location.href = 'admin-edit-student-parent.html';
 });
 
+// Redirect to Manage Teachers Page
+document.getElementById('manage-teachers-btn').addEventListener('click', () => {
+    window.location.href = 'manage-teachers.html';
+});
+
+// Redirect to Delete Students Page
+document.getElementById('delete-students-btn').addEventListener('click', () => {
+    window.location.href = 'delete-students.html';
+});
+
 // Fetch Analytics Data
 const fetchAnalytics = async () => {
     try {

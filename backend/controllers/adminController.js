@@ -42,9 +42,9 @@ const getAnalytics = async (req, res) => {
 
         // Example: Query counts from the database
         const studentCount = await adminModel.getStudentsByClass();
-        const teacherCount = await adminModel.getAllClasses(); // Replace with actual query
-        const parentCount = await adminModel.getAllClasses(); // Replace with actual query
-        const adminCount = await adminModel.getAllClasses(); // Replace with actual query
+        const teacherCount = await adminModel.getAllTeachers(); // Use getAllTeachers here
+        const parentCount = await adminModel.getAllParents(); // Replace with actual query
+        const adminCount = await adminModel.getAllAdmins(); // Replace with actual query
 
         analytics.total_students = studentCount.length;
         analytics.total_teachers = teacherCount.length;
@@ -214,6 +214,16 @@ const editTeacher = async (req, res) => {
     }
 };
 
+// Fetch All Teachers
+const fetchTeachers = async (req, res) => {
+    try {
+        const teachers = await adminModel.getAllTeachers();
+        res.status(200).json(teachers);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     addAdmin,
     loginAdmin,
@@ -230,4 +240,5 @@ module.exports = {
     removeTeacher,
     removeParent,
     editTeacher,
+    fetchTeachers, // Add this line
 };

@@ -187,6 +187,22 @@ const updateTeacher = async (teacherId, firstName, lastName, subjectTeaches) => 
     }
 };
 
+// Fetch All Teachers
+const getAllTeachers = async () => {
+    try {
+        const query = `
+            SELECT 
+                t.teacher_id, u.username, u.email, t.first_name, t.last_name, t.subject_teaches
+            FROM teachers t
+            JOIN users u ON t.teacher_id = u.user_id;
+        `;
+        const result = await pool.query(query);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     createAdmin,
     verifyAdmin,
@@ -199,4 +215,5 @@ module.exports = {
     deleteTeacher,
     deleteParent,
     updateTeacher,
+    getAllTeachers, // Add this line
 };

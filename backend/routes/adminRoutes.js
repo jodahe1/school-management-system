@@ -16,6 +16,7 @@ const {
     removeTeacher,
     removeParent,
     editTeacher,
+    fetchTeachers, // Ensure this function is imported
 } = require('../controllers/adminController');
 
 const router = express.Router();
@@ -64,5 +65,8 @@ router.delete('/parents/:parentId/delete', removeParent);
 
 // Update Teacher Information Route
 router.put('/teachers/:teacherId/update', editTeacher);
+
+// Fetch All Teachers Route
+router.get('/teachers', fetchTeachers); // Add this line
 
 module.exports = router;

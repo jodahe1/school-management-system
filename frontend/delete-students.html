@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Students</title>
+    <link rel="stylesheet" href="css/delete-students.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Delete Students</h1>
+
+        <!-- Classes Section -->
+        <section id="classes-section">
+            <h2>Select a Class</h2>
+            <div id="classes-list">
+                <p>Loading classes...</p>
+            </div>
+        </section>
+
+        <!-- Students Section -->
+        <section id="students-section" style="display: none;">
+            <h2>Students in <span id="selected-class-name"></span></h2>
+            <div id="students-list">
+                <p>Loading students...</p>
+            </div>
+        </section>
+
+        <!-- Delete Confirmation Section -->
+        <section id="delete-confirmation-section" style="display: none;">
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete <strong><span id="student-to-delete"></span></strong>?</p>
+            <button id="confirm-delete-btn">Yes, Delete</button>
+            <button id="cancel-delete-btn">Cancel</button>
+        </section>
+
+        <p id="delete-message"></p>
+    </div>
+
+    <script src="js/delete-students.js"></script>
+</body>
+</html>
