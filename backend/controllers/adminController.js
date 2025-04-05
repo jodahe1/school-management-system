@@ -268,6 +268,21 @@ const deleteSchedule = async (req, res) => {
     }
 };
 
+// Fetch Schedules for a Specific Class
+const fetchSchedulesForClass = async (req, res) => {
+    try {
+        const { classId } = req.params; // Extract classId from URL parameters
+        const schedules = await adminModel.getSchedulesByClass(classId); // Call model function
+        if (schedules.length === 0) {
+            return res.status(200).json({ message: 'No schedules found for this class', schedules: [] });
+        }
+        res.status(200).json(schedules);
+    } catch (error) {
+        console.error('Error fetching schedules for class:', error);
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     addAdmin,
     loginAdmin,
@@ -289,4 +304,5 @@ module.exports = {
     addSchedule,
     updateSchedule,
     deleteSchedule,
+    fetchSchedulesForClass,
 };

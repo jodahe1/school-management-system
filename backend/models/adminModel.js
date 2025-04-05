@@ -1,4 +1,5 @@
 // backend/models/adminModel.js
+
 const pool = require('../config/db');
 
 // Create Admin Function
@@ -270,6 +271,27 @@ const deleteSchedule = async (scheduleId) => {
     }
 };
 
+// Fetch Schedules for a Specific Class
+const getSchedulesByClass = async (classId) => {
+    try {
+        const query = `
+            SELECT 
+                s.schedule_id, c.class_name, u.username AS teacher_name, sb.subject_name, 
+                sm.semester_name, s.day_of_week, s.period_number, s.start_time, s.end_time
+            FROM schedules s
+            JOIN classes c ON s.class_id = c.class_id
+            JOIN users u ON s.teacher_id = u.user_id
+            JOIN subjects sb ON s.subject_id = sb.subject_id
+            JOIN semesters sm ON s.semester_id = sm.semester_id
+            WHERE s.class_id = $1;
+        `;
+        const result = await pool.query(query, [classId]);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     createAdmin,
     verifyAdmin,
@@ -287,4 +309,5 @@ module.exports = {
     addSchedule,
     updateSchedule,
     deleteSchedule,
+    getSchedulesByClass, // New function added
 };

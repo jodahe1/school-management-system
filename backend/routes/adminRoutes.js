@@ -1,5 +1,7 @@
 // backend/routes/adminRoutes.js
+
 const express = require('express');
+const router = express.Router();
 const {
     addAdmin,
     loginAdmin,
@@ -17,72 +19,74 @@ const {
     removeParent,
     editTeacher,
     fetchTeachers,
-    fetchSchedules, // Import the new schedule-related functions
+    fetchSchedules,
     addSchedule,
     updateSchedule,
     deleteSchedule,
+    fetchSchedulesForClass, // New function for fetching schedules by class
 } = require('../controllers/adminController');
 
-const router = express.Router();
+// Add Admin
+router.post('/admins', addAdmin);
 
-// Add Admin Route
-router.post('/add', addAdmin);
+// Login Admin
+router.post('/admins/login', loginAdmin);
 
-// Admin Login Route
-router.post('/login', loginAdmin);
-
-// Fetch Analytics Route
+// Fetch Analytics
 router.get('/analytics', getAnalytics);
 
-// Add Student Route
-router.post('/add-student', addStudent);
+// Add Student
+router.post('/students', addStudent);
 
-// Add Teacher Route
-router.post('/add-teacher', addTeacher);
+// Add Teacher
+router.post('/teachers', addTeacher);
 
-// Add Parent Route
-router.post('/add-parent', addParent);
+// Add Parent
+router.post('/parents', addParent);
 
-// Fetch All Classes Route
+// Fetch All Classes
 router.get('/classes', fetchClasses);
 
-// Fetch Students in a Specific Class Route
+// Fetch Students in a Specific Class
 router.get('/classes/:classId/students', fetchStudentsByClass);
 
-// Fetch Student and Parent Details Route
+// Fetch Student Details
 router.get('/students/:studentId/details', fetchStudentDetails);
 
-// Update Student Information Route
+// Edit Student
 router.put('/students/:studentId/update', editStudent);
 
-// Update Parent Information Route
+// Edit Parent
 router.put('/parents/:parentId/update', editParent);
 
-// Delete Student Route
+// Delete Student
 router.delete('/students/:studentId/delete', removeStudent);
 
-// Delete Teacher Route
+// Delete Teacher
 router.delete('/teachers/:teacherId/delete', removeTeacher);
 
-// Delete Parent Route
+// Delete Parent
 router.delete('/parents/:parentId/delete', removeParent);
 
-// Update Teacher Information Route
+// Edit Teacher
 router.put('/teachers/:teacherId/update', editTeacher);
 
-// Fetch All Teachers Route
+// Fetch All Teachers
 router.get('/teachers', fetchTeachers);
 
-// Fetch All Schedules Route
+// Fetch All Schedules
 router.get('/schedules', fetchSchedules);
 
-// Add Schedule Route
+// Add Schedule
 router.post('/schedules/add', addSchedule);
 
-// Update Schedule Route
+// Update Schedule
 router.put('/schedules/:scheduleId/update', updateSchedule);
 
-// Delete Schedule Route
+// Delete Schedule
 router.delete('/schedules/:scheduleId/delete', deleteSchedule);
+
+// Fetch Schedules for a Specific Class (New Route)
+router.get('/schedules/class/:classId', fetchSchedulesForClass);
 
 module.exports = router;

@@ -1,0 +1,106 @@
+/* frontend/css/manage-schedules.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+section {
+    margin-bottom: 20px;
+}
+
+#classes-list button,
+#schedules-list .schedule-item {
+    display: block;
+    margin: 5px 0;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.3s ease;
+}
+
+#classes-list button:hover,
+#schedules-list .schedule-item:hover {
+    background-color: #eaeaea;
+}
+
+#schedules-section {
+    display: none;
+}
+
+#add-new-schedule-btn,
+button.edit-btn,
+button.delete-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#add-new-schedule-btn:hover,
+button.edit-btn:hover,
+button.delete-btn:hover {
+    background-color: #0056b3;
+}
+
+button.delete-btn {
+    background-color: #dc3545;
+}
+
+button.delete-btn:hover {
+    background-color: #a71d2a;
+}
+
+#schedule-form-section {
+    display: none;
+    margin-top: 20px;
+}
+
+#schedule-form label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+#schedule-form input,
+#schedule-form select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#update-message {
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#update-message.success {
+    color: green;
+}
+
+#update-message.error {
+    color: red;
+}
