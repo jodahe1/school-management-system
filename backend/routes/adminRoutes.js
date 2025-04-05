@@ -16,7 +16,11 @@ const {
     removeTeacher,
     removeParent,
     editTeacher,
-    fetchTeachers, // Ensure this function is imported
+    fetchTeachers,
+    fetchSchedules, // Import the new schedule-related functions
+    addSchedule,
+    updateSchedule,
+    deleteSchedule,
 } = require('../controllers/adminController');
 
 const router = express.Router();
@@ -67,6 +71,18 @@ router.delete('/parents/:parentId/delete', removeParent);
 router.put('/teachers/:teacherId/update', editTeacher);
 
 // Fetch All Teachers Route
-router.get('/teachers', fetchTeachers); // Add this line
+router.get('/teachers', fetchTeachers);
+
+// Fetch All Schedules Route
+router.get('/schedules', fetchSchedules);
+
+// Add Schedule Route
+router.post('/schedules/add', addSchedule);
+
+// Update Schedule Route
+router.put('/schedules/:scheduleId/update', updateSchedule);
+
+// Delete Schedule Route
+router.delete('/schedules/:scheduleId/delete', deleteSchedule);
 
 module.exports = router;

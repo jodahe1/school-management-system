@@ -42,7 +42,7 @@ const getAnalytics = async (req, res) => {
 
         // Example: Query counts from the database
         const studentCount = await adminModel.getStudentsByClass();
-        const teacherCount = await adminModel.getAllTeachers(); // Use getAllTeachers here
+        const teacherCount = await adminModel.getAllTeachers();
         const parentCount = await adminModel.getAllParents(); // Replace with actual query
         const adminCount = await adminModel.getAllAdmins(); // Replace with actual query
 
@@ -224,6 +224,50 @@ const fetchTeachers = async (req, res) => {
     }
 };
 
+// Fetch All Schedules
+const fetchSchedules = async (req, res) => {
+    try {
+        const schedules = await adminModel.getAllSchedules();
+        res.status(200).json(schedules);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Add Schedule
+const addSchedule = async (req, res) => {
+    try {
+        const { classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime, createdBy } = req.body;
+        const newSchedule = await adminModel.addSchedule(classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime, createdBy);
+        res.status(201).json(newSchedule);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Update Schedule
+const updateSchedule = async (req, res) => {
+    try {
+        const { scheduleId } = req.params;
+        const { classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime } = req.body;
+        const updatedSchedule = await adminModel.updateSchedule(scheduleId, classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime);
+        res.status(200).json({ message: 'Schedule updated successfully', schedule: updatedSchedule });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Delete Schedule
+const deleteSchedule = async (req, res) => {
+    try {
+        const { scheduleId } = req.params;
+        await adminModel.deleteSchedule(scheduleId);
+        res.status(200).json({ message: 'Schedule deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     addAdmin,
     loginAdmin,
@@ -240,5 +284,9 @@ module.exports = {
     removeTeacher,
     removeParent,
     editTeacher,
-    fetchTeachers, // Add this line
+    fetchTeachers,
+    fetchSchedules,
+    addSchedule,
+    updateSchedule,
+    deleteSchedule,
 };

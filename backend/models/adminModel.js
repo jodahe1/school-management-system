@@ -203,6 +203,73 @@ const getAllTeachers = async () => {
     }
 };
 
+// Fetch All Schedules
+const getAllSchedules = async () => {
+    try {
+        const query = `
+            SELECT 
+                s.schedule_id, c.class_name, u.username AS teacher_name, sb.subject_name, 
+                sm.semester_name, s.day_of_week, s.period_number, s.start_time, s.end_time
+            FROM schedules s
+            JOIN classes c ON s.class_id = c.class_id
+            JOIN users u ON s.teacher_id = u.user_id
+            JOIN subjects sb ON s.subject_id = sb.subject_id
+            JOIN semesters sm ON s.semester_id = sm.semester_id;
+        `;
+        const result = await pool.query(query);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Add Schedule
+const addSchedule = async (classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime, createdBy) => {
+    try {
+        const query = `
+            INSERT INTO schedules (class_id, teacher_id, subject_id, semester_id, day_of_week, period_number, start_time, end_time, created_by)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            RETURNING *;
+        `;
+        const values = [classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime, createdBy];
+        const result = await pool.query(query, values);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Update Schedule
+const updateSchedule = async (scheduleId, classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime) => {
+    try {
+        const query = `
+            UPDATE schedules
+            SET class_id = $1, teacher_id = $2, subject_id = $3, semester_id = $4, 
+                day_of_week = $5, period_number = $6, start_time = $7, end_time = $8
+            WHERE schedule_id = $9
+            RETURNING *;
+        `;
+        const values = [classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime, scheduleId];
+        const result = await pool.query(query, values);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Delete Schedule
+const deleteSchedule = async (scheduleId) => {
+    try {
+        const query = `
+            DELETE FROM schedules
+            WHERE schedule_id = $1;
+        `;
+        await pool.query(query, [scheduleId]);
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     createAdmin,
     verifyAdmin,
@@ -215,5 +282,9 @@ module.exports = {
     deleteTeacher,
     deleteParent,
     updateTeacher,
-    getAllTeachers, // Add this line
+    getAllTeachers,
+    getAllSchedules,
+    addSchedule,
+    updateSchedule,
+    deleteSchedule,
 };
