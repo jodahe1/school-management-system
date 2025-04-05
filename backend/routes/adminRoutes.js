@@ -1,9 +1,9 @@
+// backend/routes/adminRoutes.js
 const express = require('express');
-const adminController = require('../controllers/adminController');
+const { addAdmin } = require('../controllers/adminController');
 
 const router = express.Router();
 
-// Register administrator route
-router.post('/register', adminController.registerAdmin);
+router.post('/add', addAdmin);
 
 module.exports = router;
