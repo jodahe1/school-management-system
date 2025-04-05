@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Edit Student & Parent</title>
+    <link rel="stylesheet" href="css/admin-edit-student-parent.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Admin - Edit Student & Parent</h1>
+
+        <!-- Classes Section -->
+        <section id="classes-section">
+            <h2>Select a Class</h2>
+            <div id="classes-list">
+                <p>Loading classes...</p>
+            </div>
+        </section>
+
+        <!-- Students Section -->
+        <section id="students-section" style="display: none;">
+            <h2>Students in <span id="selected-class-name"></span></h2>
+            <div id="students-list">
+                <p>Loading students...</p>
+            </div>
+        </section>
+
+        <!-- Student Details Section -->
+        <section id="student-details-section" style="display: none;">
+            <h2>Student and Parent Details</h2>
+            <form id="edit-student-form">
+                <h3>Student Information</h3>
+                <label for="student-first-name">First Name:</label>
+                <input type="text" id="student-first-name" name="firstName" required>
+
+                <label for="student-last-name">Last Name:</label>
+                <input type="text" id="student-last-name" name="lastName" required>
+
+                <label for="student-dob">Date of Birth:</label>
+                <input type="date" id="student-dob" name="dob" required>
+
+                <h3>Parent Information</h3>
+                <label for="parent-first-name">First Name:</label>
+                <input type="text" id="parent-first-name" name="firstName" required>
+
+                <label for="parent-last-name">Last Name:</label>
+                <input type="text" id="parent-last-name" name="lastName" required>
+
+                <label for="parent-phone">Phone Number:</label>
+                <input type="text" id="parent-phone" name="phoneNumber" required>
+
+                <button type="submit">Save Changes</button>
+            </form>
+            <p id="update-message"></p>
+        </section>
+    </div>
+
+    <script src="js/admin-edit-student-parent.js"></script>
+</body>
+</html>

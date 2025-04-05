@@ -1,5 +1,10 @@
 // frontend/js/admin-dashboard.js
 
+// Redirect to Edit Students & Parents Page
+document.getElementById('edit-students-parents-btn').addEventListener('click', () => {
+    window.location.href = 'admin-edit-student-parent.html';
+});
+
 // Fetch Analytics Data
 const fetchAnalytics = async () => {
     try {

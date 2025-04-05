@@ -1,4 +1,4 @@
-/* frontend/css/admin-dashboard.css */
+/* frontend/css/admin-edit-student-parent.css */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f9;
@@ -20,34 +20,32 @@ h1 {
     margin-bottom: 20px;
 }
 
-.analytics {
-    margin-bottom: 30px;
+#classes-list, #students-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.analytics h2 {
-    margin-bottom: 10px;
+#classes-list button, #students-list button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
-#analytics-data p {
-    margin: 5px 0;
-    font-size: 16px;
+#classes-list button:hover, #students-list button:hover {
+    background-color: #0056b3;
 }
 
-.add-section {
-    margin-bottom: 30px;
-}
-
-.add-section h2 {
-    margin-bottom: 10px;
-}
-
-.add-section form label {
+form label {
     display: block;
     margin-top: 10px;
     font-weight: bold;
 }
 
-.add-section form input {
+form input {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
@@ -55,7 +53,7 @@ h1 {
     border-radius: 4px;
 }
 
-.add-section form button {
+form button {
     width: 100%;
     padding: 10px;
     margin-top: 20px;
@@ -66,33 +64,12 @@ h1 {
     cursor: pointer;
 }
 
-.add-section form button:hover {
+form button:hover {
     background-color: #218838;
 }
 
-#student-message,
-#teacher-message,
-#parent-message {
+#update-message {
     margin-top: 10px;
     text-align: center;
     font-weight: bold;
-}
-
-.edit-section {
-    margin-top: 30px;
-    text-align: center;
-}
-
-#edit-students-parents-btn {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-#edit-students-parents-btn:hover {
-    background-color: #0056b3;
 }
