@@ -1,6 +1,6 @@
 // backend/controllers/adminController.js
-const pool = require('../config/db'); // Import the pool object
-const { createAdmin, createStudent } = require('../models/adminModel');
+const pool = require('../config/db');
+const { createAdmin, createStudent, createTeacher, createParent } = require('../models/adminModel');
 
 // Add Admin Function
 const addAdmin = async (req, res) => {
@@ -27,7 +27,7 @@ const getAnalytics = async (req, res) => {
                 COUNT(CASE WHEN role = 'admin' THEN 1 END) AS total_admins
             FROM users;
         `;
-        const result = await pool.query(query); // Use the pool object here
+        const result = await pool.query(query);
         res.status(200).json(result.rows[0]);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
@@ -48,4 +48,32 @@ const addStudent = async (req, res) => {
     }
 };
 
-module.exports = { addAdmin, getAnalytics, addStudent };
+// Add Teacher Function
+const addTeacher = async (req, res) => {
+    try {
+        const { username, password, email, firstName, lastName, subjectTeaches } = req.body;
+        if (!username || !password || !email || !firstName || !lastName || !subjectTeaches) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+        const newTeacher = await createTeacher(username, password, email, firstName, lastName, subjectTeaches);
+        res.status(201).json({ message: 'Teacher added successfully', teacher: newTeacher });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Add Parent Function
+const addParent = async (req, res) => {
+    try {
+        const { username, password, email, firstName, lastName, phoneNumber } = req.body;
+        if (!username || !password || !email || !firstName || !lastName || !phoneNumber) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+        const newParent = await createParent(username, password, email, firstName, lastName, phoneNumber);
+        res.status(201).json({ message: 'Parent added successfully', parent: newParent });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+module.exports = { addAdmin, getAnalytics, addStudent, addTeacher, addParent };
