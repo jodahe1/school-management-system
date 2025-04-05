@@ -27,7 +27,7 @@ const verifyAdmin = async (email, password) => {
         `;
         const values = [email, password];
         const result = await pool.query(query, values);
-        return result.rows[0]; // Returns the admin record if found, otherwise null
+        return result.rows[0];
     } catch (error) {
         throw error;
     }
@@ -334,6 +334,28 @@ const getAllSemestersForDropdown = async () => {
     }
 };
 
+// Get Single Schedule by ID
+const getScheduleById = async (scheduleId) => {
+    try {
+        const query = `
+            SELECT 
+                s.schedule_id, s.class_id, s.teacher_id, s.subject_id, s.semester_id,
+                s.day_of_week, s.period_number, s.start_time, s.end_time,
+                t.first_name AS teacher_first_name, t.last_name AS teacher_last_name,
+                sb.subject_name, sm.semester_name
+            FROM schedules s
+            JOIN teachers t ON s.teacher_id = t.teacher_id
+            JOIN subjects sb ON s.subject_id = sb.subject_id
+            JOIN semesters sm ON s.semester_id = sm.semester_id
+            WHERE s.schedule_id = $1;
+        `;
+        const result = await pool.query(query, [scheduleId]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     createAdmin,
     verifyAdmin,
@@ -352,7 +374,8 @@ module.exports = {
     updateSchedule,
     deleteSchedule,
     getSchedulesByClass,
-    getAllTeachersForDropdown, // New function
-    getAllSubjectsForDropdown, // New function
-    getAllSemestersForDropdown, // New function
+    getAllTeachersForDropdown,
+    getAllSubjectsForDropdown,
+    getAllSemestersForDropdown,
+    getScheduleById
 };

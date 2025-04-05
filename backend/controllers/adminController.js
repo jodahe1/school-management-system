@@ -327,6 +327,20 @@ const fetchAllSemesters = async (req, res) => {
     }
 };
 
+// Fetch Single Schedule by ID
+const fetchScheduleById = async (req, res) => {
+    try {
+        const { scheduleId } = req.params;
+        const schedule = await adminModel.getScheduleById(scheduleId);
+        if (!schedule) {
+            return res.status(404).json({ message: 'Schedule not found' });
+        }
+        res.status(200).json(schedule);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     addAdmin,
     loginAdmin,
@@ -352,4 +366,5 @@ module.exports = {
     fetchAllTeachers,
     fetchAllSubjects,
     fetchAllSemesters,
+    fetchScheduleById
 };
