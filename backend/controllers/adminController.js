@@ -1,6 +1,5 @@
 // backend/controllers/adminController.js
 
-// Import Admin Model
 const adminModel = require('../models/adminModel');
 
 // Add Admin
@@ -37,11 +36,10 @@ const getAnalytics = async (req, res) => {
             total_parents: 0,
             total_admins: 0,
         };
-        // Example: Query counts from the database
         const studentCount = await adminModel.getStudentsByClass();
         const teacherCount = await adminModel.getAllTeachers();
-        const parentCount = await adminModel.getAllParents(); // Replace with actual query
-        const adminCount = await adminModel.getAllAdmins(); // Replace with actual query
+        const parentCount = await adminModel.getAllParents();
+        const adminCount = await adminModel.getAllAdmins();
         analytics.total_students = studentCount.length;
         analytics.total_teachers = teacherCount.length;
         analytics.total_parents = parentCount.length;
@@ -287,8 +285,8 @@ const deleteSchedule = async (req, res) => {
 // Fetch Schedules for a Specific Class
 const fetchSchedulesForClass = async (req, res) => {
     try {
-        const { classId } = req.params; // Extract classId from URL parameters
-        const schedules = await adminModel.getSchedulesByClass(classId); // Call model function
+        const { classId } = req.params;
+        const schedules = await adminModel.getSchedulesByClass(classId);
         if (schedules.length === 0) {
             return res.status(200).json({ message: 'No schedules found for this class', schedules: [] });
         }
@@ -302,7 +300,7 @@ const fetchSchedulesForClass = async (req, res) => {
 // Fetch All Teachers (For Dropdown)
 const fetchAllTeachers = async (req, res) => {
     try {
-        const teachers = await adminModel.getAllTeachers();
+        const teachers = await adminModel.getAllTeachersForDropdown();
         res.status(200).json(teachers);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
@@ -312,7 +310,7 @@ const fetchAllTeachers = async (req, res) => {
 // Fetch All Subjects (For Dropdown)
 const fetchAllSubjects = async (req, res) => {
     try {
-        const subjects = await adminModel.getAllSubjects();
+        const subjects = await adminModel.getAllSubjectsForDropdown();
         res.status(200).json(subjects);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
@@ -322,7 +320,7 @@ const fetchAllSubjects = async (req, res) => {
 // Fetch All Semesters (For Dropdown)
 const fetchAllSemesters = async (req, res) => {
     try {
-        const semesters = await adminModel.getAllSemesters();
+        const semesters = await adminModel.getAllSemestersForDropdown();
         res.status(200).json(semesters);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
@@ -351,7 +349,7 @@ module.exports = {
     updateSchedule,
     deleteSchedule,
     fetchSchedulesForClass,
-    fetchAllTeachers, // New function
-    fetchAllSubjects, // New function
-    fetchAllSemesters, // New function
+    fetchAllTeachers,
+    fetchAllSubjects,
+    fetchAllSemesters,
 };
