@@ -292,6 +292,48 @@ const getSchedulesByClass = async (classId) => {
     }
 };
 
+// Fetch All Teachers for Dropdown
+const getAllTeachersForDropdown = async () => {
+    try {
+        const query = `
+            SELECT teacher_id, first_name, last_name
+            FROM teachers;
+        `;
+        const result = await pool.query(query);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Fetch All Subjects for Dropdown
+const getAllSubjectsForDropdown = async () => {
+    try {
+        const query = `
+            SELECT subject_id, subject_name
+            FROM subjects;
+        `;
+        const result = await pool.query(query);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Fetch All Semesters for Dropdown
+const getAllSemestersForDropdown = async () => {
+    try {
+        const query = `
+            SELECT semester_id, semester_name
+            FROM semesters;
+        `;
+        const result = await pool.query(query);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     createAdmin,
     verifyAdmin,
@@ -309,5 +351,8 @@ module.exports = {
     addSchedule,
     updateSchedule,
     deleteSchedule,
-    getSchedulesByClass, // New function added
+    getSchedulesByClass,
+    getAllTeachersForDropdown, // New function
+    getAllSubjectsForDropdown, // New function
+    getAllSemestersForDropdown, // New function
 };

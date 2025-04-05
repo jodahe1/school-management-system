@@ -23,7 +23,10 @@ const {
     addSchedule,
     updateSchedule,
     deleteSchedule,
-    fetchSchedulesForClass, // New function for fetching schedules by class
+    fetchSchedulesForClass, // Fetch schedules for a specific class
+    fetchAllTeachers,       // Fetch all teachers (newly added)
+    fetchAllSubjects,       // Fetch all subjects (newly added)
+    fetchAllSemesters,      // Fetch all semesters (newly added)
 } = require('../controllers/adminController');
 
 // Add Admin
@@ -86,7 +89,16 @@ router.put('/schedules/:scheduleId/update', updateSchedule);
 // Delete Schedule
 router.delete('/schedules/:scheduleId/delete', deleteSchedule);
 
-// Fetch Schedules for a Specific Class (New Route)
+// Fetch Schedules for a Specific Class
 router.get('/schedules/class/:classId', fetchSchedulesForClass);
+
+// Fetch All Teachers (Dropdown Data)
+router.get('/dropdown/teachers', fetchAllTeachers);
+
+// Fetch All Subjects (Dropdown Data)
+router.get('/dropdown/subjects', fetchAllSubjects);
+
+// Fetch All Semesters (Dropdown Data)
+router.get('/dropdown/semesters', fetchAllSemesters);
 
 module.exports = router;

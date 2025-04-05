@@ -19,11 +19,9 @@ const loginAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
         const admin = await adminModel.verifyAdmin(email, password);
-
         if (!admin) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-
         res.status(200).json({ message: 'Login successful', admin });
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
@@ -39,18 +37,15 @@ const getAnalytics = async (req, res) => {
             total_parents: 0,
             total_admins: 0,
         };
-
         // Example: Query counts from the database
         const studentCount = await adminModel.getStudentsByClass();
         const teacherCount = await adminModel.getAllTeachers();
         const parentCount = await adminModel.getAllParents(); // Replace with actual query
         const adminCount = await adminModel.getAllAdmins(); // Replace with actual query
-
         analytics.total_students = studentCount.length;
         analytics.total_teachers = teacherCount.length;
         analytics.total_parents = parentCount.length;
         analytics.total_admins = adminCount.length;
-
         res.status(200).json(analytics);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
@@ -237,8 +232,19 @@ const fetchSchedules = async (req, res) => {
 // Add Schedule
 const addSchedule = async (req, res) => {
     try {
-        const { classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime, createdBy } = req.body;
-        const newSchedule = await adminModel.addSchedule(classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime, createdBy);
+        const { classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime, createdBy } =
+            req.body;
+        const newSchedule = await adminModel.addSchedule(
+            classId,
+            teacherId,
+            subjectId,
+            semesterId,
+            dayOfWeek,
+            periodNumber,
+            startTime,
+            endTime,
+            createdBy
+        );
         res.status(201).json(newSchedule);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
@@ -250,7 +256,17 @@ const updateSchedule = async (req, res) => {
     try {
         const { scheduleId } = req.params;
         const { classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime } = req.body;
-        const updatedSchedule = await adminModel.updateSchedule(scheduleId, classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime);
+        const updatedSchedule = await adminModel.updateSchedule(
+            scheduleId,
+            classId,
+            teacherId,
+            subjectId,
+            semesterId,
+            dayOfWeek,
+            periodNumber,
+            startTime,
+            endTime
+        );
         res.status(200).json({ message: 'Schedule updated successfully', schedule: updatedSchedule });
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
@@ -283,6 +299,36 @@ const fetchSchedulesForClass = async (req, res) => {
     }
 };
 
+// Fetch All Teachers (For Dropdown)
+const fetchAllTeachers = async (req, res) => {
+    try {
+        const teachers = await adminModel.getAllTeachers();
+        res.status(200).json(teachers);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Fetch All Subjects (For Dropdown)
+const fetchAllSubjects = async (req, res) => {
+    try {
+        const subjects = await adminModel.getAllSubjects();
+        res.status(200).json(subjects);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Fetch All Semesters (For Dropdown)
+const fetchAllSemesters = async (req, res) => {
+    try {
+        const semesters = await adminModel.getAllSemesters();
+        res.status(200).json(semesters);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     addAdmin,
     loginAdmin,
@@ -305,4 +351,7 @@ module.exports = {
     updateSchedule,
     deleteSchedule,
     fetchSchedulesForClass,
+    fetchAllTeachers, // New function
+    fetchAllSubjects, // New function
+    fetchAllSemesters, // New function
 };

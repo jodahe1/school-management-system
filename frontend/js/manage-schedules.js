@@ -1,5 +1,3 @@
-// frontend/js/manage-schedules.js
-
 document.addEventListener('DOMContentLoaded', () => {
     const classesSection = document.getElementById('classes-section');
     const classesList = document.getElementById('classes-list');
@@ -14,13 +12,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const formTitle = document.getElementById('form-title');
     const cancelScheduleBtn = document.getElementById('cancel-schedule-btn');
 
+    const teacherDropdown = document.getElementById('teacher-id');
+    const subjectDropdown = document.getElementById('subject-id');
+    const semesterDropdown = document.getElementById('semester-id');
+
     let selectedClassId = null;
 
     // Fetch All Classes
     const fetchClasses = async () => {
         try {
             const response = await fetch('http://localhost:5000/api/admin/classes');
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP error! Status: ${response.status}, Response: ${errorText}`);
+            }
             const classes = await response.json();
 
             if (classes.length === 0) {
@@ -36,8 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 classesList.appendChild(button);
             });
         } catch (error) {
-            console.error('Error fetching classes:', error.message);
-            classesList.innerHTML = '<p>Error loading classes. Please try again.</p>';
+            console.error('Error fetching classes:', error);
+            classesList.innerHTML = `<p>Error loading classes: ${error.message}</p>`;
         }
     };
 
@@ -49,7 +54,10 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedClassName.textContent = className;
 
             const response = await fetch(`http://localhost:5000/api/admin/schedules/class/${classId}`);
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP error! Status: ${response.status}, Response: ${errorText}`);
+            }
             const schedules = await response.json();
 
             if (schedules.length === 0) {
@@ -69,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 schedulesList.appendChild(div);
             });
 
-            // Add event listeners for edit and delete buttons
             document.querySelectorAll('.edit-btn').forEach((btn) => {
                 btn.addEventListener('click', () => openEditScheduleModal(btn.dataset.id));
             });
@@ -79,17 +86,93 @@ document.addEventListener('DOMContentLoaded', () => {
                     const scheduleId = btn.dataset.id;
                     if (confirm('Are you sure you want to delete this schedule?')) {
                         try {
-                            await fetch(`http://localhost:5000/api/admin/schedules/${scheduleId}/delete`, { method: 'DELETE' });
-                            fetchSchedules(selectedClassId, className); // Refresh the list after deletion
+                            const response = await fetch(`http://localhost:5000/api/admin/schedules/${scheduleId}/delete`, { 
+                                method: 'DELETE' 
+                            });
+                            if (!response.ok) {
+                                const errorText = await response.text();
+                                throw new Error(`Delete failed: ${errorText}`);
+                            }
+                            fetchSchedules(selectedClassId, className);
                         } catch (error) {
-                            alert('An error occurred while deleting the schedule.');
+                            alert(`Delete failed: ${error.message}`);
                         }
                     }
                 });
             });
         } catch (error) {
-            console.error('Error fetching schedules:', error.message);
-            schedulesList.innerHTML = '<p>Error loading schedules. Please try again.</p>';
+            console.error('Error fetching schedules:', error);
+            schedulesList.innerHTML = `<p>Error loading schedules: ${error.message}</p>`;
+        }
+    };
+
+    // Populate Dropdowns (Teachers, Subjects, Semesters)
+    const populateDropdowns = async () => {
+        try {
+            console.log('Fetching dropdown data...');
+            
+            // Fetch Teachers
+            const teachersResponse = await fetch('http://localhost:5000/api/admin/dropdown/teachers');
+            if (!teachersResponse.ok) {
+                const errorText = await teachersResponse.text();
+                console.error('Teachers fetch error:', {
+                    status: teachersResponse.status,
+                    statusText: teachersResponse.statusText,
+                    response: errorText
+                });
+                throw new Error(`Failed to fetch teachers: ${teachersResponse.statusText}`);
+            }
+            const teachers = await teachersResponse.json();
+            console.log('Teachers data:', teachers);
+
+            teacherDropdown.innerHTML = '';
+            if (teachers.length === 0) {
+                teacherDropdown.innerHTML = '<option value="">No teachers available</option>';
+            } else {
+                teachers.forEach((teacher) => {
+                    const option = document.createElement('option');
+                    option.value = teacher.teacher_id;
+                    option.textContent = `${teacher.first_name} ${teacher.last_name}`;
+                    teacherDropdown.appendChild(option);
+                });
+            }
+
+            // Fetch Subjects
+            const subjectsResponse = await fetch('http://localhost:5000/api/admin/dropdown/subjects');
+            if (!subjectsResponse.ok) {
+                const errorText = await subjectsResponse.text();
+                throw new Error(`Failed to fetch subjects: ${errorText}`);
+            }
+            const subjects = await subjectsResponse.json();
+
+            subjectDropdown.innerHTML = '';
+            subjects.forEach((subject) => {
+                const option = document.createElement('option');
+                option.value = subject.subject_id;
+                option.textContent = subject.subject_name;
+                subjectDropdown.appendChild(option);
+            });
+
+            // Fetch Semesters
+            const semestersResponse = await fetch('http://localhost:5000/api/admin/dropdown/semesters');
+            if (!semestersResponse.ok) {
+                const errorText = await semestersResponse.text();
+                throw new Error(`Failed to fetch semesters: ${errorText}`);
+            }
+            const semesters = await semestersResponse.json();
+
+            semesterDropdown.innerHTML = '';
+            semesters.forEach((semester) => {
+                const option = document.createElement('option');
+                option.value = semester.semester_id;
+                option.textContent = semester.semester_name;
+                semesterDropdown.appendChild(option);
+            });
+
+        } catch (error) {
+            console.error('Error populating dropdowns:', error);
+            updateMessage.textContent = `Error loading dropdown options: ${error.message}`;
+            updateMessage.className = 'error';
         }
     };
 
@@ -97,11 +180,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const openEditScheduleModal = async (scheduleId) => {
         try {
             if (scheduleId) {
-                // Fetch existing schedule details for editing
                 const response = await fetch(`http://localhost:5000/api/admin/schedules/${scheduleId}`);
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Failed to fetch schedule: ${errorText}`);
+                }
                 const schedule = await response.json();
 
-                // Populate the form with existing data
                 document.getElementById('schedule-id').value = schedule.schedule_id;
                 document.getElementById('teacher-id').value = schedule.teacher_id;
                 document.getElementById('subject-id').value = schedule.subject_id;
@@ -113,7 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 formTitle.textContent = 'Edit Schedule';
             } else {
-                // Clear the form for adding a new schedule
                 document.getElementById('schedule-id').value = '';
                 document.getElementById('teacher-id').value = '';
                 document.getElementById('subject-id').value = '';
@@ -126,11 +210,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 formTitle.textContent = 'Add New Schedule';
             }
 
-            // Show the form
             scheduleFormSection.style.display = 'block';
         } catch (error) {
-            console.error('Error fetching schedule details:', error.message);
-            alert('An error occurred while loading the schedule details.');
+            console.error('Error opening schedule modal:', error);
+            updateMessage.textContent = `Error loading schedule: ${error.message}`;
+            updateMessage.className = 'error';
         }
     };
 
@@ -157,15 +241,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 }),
             });
 
-            if (!response.ok) throw new Error(isEditMode ? 'Failed to update schedule' : 'Failed to add schedule');
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(isEditMode 
+                    ? `Update failed: ${errorText}`
+                    : `Create failed: ${errorText}`);
+            }
 
-            updateMessage.textContent = 'Changes saved successfully!';
+            updateMessage.textContent = 'Schedule saved successfully!';
             updateMessage.className = 'success';
-            scheduleFormSection.style.display = 'none'; // Hide the form after saving
-            fetchSchedules(selectedClassId); // Refresh the list after adding/updating
+            scheduleFormSection.style.display = 'none';
+            fetchSchedules(selectedClassId, selectedClassName.textContent);
         } catch (error) {
-            console.error('Error saving schedule:', error.message);
-            updateMessage.textContent = 'Error saving changes. Please try again.';
+            console.error('Error saving schedule:', error);
+            updateMessage.textContent = `Error saving schedule: ${error.message}`;
             updateMessage.className = 'error';
         }
     });
@@ -177,9 +266,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add New Schedule Button
     addNewScheduleBtn.addEventListener('click', () => {
-        openEditScheduleModal(null); // Pass `null` for adding a new schedule
+        openEditScheduleModal(null);
     });
 
     // Initialize the Page
     fetchClasses();
+    populateDropdowns();
 });
