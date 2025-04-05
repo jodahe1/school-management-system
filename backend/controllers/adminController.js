@@ -1,51 +1,27 @@
 // backend/controllers/adminController.js
-const pool = require('../config/db');
-const { createAdmin, verifyAdmin, createStudent, createTeacher, createParent, getAllClasses, getStudentsByClass, getStudentDetails, updateStudent, updateParent } = require('../models/adminModel');
 
-// Add Admin Function
+// Import Admin Model
+const adminModel = require('../models/adminModel');
+
+// Add Admin
 const addAdmin = async (req, res) => {
     try {
         const { username, password, email } = req.body;
-        if (!username || !password || !email) {
-            return res.status(400).json({ message: 'All fields are required' });
-        }
-        const newAdmin = await createAdmin(username, password, email);
-        res.status(201).json({ message: 'Administrator added successfully', admin: newAdmin });
+        const newAdmin = await adminModel.createAdmin(username, password, email);
+        res.status(201).json(newAdmin);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
 
-// Fetch Analytics Function
-const getAnalytics = async (req, res) => {
-    try {
-        const query = `
-            SELECT 
-                COUNT(CASE WHEN role = 'student' THEN 1 END) AS total_students,
-                COUNT(CASE WHEN role = 'teacher' THEN 1 END) AS total_teachers,
-                COUNT(CASE WHEN role = 'parent' THEN 1 END) AS total_parents,
-                COUNT(CASE WHEN role = 'admin' THEN 1 END) AS total_admins
-            FROM users;
-        `;
-        const result = await pool.query(query);
-        res.status(200).json(result.rows[0]);
-    } catch (error) {
-        res.status(500).json({ message: 'Database error', error: error.message });
-    }
-};
-
-// Admin Login Function
+// Login Admin
 const loginAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
-        if (!email || !password) {
-            return res.status(400).json({ message: 'All fields are required' });
-        }
-
-        const admin = await verifyAdmin(email, password);
+        const admin = await adminModel.verifyAdmin(email, password);
 
         if (!admin) {
-            return res.status(401).json({ message: 'Invalid email or password' });
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
 
         res.status(200).json({ message: 'Login successful', admin });
@@ -54,122 +30,204 @@ const loginAdmin = async (req, res) => {
     }
 };
 
-// Add Student Function
+// Fetch Analytics
+const getAnalytics = async (req, res) => {
+    try {
+        const analytics = {
+            total_students: 0,
+            total_teachers: 0,
+            total_parents: 0,
+            total_admins: 0,
+        };
+
+        // Example: Query counts from the database
+        const studentCount = await adminModel.getStudentsByClass();
+        const teacherCount = await adminModel.getAllClasses(); // Replace with actual query
+        const parentCount = await adminModel.getAllClasses(); // Replace with actual query
+        const adminCount = await adminModel.getAllClasses(); // Replace with actual query
+
+        analytics.total_students = studentCount.length;
+        analytics.total_teachers = teacherCount.length;
+        analytics.total_parents = parentCount.length;
+        analytics.total_admins = adminCount.length;
+
+        res.status(200).json(analytics);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Add Student
 const addStudent = async (req, res) => {
     try {
         const { username, password, email, firstName, lastName, dob, classId, parentId } = req.body;
-        if (!username || !password || !email || !firstName || !lastName || !dob || !classId || !parentId) {
-            return res.status(400).json({ message: 'All fields are required' });
-        }
-        const newStudent = await createStudent(username, password, email, firstName, lastName, dob, classId, parentId);
-        res.status(201).json({ message: 'Student added successfully', student: newStudent });
+        const newStudent = await adminModel.createStudent(
+            username,
+            password,
+            email,
+            firstName,
+            lastName,
+            dob,
+            classId,
+            parentId
+        );
+        res.status(201).json(newStudent);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
 
-// Add Teacher Function
+// Add Teacher
 const addTeacher = async (req, res) => {
     try {
         const { username, password, email, firstName, lastName, subjectTeaches } = req.body;
-        if (!username || !password || !email || !firstName || !lastName || !subjectTeaches) {
-            return res.status(400).json({ message: 'All fields are required' });
-        }
-        const newTeacher = await createTeacher(username, password, email, firstName, lastName, subjectTeaches);
-        res.status(201).json({ message: 'Teacher added successfully', teacher: newTeacher });
+        const newTeacher = await adminModel.createTeacher(
+            username,
+            password,
+            email,
+            firstName,
+            lastName,
+            subjectTeaches
+        );
+        res.status(201).json(newTeacher);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
 
-// Add Parent Function
+// Add Parent
 const addParent = async (req, res) => {
     try {
         const { username, password, email, firstName, lastName, phoneNumber } = req.body;
-        if (!username || !password || !email || !firstName || !lastName || !phoneNumber) {
-            return res.status(400).json({ message: 'All fields are required' });
-        }
-        const newParent = await createParent(username, password, email, firstName, lastName, phoneNumber);
-        res.status(201).json({ message: 'Parent added successfully', parent: newParent });
+        const newParent = await adminModel.createParent(
+            username,
+            password,
+            email,
+            firstName,
+            lastName,
+            phoneNumber
+        );
+        res.status(201).json(newParent);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
 
-// Fetch All Classes
+// Fetch Classes
 const fetchClasses = async (req, res) => {
     try {
-        const classes = await getAllClasses();
+        const classes = await adminModel.getAllClasses();
         res.status(200).json(classes);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
 
-// Fetch Students in a Specific Class
+// Fetch Students in a Class
 const fetchStudentsByClass = async (req, res) => {
     try {
         const { classId } = req.params;
-        if (!classId) {
-            return res.status(400).json({ message: 'Class ID is required' });
-        }
-
-        const students = await getStudentsByClass(classId);
+        const students = await adminModel.getStudentsByClass(classId);
         res.status(200).json(students);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
 
-// Fetch Student and Parent Details
+// Fetch Student Details
 const fetchStudentDetails = async (req, res) => {
     try {
         const { studentId } = req.params;
-        if (!studentId) {
-            return res.status(400).json({ message: 'Student ID is required' });
-        }
-
-        const studentDetails = await getStudentDetails(studentId);
-        if (!studentDetails) {
-            return res.status(404).json({ message: 'Student not found' });
-        }
-
-        res.status(200).json(studentDetails);
+        const details = await adminModel.getStudentDetails(studentId);
+        res.status(200).json(details);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
 
-// Update Student Information
+// Edit Student
 const editStudent = async (req, res) => {
     try {
         const { studentId } = req.params;
         const { firstName, lastName, dob } = req.body;
-        if (!studentId || !firstName || !lastName || !dob) {
-            return res.status(400).json({ message: 'All fields are required' });
-        }
-
-        const updatedStudent = await updateStudent(studentId, firstName, lastName, dob);
+        const updatedStudent = await adminModel.updateStudent(studentId, firstName, lastName, dob);
         res.status(200).json({ message: 'Student updated successfully', student: updatedStudent });
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
 
-// Update Parent Information
+// Edit Parent
 const editParent = async (req, res) => {
     try {
         const { parentId } = req.params;
         const { firstName, lastName, phoneNumber } = req.body;
-        if (!parentId || !firstName || !lastName || !phoneNumber) {
-            return res.status(400).json({ message: 'All fields are required' });
-        }
-
-        const updatedParent = await updateParent(parentId, firstName, lastName, phoneNumber);
+        const updatedParent = await adminModel.updateParent(parentId, firstName, lastName, phoneNumber);
         res.status(200).json({ message: 'Parent updated successfully', parent: updatedParent });
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
 
-module.exports = { addAdmin, getAnalytics, loginAdmin, addStudent, addTeacher, addParent, fetchClasses, fetchStudentsByClass, fetchStudentDetails, editStudent, editParent };
+// Delete Student
+const removeStudent = async (req, res) => {
+    try {
+        const { studentId } = req.params;
+        await adminModel.deleteStudent(studentId);
+        res.status(200).json({ message: 'Student deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Delete Teacher
+const removeTeacher = async (req, res) => {
+    try {
+        const { teacherId } = req.params;
+        await adminModel.deleteTeacher(teacherId);
+        res.status(200).json({ message: 'Teacher deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Delete Parent
+const removeParent = async (req, res) => {
+    try {
+        const { parentId } = req.params;
+        await adminModel.deleteParent(parentId);
+        res.status(200).json({ message: 'Parent deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Edit Teacher
+const editTeacher = async (req, res) => {
+    try {
+        const { teacherId } = req.params;
+        const { firstName, lastName, subjectTeaches } = req.body;
+        const updatedTeacher = await adminModel.updateTeacher(teacherId, firstName, lastName, subjectTeaches);
+        res.status(200).json({ message: 'Teacher updated successfully', teacher: updatedTeacher });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+module.exports = {
+    addAdmin,
+    loginAdmin,
+    getAnalytics,
+    addStudent,
+    addTeacher,
+    addParent,
+    fetchClasses,
+    fetchStudentsByClass,
+    fetchStudentDetails,
+    editStudent,
+    editParent,
+    removeStudent,
+    removeTeacher,
+    removeParent,
+    editTeacher,
+};

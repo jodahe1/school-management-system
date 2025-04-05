@@ -4,7 +4,6 @@ const pool = require('../config/db');
 // Create Admin Function
 const createAdmin = async (username, password, email) => {
     try {
-        // Insert into users table with role = 'admin'
         const query = `
             INSERT INTO users (username, password_hash, email, role)
             VALUES ($1, $2, $3, 'admin')
@@ -115,6 +114,79 @@ const updateParent = async (parentId, firstName, lastName, phoneNumber) => {
     }
 };
 
+// Delete Student
+const deleteStudent = async (studentId) => {
+    try {
+        const studentQuery = `
+            DELETE FROM students
+            WHERE student_id = $1;
+        `;
+        await pool.query(studentQuery, [studentId]);
+
+        const userQuery = `
+            DELETE FROM users
+            WHERE user_id = $1;
+        `;
+        await pool.query(userQuery, [studentId]);
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Delete Teacher
+const deleteTeacher = async (teacherId) => {
+    try {
+        const teacherQuery = `
+            DELETE FROM teachers
+            WHERE teacher_id = $1;
+        `;
+        await pool.query(teacherQuery, [teacherId]);
+
+        const userQuery = `
+            DELETE FROM users
+            WHERE user_id = $1;
+        `;
+        await pool.query(userQuery, [teacherId]);
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Delete Parent
+const deleteParent = async (parentId) => {
+    try {
+        const parentQuery = `
+            DELETE FROM parents
+            WHERE parent_id = $1;
+        `;
+        await pool.query(parentQuery, [parentId]);
+
+        const userQuery = `
+            DELETE FROM users
+            WHERE user_id = $1;
+        `;
+        await pool.query(userQuery, [parentId]);
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Update Teacher Information
+const updateTeacher = async (teacherId, firstName, lastName, subjectTeaches) => {
+    try {
+        const query = `
+            UPDATE teachers
+            SET first_name = $1, last_name = $2, subject_teaches = $3
+            WHERE teacher_id = $4
+            RETURNING *;
+        `;
+        const result = await pool.query(query, [firstName, lastName, subjectTeaches, teacherId]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     createAdmin,
     verifyAdmin,
@@ -123,4 +195,8 @@ module.exports = {
     getStudentDetails,
     updateStudent,
     updateParent,
+    deleteStudent,
+    deleteTeacher,
+    deleteParent,
+    updateTeacher,
 };

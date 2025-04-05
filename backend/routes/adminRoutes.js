@@ -2,8 +2,8 @@
 const express = require('express');
 const {
     addAdmin,
-    getAnalytics,
     loginAdmin,
+    getAnalytics,
     addStudent,
     addTeacher,
     addParent,
@@ -12,6 +12,10 @@ const {
     fetchStudentDetails,
     editStudent,
     editParent,
+    removeStudent,
+    removeTeacher,
+    removeParent,
+    editTeacher,
 } = require('../controllers/adminController');
 
 const router = express.Router();
@@ -19,11 +23,11 @@ const router = express.Router();
 // Add Admin Route
 router.post('/add', addAdmin);
 
-// Fetch Analytics Route
-router.get('/analytics', getAnalytics);
-
 // Admin Login Route
 router.post('/login', loginAdmin);
+
+// Fetch Analytics Route
+router.get('/analytics', getAnalytics);
 
 // Add Student Route
 router.post('/add-student', addStudent);
@@ -48,5 +52,17 @@ router.put('/students/:studentId/update', editStudent);
 
 // Update Parent Information Route
 router.put('/parents/:parentId/update', editParent);
+
+// Delete Student Route
+router.delete('/students/:studentId/delete', removeStudent);
+
+// Delete Teacher Route
+router.delete('/teachers/:teacherId/delete', removeTeacher);
+
+// Delete Parent Route
+router.delete('/parents/:parentId/delete', removeParent);
+
+// Update Teacher Information Route
+router.put('/teachers/:teacherId/update', editTeacher);
 
 module.exports = router;
