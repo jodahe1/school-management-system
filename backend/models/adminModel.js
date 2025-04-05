@@ -33,91 +33,94 @@ const verifyAdmin = async (email, password) => {
     }
 };
 
-// Create Student Function
-const createStudent = async (username, password, email, firstName, lastName, dob, classId, parentId) => {
+// Fetch All Classes
+const getAllClasses = async () => {
     try {
-        // Insert into users table
-        const userQuery = `
-            INSERT INTO users (username, password_hash, email, role)
-            VALUES ($1, $2, $3, 'student')
-            RETURNING user_id;
-        `;
-        const userValues = [username, password, email];
-        const userResult = await pool.query(userQuery, userValues);
-
-        const userId = userResult.rows[0].user_id;
-
-        // Insert into students table
-        const studentQuery = `
-            INSERT INTO students (student_id, class_id, parent_id, first_name, last_name, date_of_birth)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING *;
-        `;
-        const studentValues = [userId, classId, parentId, firstName, lastName, dob];
-        const studentResult = await pool.query(studentQuery, studentValues);
-
-        return studentResult.rows[0];
+        const query = 'SELECT * FROM classes';
+        const result = await pool.query(query);
+        return result.rows;
     } catch (error) {
         throw error;
     }
 };
 
-// Create Teacher Function
-const createTeacher = async (username, password, email, firstName, lastName, subjectTeaches) => {
+// Fetch Students in a Specific Class
+const getStudentsByClass = async (classId) => {
     try {
-        // Insert into users table
-        const userQuery = `
-            INSERT INTO users (username, password_hash, email, role)
-            VALUES ($1, $2, $3, 'teacher')
-            RETURNING user_id;
+        const query = `
+            SELECT s.student_id, u.username, u.email, s.first_name, s.last_name, s.date_of_birth
+            FROM students s
+            JOIN users u ON s.student_id = u.user_id
+            WHERE s.class_id = $1;
         `;
-        const userValues = [username, password, email];
-        const userResult = await pool.query(userQuery, userValues);
-
-        const userId = userResult.rows[0].user_id;
-
-        // Insert into teachers table
-        const teacherQuery = `
-            INSERT INTO teachers (teacher_id, first_name, last_name, subject_teaches)
-            VALUES ($1, $2, $3, $4)
-            RETURNING *;
-        `;
-        const teacherValues = [userId, firstName, lastName, subjectTeaches];
-        const teacherResult = await pool.query(teacherQuery, teacherValues);
-
-        return teacherResult.rows[0];
+        const result = await pool.query(query, [classId]);
+        return result.rows;
     } catch (error) {
         throw error;
     }
 };
 
-// Create Parent Function
-const createParent = async (username, password, email, firstName, lastName, phoneNumber) => {
+// Fetch Student and Parent Details
+const getStudentDetails = async (studentId) => {
     try {
-        // Insert into users table
-        const userQuery = `
-            INSERT INTO users (username, password_hash, email, role)
-            VALUES ($1, $2, $3, 'parent')
-            RETURNING user_id;
+        const query = `
+            SELECT 
+                s.student_id, u.username AS student_username, u.email AS student_email,
+                s.first_name AS student_first_name, s.last_name AS student_last_name,
+                s.date_of_birth, p.parent_id, pu.username AS parent_username,
+                pu.email AS parent_email, p.first_name AS parent_first_name,
+                p.last_name AS parent_last_name, p.phone_number
+            FROM students s
+            JOIN users u ON s.student_id = u.user_id
+            LEFT JOIN parents p ON s.parent_id = p.parent_id
+            LEFT JOIN users pu ON p.parent_id = pu.user_id
+            WHERE s.student_id = $1;
         `;
-        const userValues = [username, password, email];
-        const userResult = await pool.query(userQuery, userValues);
-
-        const userId = userResult.rows[0].user_id;
-
-        // Insert into parents table
-        const parentQuery = `
-            INSERT INTO parents (parent_id, first_name, last_name, phone_number)
-            VALUES ($1, $2, $3, $4)
-            RETURNING *;
-        `;
-        const parentValues = [userId, firstName, lastName, phoneNumber];
-        const parentResult = await pool.query(parentQuery, parentValues);
-
-        return parentResult.rows[0];
+        const result = await pool.query(query, [studentId]);
+        return result.rows[0];
     } catch (error) {
         throw error;
     }
 };
 
-module.exports = { createAdmin, verifyAdmin, createStudent, createTeacher, createParent };
+// Update Student Information
+const updateStudent = async (studentId, firstName, lastName, dob) => {
+    try {
+        const query = `
+            UPDATE students
+            SET first_name = $1, last_name = $2, date_of_birth = $3
+            WHERE student_id = $4
+            RETURNING *;
+        `;
+        const result = await pool.query(query, [firstName, lastName, dob, studentId]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Update Parent Information
+const updateParent = async (parentId, firstName, lastName, phoneNumber) => {
+    try {
+        const query = `
+            UPDATE parents
+            SET first_name = $1, last_name = $2, phone_number = $3
+            WHERE parent_id = $4
+            RETURNING *;
+        `;
+        const result = await pool.query(query, [firstName, lastName, phoneNumber, parentId]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+module.exports = {
+    createAdmin,
+    verifyAdmin,
+    getAllClasses,
+    getStudentsByClass,
+    getStudentDetails,
+    updateStudent,
+    updateParent,
+};
