@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="css/Student_styles.css">
+</head>
+<body class="dashboard-page">
+  <header class="header">
+    <div class="header-left">
+      <h1>Hello, <span id="studentName">[Student Name]</span>!</h1>
+      <p id="motivationalQuote">Keep shining and achieve your goals!</p>
+    </div>
+    <div class="header-right">
+      <button class="notifications-btn" id="notificationsBtn">🔔</button>
+      <a href="#" class="logout-btn" id="logoutBtn">Logout</a>
+    </div>
+  </header>
+
+  <main class="dashboard-content">
+    <!-- Summary Widgets -->
+    <section class="widgets">
+      <div class="widget grade-widget">
+        <h3>Grade Average</h3>
+        <div id="gradeProgress" class="progress-circle"></div>
+      </div>
+      <div class="widget attendance-widget">
+        <h3>Attendance</h3>
+        <div id="attendanceChart" class="pie-chart"></div>
+      </div>
+      <div class="widget assignments-widget">
+        <h3>Upcoming Assignments</h3>
+        <ul id="upcomingAssignments"></ul>
+      </div>
+    </section>
+
+    <!-- Grades Section -->
+    <section class="grades-section">
+      <h2>Grades</h2>
+      <table id="gradesTable">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Semester</th>
+            <th>Grade</th>
+            <th>Comments</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <canvas id="gradeTrendChart"></canvas>
+    </section>
+
+    <!-- Attendance Section -->
+    <section class="attendance-section">
+      <h2>Attendance</h2>
+      <div id="calendar"></div>
+      <table id="attendanceDetails">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Period</th>
+            <th>Subject</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Materials Section -->
+    <section class="materials-section">
+      <h2>Materials</h2>
+      <input type="text" id="materialSearch" placeholder="Search materials...">
+      <div class="material-grid" id="materialGrid"></div>
+    </section>
+
+    <!-- Assignments Section -->
+    <section class="assignments-section">
+      <h2>Pending Assignments</h2>
+      <div id="pendingAssignments"></div>
+      <h2>Submitted Assignments</h2>
+      <div id="submittedAssignments"></div>
+    </section>
+
+    <!-- Chat Section -->
+    <section class="chat-section">
+      <h2>Chat</h2>
+      <div class="chat-container">
+        <div class="chat-list" id="chatList"></div>
+        <div class="chat-thread" id="chatThread"></div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="chatMessage" placeholder="Type a message...">
+        <button id="sendMessage">Send</button>
+      </div>
+    </section>
+
+    <!-- Notifications Section -->
+    <section class="notifications-section" id="notificationsSection">
+      <h2>Notifications</h2>
+      <ul id="notificationsList"></ul>
+      <button id="markAllRead">Mark All as Read</button>
+    </section>
+  </main>
+
+  <script src="js/studentDashboard.js"></script>
+</body>
+</html>
