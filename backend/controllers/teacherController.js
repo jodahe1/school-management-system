@@ -1,220 +1,98 @@
-// controllers/teacherController.js
+// backend/controllers/teacherController.js
 const teacherModel = require('../models/teacherModel');
-const pool = require('../config/db');
 
-const teacherController = {
-  // Get teacher profile
-  getTeacherProfile: async (req, res) => {
+// View Profile
+const getProfile = async (req, res) => {
     try {
-      const { teacherId } = req; // Assuming teacherId is set from auth middleware
-      const profile = await teacherModel.getTeacherProfile(teacherId);
-      res.json(profile);
+        const { teacher_id } = req.query;
+        const profile = await teacherModel.getTeacherProfile(teacher_id);
+        if (!profile) {
+            return res.status(404).json({ message: 'Teacher not found' });
+        }
+        res.status(200).json(profile);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+        res.status(500).json({ message: 'Database error', error: error.message });
     }
-  },
-
-  // Get teacher's schedules
-  getSchedules: async (req, res) => {
-    try {
-      const { teacherId } = req;
-      const schedules = await teacherModel.getSchedules(teacherId);
-      res.json(schedules);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  // Get attendance records
-  getAttendanceRecords: async (req, res) => {
-    try {
-      const { teacherId } = req;
-      const { classId, subjectId, date } = req.query;
-      const attendance = await teacherModel.getAttendanceRecords(teacherId, classId, subjectId, date);
-      res.json(attendance);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  // Record attendance
-  recordAttendance: async (req, res) => {
-    try {
-      const { teacherId } = req;
-      const { classId, subjectId, semesterId, date, periodNumber, attendanceData } = req.body;
-      
-      const result = await teacherModel.recordAttendance(
-        teacherId, 
-        classId, 
-        subjectId, 
-        semesterId, 
-        date, 
-        periodNumber, 
-        attendanceData
-      );
-      
-      res.json({ message: 'Attendance recorded successfully', result });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  // Get grades
-  getGrades: async (req, res) => {
-    try {
-      const { teacherId } = req;
-      const { classId, subjectId, semesterId } = req.query;
-      const grades = await teacherModel.getGrades(teacherId, classId, subjectId, semesterId);
-      res.json(grades);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  // Assign grade
-  assignGrade: async (req, res) => {
-    try {
-      const { teacherId } = req;
-      const { studentId, subjectId, semesterId, grade, comments } = req.body;
-      
-      const result = await teacherModel.assignGrade(
-        teacherId, 
-        studentId, 
-        subjectId, 
-        semesterId, 
-        grade, 
-        comments
-      );
-      
-      res.json({ message: 'Grade assigned successfully', result });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  // Get materials
-  getMaterials: async (req, res) => {
-    try {
-      const { teacherId } = req;
-      const { classId, subjectId, semesterId } = req.query;
-      const materials = await teacherModel.getMaterials(teacherId, classId, subjectId, semesterId);
-      res.json(materials);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  // Upload material
-  uploadMaterial: async (req, res) => {
-    try {
-      const { teacherId } = req;
-      const { classId, subjectId, semesterId, title, filePath } = req.body;
-      
-      const result = await teacherModel.uploadMaterial(
-        teacherId, 
-        classId, 
-        subjectId, 
-        semesterId, 
-        title, 
-        filePath
-      );
-      
-      res.json({ message: 'Material uploaded successfully', result });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  // Get assignments
-  getAssignments: async (req, res) => {
-    try {
-      const { teacherId } = req;
-      const { classId, subjectId, semesterId } = req.query;
-      const assignments = await teacherModel.getAssignments(teacherId, classId, subjectId, semesterId);
-      res.json(assignments);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  // Create assignment
-  createAssignment: async (req, res) => {
-    try {
-      const { teacherId } = req;
-      const { classId, subjectId, semesterId, title, description, dueDate, filePath } = req.body;
-      
-      const result = await teacherModel.createAssignment(
-        teacherId, 
-        classId, 
-        subjectId, 
-        semesterId, 
-        title, 
-        description, 
-        dueDate, 
-        filePath
-      );
-      
-      res.json({ message: 'Assignment created successfully', result });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  // Get submissions
-  getSubmissions: async (req, res) => {
-    try {
-      const { teacherId } = req;
-      const { assignmentId } = req.query;
-      const submissions = await teacherModel.getSubmissions(teacherId, assignmentId);
-      res.json(submissions);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  // Grade submission
-  gradeSubmission: async (req, res) => {
-    try {
-      const { submissionId } = req.params;
-      const { grade, feedback } = req.body;
-      
-      const result = await teacherModel.gradeSubmission(submissionId, grade, feedback);
-      res.json({ message: 'Submission graded successfully', result });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  // Get chat messages
-  getChatMessages: async (req, res) => {
-    try {
-      const { teacherId } = req;
-      const { studentId } = req.query;
-      const messages = await teacherModel.getChatMessages(teacherId, studentId);
-      res.json(messages);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
-  // Send chat message
-  sendChatMessage: async (req, res) => {
-    try {
-      const { teacherId } = req;
-      const { receiverId, studentId, messageText } = req.body;
-      
-      const result = await teacherModel.sendChatMessage(
-        teacherId, 
-        receiverId, 
-        studentId, 
-        messageText
-      );
-      
-      res.json({ message: 'Message sent successfully', result });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
 };
 
-module.exports = teacherController;
+// View Schedule
+const getSchedule = async (req, res) => {
+    try {
+        const { teacher_id } = req.query;
+        const schedule = await teacherModel.getTeacherSchedule(teacher_id);
+        if (schedule.length === 0) {
+            return res.status(200).json({ message: 'No schedules found for this teacher', schedule: [] });
+        }
+        res.status(200).json(schedule);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Record Attendance
+const recordAttendance = async (req, res) => {
+    try {
+        const { teacher_id, class_id, subject_id, semester_id, date, period_number, attendance } = req.body;
+        const result = await teacherModel.recordAttendance(teacher_id, class_id, subject_id, semester_id, date, period_number, attendance);
+        res.status(201).json({ message: 'Attendance recorded successfully', attendance: result });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Assign Grades
+const assignGrades = async (req, res) => {
+    try {
+        const { teacher_id, student_id, subject_id, semester_id, grade, comments } = req.body;
+        const newGrade = await teacherModel.assignGrade(teacher_id, student_id, subject_id, semester_id, grade, comments);
+        res.status(201).json({ message: 'Grade assigned successfully', grade: newGrade });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Upload Materials
+const uploadMaterials = async (req, res) => {
+    try {
+        const { teacher_id, class_id, subject_id, semester_id, title, file_path } = req.body;
+        const material = await teacherModel.uploadMaterial(teacher_id, class_id, subject_id, semester_id, title, file_path);
+        res.status(201).json({ message: 'Material uploaded successfully', material });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Create Assignment
+const createAssignment = async (req, res) => {
+    try {
+        const { teacher_id, class_id, subject_id, semester_id, title, description, due_date, file_path } = req.body;
+        const assignment = await teacherModel.createAssignment(teacher_id, class_id, subject_id, semester_id, title, description, due_date, file_path);
+        res.status(201).json({ message: 'Assignment created successfully', assignment });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// View Submissions
+const getSubmissions = async (req, res) => {
+    try {
+        const { teacher_id, class_id, subject_id } = req.query;
+        const submissions = await teacherModel.getTeacherSubmissions(teacher_id, class_id, subject_id);
+        if (submissions.length === 0) {
+            return res.status(200).json({ message: 'No submissions found for this teacher', submissions: [] });
+        }
+        res.status(200).json(submissions);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+module.exports = {
+    getProfile,
+    getSchedule,
+    recordAttendance,
+    assignGrades,
+    uploadMaterials,
+    createAssignment,
+    getSubmissions,
+};
