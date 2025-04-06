@@ -1,136 +1,186 @@
+// Updated studentDashboard.js
 // Load student data from localStorage
 const student = JSON.parse(localStorage.getItem('student'));
-if (!student) window.location.href = 'studentLogin.html';
+if (!student) {
+  window.location.href = 'studentLogin.html';
+  throw new Error('Student not found');
+}
 
-// Display student name and motivational quote
-document.getElementById('studentName').textContent = student.username;
+// API base URL
+const API_BASE_URL = 'http://localhost:5000/api/student';
+
+// Display student name
+document.getElementById('studentName').textContent = student.username || 'Student';
+
+// Helper function for API calls
+async function fetchWithErrorHandling(endpoint, errorMessage) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/${endpoint}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(errorMessage, error);
+    // Show user-friendly error message
+    showToast(errorMessage);
+    return null;
+  }
+}
+
+// Show toast notification
+function showToast(message, isError = true) {
+  const toast = document.createElement('div');
+  toast.className = `toast ${isError ? 'error' : 'success'}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}
 
 // Fetch and display grades
 async function fetchGrades() {
-  const response = await fetch(`/api/student/${student.user_id}/grades`);
-  const grades = await response.json();
-  const tableBody = document.querySelector('#gradesTable tbody');
-  tableBody.innerHTML = grades
-    .map(
-      (grade) => `
-    <tr>
-      <td>${grade.subject_name}</td>
-      <td>${grade.semester_name}</td>
-      <td>${grade.grade}</td>
-      <td>${grade.comments}</td>
-    </tr>
-  `
-    )
-    .join('');
-}
-fetchGrades();
+  const grades = await fetchWithErrorHandling(
+    `${student.user_id}/grades`,
+    'Failed to load grades'
+  );
+  
+  if (!grades) return;
 
-// Logout functionality
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  localStorage.removeItem('student');
-  window.location.href = 'studentLogin.html';
-});
+  const tableBody = document.querySelector('#gradesTable tbody');
+  tableBody.innerHTML = grades.length > 0 
+    ? grades.map(grade => `
+        <tr>
+          <td>${grade.subject_name || 'N/A'}</td>
+          <td>${grade.semester_name || 'N/A'}</td>
+          <td>${grade.grade || 'N/A'}</td>
+          <td>${grade.comments || 'No comments'}</td>
+        </tr>
+      `).join('')
+    : '<tr><td colspan="4">No grades available</td></tr>';
+}
 
 // Fetch and display attendance
 async function fetchAttendance() {
-  const response = await fetch(`/api/student/${student.user_id}/attendance`);
-  const attendance = await response.json();
+  const attendance = await fetchWithErrorHandling(
+    `${student.user_id}/attendance`,
+    'Failed to load attendance'
+  );
+  
+  if (!attendance) return;
+
   const tableBody = document.querySelector('#attendanceDetails tbody');
-  tableBody.innerHTML = attendance
-    .map(
-      (record) => `
-    <tr>
-      <td>${record.date}</td>
-      <td>${record.period_number}</td>
-      <td>${record.subject_name}</td>
-      <td>${record.status}</td>
-    </tr>
-  `
-    )
-    .join('');
+  tableBody.innerHTML = attendance.length > 0
+    ? attendance.map(record => `
+        <tr>
+          <td>${new Date(record.date).toLocaleDateString() || 'N/A'}</td>
+          <td>${record.period_number || 'N/A'}</td>
+          <td>${record.subject_name || 'N/A'}</td>
+          <td class="${record.status.toLowerCase()}">${record.status || 'N/A'}</td>
+        </tr>
+      `).join('')
+    : '<tr><td colspan="4">No attendance records available</td></tr>';
 }
-fetchAttendance();
 
 // Fetch and display materials
 async function fetchMaterials() {
-  const response = await fetch(`/api/student/${student.user_id}/materials`);
-  const materials = await response.json();
+  const materials = await fetchWithErrorHandling(
+    `${student.user_id}/materials`,
+    'Failed to load materials'
+  );
+  
+  if (!materials) return;
+
   const materialGrid = document.getElementById('materialGrid');
-  materialGrid.innerHTML = materials
-    .map(
-      (material) => `
-    <div class="material-card">
-      <h3>${material.title}</h3>
-      <p><strong>Subject:</strong> ${material.subject_name}</p>
-      <a href="${material.file_path}" target="_blank">View Material</a>
-    </div>
-  `
-    )
-    .join('');
+  materialGrid.innerHTML = materials.length > 0
+    ? materials.map(material => `
+        <div class="material-card">
+          <h3>${material.title || 'Untitled Material'}</h3>
+          <p><strong>Subject:</strong> ${material.subject_name || 'General'}</p>
+          <p><strong>Uploaded:</strong> ${new Date(material.uploaded_at).toLocaleDateString()}</p>
+          <a href="${material.file_path}" target="_blank" class="download-btn">Download</a>
+        </div>
+      `).join('')
+    : '<p class="no-data">No materials available</p>';
 }
-fetchMaterials();
 
 // Fetch and display assignments
 async function fetchAssignments() {
-  const response = await fetch(`/api/student/${student.user_id}/assignments`);
-  const assignments = await response.json();
+  const assignments = await fetchWithErrorHandling(
+    `${student.user_id}/assignments`,
+    'Failed to load assignments'
+  );
 
-  const pendingAssignments = assignments.filter((a) => !a.submitted_file_path);
-  const submittedAssignments = assignments.filter((a) => a.submitted_file_path);
+  if (!assignments) return;
+
+  const pendingAssignments = Array.isArray(assignments) ? assignments.filter(a => !a.submitted_file_path) : [];
+  const submittedAssignments = Array.isArray(assignments) ? assignments.filter(a => a.submitted_file_path) : [];
 
   // Display pending assignments
   const pendingContainer = document.getElementById('pendingAssignments');
-  pendingContainer.innerHTML = pendingAssignments
-    .map(
-      (assignment) => `
-    <div class="assignment-card">
-      <h3>${assignment.title}</h3>
-      <p><strong>Description:</strong> ${assignment.description}</p>
-      <p><strong>Due Date:</strong> ${assignment.due_date}</p>
-      <button onclick="submitAssignment(${assignment.assignment_id})">Submit</button>
-    </div>
-  `
-    )
-    .join('');
+  pendingContainer.innerHTML = pendingAssignments.length > 0
+    ? pendingAssignments.map(assignment => `
+        <div class="assignment-card pending">
+          <h3>${assignment.title || 'Untitled Assignment'}</h3>
+          <p><strong>Due:</strong> ${new Date(assignment.due_date).toLocaleDateString()}</p>
+          <button onclick="submitAssignment(${assignment.assignment_id})" class="submit-btn">Submit</button>
+        </div>
+      `).join('')
+    : '<p class="no-data">No pending assignments</p>';
 
   // Display submitted assignments
   const submittedContainer = document.getElementById('submittedAssignments');
-  submittedContainer.innerHTML = submittedAssignments
-    .map(
-      (assignment) => `
-    <div class="assignment-card">
-      <h3>${assignment.title}</h3>
-      <p><strong>Submitted On:</strong> ${assignment.submission_date}</p>
-      <p><strong>Grade:</strong> ${assignment.grade || 'Not graded yet'}</p>
-      <p><strong>Feedback:</strong> ${assignment.feedback || 'No feedback yet'}</p>
-    </div>
-  `
-    )
-    .join('');
+  submittedContainer.innerHTML = submittedAssignments.length > 0
+    ? submittedAssignments.map(assignment => `
+        <div class="assignment-card submitted">
+          <h3>${assignment.title || 'Untitled Assignment'}</h3>
+          <p><strong>Submitted:</strong> ${new Date(assignment.submission_date).toLocaleDateString()}</p>
+          <p><strong>Status:</strong> ${assignment.grade ? 'Graded' : 'Submitted'}</p>
+        </div>
+      `).join('')
+    : '<p class="no-data">No submitted assignments</p>';
 }
-fetchAssignments();
 
 // Submit assignment
 async function submitAssignment(assignmentId) {
-  const submittedFilePath = prompt('Enter the Google Drive link for your submission:');
-  if (!submittedFilePath) return alert('Submission link is required.');
+  const submittedFilePath = prompt('Enter the path to your submission file:');
+  if (!submittedFilePath) {
+    showToast('Submission path is required.');
+    return;
+  }
 
   try {
-    const response = await fetch(`/api/student/${student.user_id}/assignments/submit`, {
+    const response = await fetch(`${API_BASE_URL}/${student.user_id}/assignments/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ assignmentId, submittedFilePath }),
     });
 
     if (response.ok) {
-      alert('Assignment submitted successfully!');
-      location.reload(); // Refresh the page to reflect changes
+      showToast('Assignment submitted successfully!', false);
+      fetchAssignments();
     } else {
-      alert('Failed to submit assignment.');
+      const errorData = await response.json();
+      showToast(errorData.message || 'Failed to submit assignment.');
     }
   } catch (error) {
     console.error('Error submitting assignment:', error);
+    showToast('An error occurred while submitting. Please try again.');
   }
 }
 
-// Additional functionality omitted for brevity
+// Initialize all data fetches when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  fetchGrades();
+  fetchAttendance();
+  fetchMaterials();
+  fetchAssignments();
+
+  // Logout functionality
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('student');
+    window.location.href = 'studentLogin.html';
+  });
+});

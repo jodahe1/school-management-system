@@ -4,7 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Dashboard</title>
-  <link rel="stylesheet" href="css/Student_styles.css">
+  <!-- Updated CSS link -->
+  <link rel="stylesheet" href="css/studentDashboard.css">
+  <!-- Chart.js for grade trend visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="dashboard-page">
   <header class="header">
@@ -13,8 +18,13 @@
       <p id="motivationalQuote">Keep shining and achieve your goals!</p>
     </div>
     <div class="header-right">
-      <button class="notifications-btn" id="notificationsBtn">🔔</button>
-      <a href="#" class="logout-btn" id="logoutBtn">Logout</a>
+      <button class="notifications-btn" id="notificationsBtn">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge" id="notificationBadge">0</span>
+      </button>
+      <a href="#" class="logout-btn" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
     </div>
   </header>
 
@@ -22,88 +32,177 @@
     <!-- Summary Widgets -->
     <section class="widgets">
       <div class="widget grade-widget">
-        <h3>Grade Average</h3>
-        <div id="gradeProgress" class="progress-circle"></div>
+        <h3><i class="fas fa-chart-line"></i> Grade Average</h3>
+        <div id="gradeProgress" class="progress-circle">
+          <svg viewBox="0 0 36 36">
+            <circle class="progress-circle-bg" cx="18" cy="18" r="15.9155"></circle>
+            <circle class="progress-circle-fill" cx="18" cy="18" r="15.9155" stroke-dasharray="100, 100"></circle>
+          </svg>
+          <div class="progress-percent">0%</div>
+        </div>
       </div>
       <div class="widget attendance-widget">
-        <h3>Attendance</h3>
+        <h3><i class="fas fa-calendar-check"></i> Attendance</h3>
         <div id="attendanceChart" class="pie-chart"></div>
+        <div class="attendance-stats">
+          <span class="present-stat">80% Present</span>
+          <span class="absent-stat">20% Absent</span>
+        </div>
       </div>
       <div class="widget assignments-widget">
-        <h3>Upcoming Assignments</h3>
-        <ul id="upcomingAssignments"></ul>
+        <h3><i class="fas fa-tasks"></i> Upcoming Assignments</h3>
+        <ul id="upcomingAssignments">
+          <li class="loading">Loading assignments...</li>
+        </ul>
       </div>
     </section>
 
     <!-- Grades Section -->
     <section class="grades-section">
-      <h2>Grades</h2>
-      <table id="gradesTable">
-        <thead>
-          <tr>
-            <th>Subject</th>
-            <th>Semester</th>
-            <th>Grade</th>
-            <th>Comments</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <canvas id="gradeTrendChart"></canvas>
+      <div class="section-header">
+        <h2><i class="fas fa-graduation-cap"></i> Grades</h2>
+        <div class="section-actions">
+          <button id="refreshGrades"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table id="gradesTable">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Semester</th>
+              <th>Grade</th>
+              <th>Comments</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="loading-row">
+              <td colspan="4">Loading grades...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-container">
+        <canvas id="gradeTrendChart"></canvas>
+      </div>
     </section>
 
     <!-- Attendance Section -->
     <section class="attendance-section">
-      <h2>Attendance</h2>
-      <div id="calendar"></div>
-      <table id="attendanceDetails">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Period</th>
-            <th>Subject</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="section-header">
+        <h2><i class="fas fa-user-check"></i> Attendance</h2>
+        <div class="date-filter">
+          <select id="attendanceFilter">
+            <option value="all">All Time</option>
+            <option value="month">This Month</option>
+            <option value="week">This Week</option>
+          </select>
+        </div>
+      </div>
+      <div class="calendar-container">
+        <div id="calendar"></div>
+      </div>
+      <div class="table-container">
+        <table id="attendanceDetails">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Period</th>
+              <th>Subject</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="loading-row">
+              <td colspan="4">Loading attendance data...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <!-- Materials Section -->
     <section class="materials-section">
-      <h2>Materials</h2>
-      <input type="text" id="materialSearch" placeholder="Search materials...">
-      <div class="material-grid" id="materialGrid"></div>
+      <div class="section-header">
+        <h2><i class="fas fa-book"></i> Materials</h2>
+        <div class="search-filter">
+          <input type="text" id="materialSearch" placeholder="Search materials...">
+          <button id="searchMaterials"><i class="fas fa-search"></i></button>
+        </div>
+      </div>
+      <div class="material-grid" id="materialGrid">
+        <div class="material-card loading-card">
+          <div class="loading-animation"></div>
+        </div>
+        <div class="material-card loading-card">
+          <div class="loading-animation"></div>
+        </div>
+      </div>
     </section>
 
     <!-- Assignments Section -->
     <section class="assignments-section">
-      <h2>Pending Assignments</h2>
-      <div id="pendingAssignments"></div>
-      <h2>Submitted Assignments</h2>
-      <div id="submittedAssignments"></div>
+      <div class="assignments-tabs">
+        <button class="tab-btn active" data-tab="pending">Pending Assignments</button>
+        <button class="tab-btn" data-tab="submitted">Submitted Assignments</button>
+      </div>
+      
+      <div class="tab-content active" id="pendingAssignments">
+        <div class="assignment-card loading-card">
+          <div class="loading-animation"></div>
+        </div>
+      </div>
+      
+      <div class="tab-content" id="submittedAssignments">
+        <div class="assignment-card loading-card">
+          <div class="loading-animation"></div>
+        </div>
+      </div>
     </section>
 
     <!-- Chat Section -->
     <section class="chat-section">
-      <h2>Chat</h2>
+      <div class="section-header">
+        <h2><i class="fas fa-comments"></i> Chat</h2>
+        <div class="chat-actions">
+          <button id="newChat"><i class="fas fa-plus"></i> New Chat</button>
+        </div>
+      </div>
       <div class="chat-container">
-        <div class="chat-list" id="chatList"></div>
-        <div class="chat-thread" id="chatThread"></div>
+        <div class="chat-list" id="chatList">
+          <div class="chat-list-item loading">
+            <div class="loading-animation"></div>
+          </div>
+        </div>
+        <div class="chat-thread" id="chatThread">
+          <div class="no-chat-selected">
+            <i class="fas fa-comment-alt"></i>
+            <p>Select a chat to view messages</p>
+          </div>
+        </div>
       </div>
       <div class="chat-input">
-        <input type="text" id="chatMessage" placeholder="Type a message...">
-        <button id="sendMessage">Send</button>
+        <input type="text" id="chatMessage" placeholder="Type a message..." disabled>
+        <button id="sendMessage" disabled><i class="fas fa-paper-plane"></i> Send</button>
       </div>
     </section>
-
-    <!-- Notifications Section -->
-    <section class="notifications-section" id="notificationsSection">
-      <h2>Notifications</h2>
-      <ul id="notificationsList"></ul>
-      <button id="markAllRead">Mark All as Read</button>
-    </section>
   </main>
+
+  <!-- Notifications Panel (hidden by default) -->
+  <div class="notifications-panel" id="notificationsPanel">
+    <div class="notifications-header">
+      <h3>Notifications</h3>
+      <button id="closeNotifications"><i class="fas fa-times"></i></button>
+    </div>
+    <ul id="notificationsList">
+      <li class="notification-item">
+        <div class="notification-loading"></div>
+      </li>
+    </ul>
+    <div class="notifications-footer">
+      <button id="markAllRead"><i class="fas fa-check-double"></i> Mark All as Read</button>
+    </div>
+  </div>
 
   <script src="js/studentDashboard.js"></script>
 </body>

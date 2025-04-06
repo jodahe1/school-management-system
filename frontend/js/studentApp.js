@@ -1,26 +1,78 @@
-// Handle login form submission
+// studentApp.js - Updated with proper error handling
 document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-  
-    try {
-      const response = await fetch('/api/student/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('student', JSON.stringify(data.student));
-        window.location.href = 'studentDashboard.html';
-      } else {
-        document.getElementById('errorMessage').textContent = 'Invalid credentials';
+  e.preventDefault();
+
+  // Clear previous error messages
+  const errorMessage = document.getElementById('errorMessage');
+  errorMessage.textContent = '';
+  errorMessage.style.display = 'none';
+
+  // Get form values
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  // Validate inputs
+  if (!email || !password) {
+    errorMessage.textContent = 'Please fill in all fields.';
+    errorMessage.style.display = 'block';
+    return;
+  }
+
+  // Validate email format
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errorMessage.textContent = 'Please enter a valid email address.';
+    errorMessage.style.display = 'block';
+    return;
+  }
+
+  try {
+    // Show loading state
+    const submitBtn = document.querySelector('#loginForm button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Logging in...';
+
+    // Send login request to the backend
+    const response = await fetch('http://localhost:5000/api/student/login', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    // Check if response is OK (status 200-299)
+    if (!response.ok) {
+      // Try to parse error response
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch (e) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    } catch (error) {
-      console.error('Error during login:', error);
+      throw new Error(errorData.message || 'Login failed');
     }
-  });
-  
-  // Additional functionality omitted for brevity
+
+    // Parse successful response
+    const data = await response.json();
+
+    // Handle successful login
+    if (data.student) {
+      localStorage.setItem('student', JSON.stringify(data.student));
+      window.location.href = 'studentDashboard.html';
+    } else {
+      throw new Error('Invalid response from server');
+    }
+  } catch (error) {
+    console.error('Error during login:', error);
+    errorMessage.textContent = error.message || 'An unexpected error occurred. Please try again.';
+    errorMessage.style.display = 'block';
+  } finally {
+    // Reset loading state
+    const submitBtn = document.querySelector('#loginForm button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Login';
+    }
+  }
+});
