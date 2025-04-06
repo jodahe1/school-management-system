@@ -1,34 +1,36 @@
 // routes/teacherRoutes.js
 const express = require('express');
+const router = express.Router();
 const teacherController = require('../controllers/teacherController');
 
-const router = express.Router();
-
-// Login
-router.post('/login', teacherController.loginTeacher);
-
-// Profile
-router.get('/:teacherId/profile', teacherController.getProfile);
+// Teacher Profile
+router.get('/profile', teacherController.getTeacherProfile);
 
 // Schedules
-router.get('/:teacherId/schedules', teacherController.getSchedules);
+router.get('/schedules', teacherController.getSchedules);
 
 // Attendance
-router.post('/:teacherId/attendance', teacherController.recordAttendance);
+router.get('/attendance', teacherController.getAttendanceRecords);
+router.post('/attendance', teacherController.recordAttendance);
 
 // Grades
-router.post('/:teacherId/grades', teacherController.assignGrades);
+router.get('/grades', teacherController.getGrades);
+router.post('/grades', teacherController.assignGrade);
 
 // Materials
-router.post('/:teacherId/materials', teacherController.uploadMaterials);
+router.get('/materials', teacherController.getMaterials);
+router.post('/materials', teacherController.uploadMaterial);
 
 // Assignments
-router.post('/:teacherId/assignments', teacherController.createAssignment);
+router.get('/assignments', teacherController.getAssignments);
+router.post('/assignments', teacherController.createAssignment);
 
 // Submissions
+router.get('/submissions', teacherController.getSubmissions);
 router.put('/submissions/:submissionId', teacherController.gradeSubmission);
 
-// Chat Messages
+// Chat
+router.get('/chats', teacherController.getChatMessages);
 router.post('/chats', teacherController.sendChatMessage);
 
 module.exports = router;
