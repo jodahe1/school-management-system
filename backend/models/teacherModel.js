@@ -1,6 +1,18 @@
 // backend/models/teacherModel.js
 const pool = require('../config/db');
 
+// Verify Teacher Credentials
+const verifyTeacher = async (username, password) => {
+    const query = `
+        SELECT u.user_id, u.username, u.email, t.first_name, t.last_name, t.subject_teaches
+        FROM users u
+        JOIN teachers t ON u.user_id = t.teacher_id
+        WHERE u.username = $1 AND u.password_hash = $2 AND u.role = 'teacher';
+    `;
+    const result = await pool.query(query, [username, password]);
+    return result.rows[0];
+};
+
 // Get Teacher Profile
 const getTeacherProfile = async (teacher_id) => {
     const query = `
@@ -108,6 +120,7 @@ const getTeacherSubmissions = async (teacher_id, class_id, subject_id) => {
 };
 
 module.exports = {
+    verifyTeacher,
     getTeacherProfile,
     getTeacherSchedule,
     recordAttendance,

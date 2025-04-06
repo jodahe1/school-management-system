@@ -4,6 +4,9 @@ const teacherController = require('../controllers/teacherController');
 
 const router = express.Router();
 
+// Teacher Login
+router.post('/login', teacherController.loginTeacher);
+
 // View Profile
 router.get('/profile', teacherController.getProfile);
 

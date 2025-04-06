@@ -1,6 +1,24 @@
 // backend/controllers/teacherController.js
 const teacherModel = require('../models/teacherModel');
 
+// Teacher Login
+const loginTeacher = async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        // Verify credentials and fetch teacher details
+        const teacher = await teacherModel.verifyTeacher(username, password);
+
+        if (!teacher) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        res.status(200).json({ message: 'Login successful', teacher });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 // View Profile
 const getProfile = async (req, res) => {
     try {
@@ -88,6 +106,7 @@ const getSubmissions = async (req, res) => {
 };
 
 module.exports = {
+    loginTeacher,
     getProfile,
     getSchedule,
     recordAttendance,
