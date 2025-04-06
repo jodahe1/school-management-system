@@ -1,0 +1,62 @@
+<!-- frontend/teacherDashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="css/teacherstyles.css">
+</head>
+<body>
+    <header>
+        <h1>Teacher Dashboard</h1>
+        <button id="logoutButton">Logout</button>
+    </header>
+    <main>
+        <section id="profile-section">
+            <h2>Profile</h2>
+            <div id="profile-details"></div>
+        </section>
+
+        <section id="schedule-section">
+            <h2>Schedule</h2>
+            <table id="schedule-table">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Subject</th>
+                        <th>Day</th>
+                        <th>Period</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <section id="attendance-section">
+            <h2>Record Attendance</h2>
+            <form id="attendanceForm">
+                <label for="class-id">Class ID:</label>
+                <input type="number" id="class-id" name="class_id" required>
+
+                <label for="subject-id">Subject ID:</label>
+                <input type="number" id="subject-id" name="subject_id" required>
+
+                <label for="semester-id">Semester ID:</label>
+                <input type="number" id="semester-id" name="semester_id" required>
+
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" required>
+
+                <label for="period-number">Period Number:</label>
+                <input type="number" id="period-number" name="period_number" required>
+
+                <button type="submit">Submit Attendance</button>
+            </form>
+        </section>
+    </main>
+    <script src="js/teacherDashboard.js"></script>
+</body>
+</html>
