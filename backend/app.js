@@ -2,7 +2,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const adminRoutes = require('./routes/adminRoutes');
-const studentRoutes = require('./routes/studentRoutes'); // New student routes
+const studentRoutes = require('./routes/studentRoutes');
+const teacherRoutes = require('./routes/teacherRoutes'); // Import teacher routes
 require('dotenv').config();
 
 // Enable CORS
@@ -18,6 +19,8 @@ app.use(bodyParser.json());
 // Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/student', studentRoutes); // Student routes
+app.use('/api/teacher', teacherRoutes); // Teacher routes
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
