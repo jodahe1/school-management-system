@@ -1,3 +1,4 @@
+// backend/models/studentModel.js
 const pool = require('../config/db');
 
 // Login Student

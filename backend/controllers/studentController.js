@@ -1,4 +1,6 @@
+// backend/controllers/studentController.js
 const studentModel = require('../models/studentModel');
+const pool = require('../config/db'); // Import the pool object
 
 // Login Student
 const loginStudent = async (req, res) => {
@@ -75,10 +77,34 @@ const getAssignments = async (req, res) => {
 // Submit Assignment
 const submitAssignment = async (req, res) => {
     try {
-        const { studentId, assignmentId, submittedFilePath } = req.body;
+        const { studentId } = req.params; // Extract studentId from URL params
+        const { assignmentId, submittedFilePath } = req.body;
+
+        // Validate required fields
+        if (!studentId || !assignmentId || !submittedFilePath) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        // Check if the assignment exists
+        const assignmentQuery = `
+            SELECT * FROM assignments
+            WHERE assignment_id = $1;
+        `;
+        const assignmentResult = await pool.query(assignmentQuery, [assignmentId]);
+        if (assignmentResult.rows.length === 0) {
+            return res.status(404).json({ message: 'Assignment not found' });
+        }
+
+        // Insert the submission using the model function
         const submission = await studentModel.submitAssignment(studentId, assignmentId, submittedFilePath);
-        res.status(201).json(submission);
+
+        // Return the newly created submission
+        res.status(201).json({
+            message: 'Assignment submitted successfully',
+            submission,
+        });
     } catch (error) {
+        console.error('Error submitting assignment:', error);
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
