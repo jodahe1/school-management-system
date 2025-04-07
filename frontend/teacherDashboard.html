@@ -1,4 +1,3 @@
-<!-- frontend/teacherDashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard</title>
     <link rel="stylesheet" href="css/teacherstyles.css">
+    <style>
+        /* OLD STYLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        /* NEW STYLES */
+        .hidden { display: none; }
+        .clickable { 
+            cursor: pointer; 
+            color: blue; 
+            text-decoration: underline; 
+        }
+        .action-section { 
+            margin-top: 20px; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+        }
+        .back-button { 
+            margin-bottom: 10px; 
+            padding: 5px 10px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+        form {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 10px;
+            max-width: 600px;
+        }
+        form label {
+            text-align: right;
+            padding-right: 10px;
+        }
+        form button {
+            grid-column: 2;
+            padding: 8px;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -13,6 +64,7 @@
         <button id="logoutButton">Logout</button>
     </header>
     <main>
+        <!-- OLD SECTIONS -->
         <section id="profile-section">
             <h2>Profile</h2>
             <div id="profile-details"></div>
@@ -35,9 +87,59 @@
             </table>
         </section>
 
-        <section id="attendance-section">
+        <!-- NEW SECTIONS -->
+        <section id="classes-section" class="hidden">
+            <button id="backToSchedule" class="back-button">← Back to Schedule</button>
+            <h2>Classes</h2>
+            <table id="classes-table">
+                <thead>
+                    <tr>
+                        <th>Class ID</th>
+                        <th>Class Name</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <section id="students-section" class="hidden">
+            <button id="backToClasses" class="back-button">← Back to Classes</button>
+            <h2>Students</h2>
+            <table id="students-table">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <section id="student-section" class="hidden">
+            <button id="backToStudents" class="back-button">← Back to Students</button>
+            <h2>Student: <span id="student-name"></span></h2>
+            <div id="student-details"></div>
+            
+            <div class="action-section">
+                <h3>Actions</h3>
+                <button id="recordAttendanceBtn">Record Attendance</button>
+                <button id="assignGradeBtn">Assign Grade</button>
+                <button id="sendMaterialBtn">Send Material</button>
+                <button id="createAssignmentBtn">Create Assignment</button>
+                <button id="viewSubmissionsBtn">View Submissions</button>
+            </div>
+        </section>
+
+        <!-- OLD ATTENDANCE FORM (UPDATED) -->
+        <section id="attendance-section" class="hidden">
+            <button id="backToStudentFromAttendance" class="back-button">← Back to Student</button>
             <h2>Record Attendance</h2>
             <form id="attendanceForm">
+                <input type="hidden" id="student-id" name="student_id">
+                <input type="hidden" id="teacher-id" name="teacher_id">
+                
                 <label for="class-id">Class ID:</label>
                 <input type="number" id="class-id" name="class_id" required>
 
@@ -52,6 +154,13 @@
 
                 <label for="period-number">Period Number:</label>
                 <input type="number" id="period-number" name="period_number" required>
+
+                <label for="status">Status:</label>
+                <select id="status" name="status" required>
+                    <option value="present">Present</option>
+                    <option value="absent">Absent</option>
+                    <option value="late">Late</option>
+                </select>
 
                 <button type="submit">Submit Attendance</button>
             </form>

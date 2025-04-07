@@ -105,6 +105,41 @@ const getSubmissions = async (req, res) => {
     }
 };
 
+// NEW CONTROLLER METHODS
+
+// Get Classes for Teacher
+const getTeacherClasses = async (req, res) => {
+    try {
+        const { teacher_id } = req.query;
+        const classes = await teacherModel.getTeacherClasses(teacher_id);
+        res.status(200).json(classes);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Get Students in Class
+const getClassStudents = async (req, res) => {
+    try {
+        const { class_id } = req.query;
+        const students = await teacherModel.getClassStudents(class_id);
+        res.status(200).json(students);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Get Student Details
+const getStudentDetails = async (req, res) => {
+    try {
+        const { student_id } = req.query;
+        const student = await teacherModel.getStudentDetails(student_id);
+        res.status(200).json(student);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     loginTeacher,
     getProfile,
@@ -114,4 +149,8 @@ module.exports = {
     uploadMaterials,
     createAssignment,
     getSubmissions,
+    // New exports
+    getTeacherClasses,
+    getClassStudents,
+    getStudentDetails
 };

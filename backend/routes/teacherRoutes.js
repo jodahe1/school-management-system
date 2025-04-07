@@ -28,4 +28,15 @@ router.post('/assignments', teacherController.createAssignment);
 // View Submissions
 router.get('/submissions', teacherController.getSubmissions);
 
+// NEW ROUTES
+
+// Get Classes for Teacher
+router.get('/classes', teacherController.getTeacherClasses);
+
+// Get Students in Class
+router.get('/students', teacherController.getClassStudents);
+
+// Get Student Details
+router.get('/student', teacherController.getStudentDetails);
+
 module.exports = router;

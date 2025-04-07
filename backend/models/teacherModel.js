@@ -119,6 +119,46 @@ const getTeacherSubmissions = async (teacher_id, class_id, subject_id) => {
     return result.rows;
 };
 
+// NEW MODEL METHODS
+
+// Get Classes for Teacher
+const getTeacherClasses = async (teacher_id) => {
+    const query = `
+        SELECT DISTINCT c.class_id, c.class_name
+        FROM schedules sch
+        JOIN classes c ON sch.class_id = c.class_id
+        WHERE sch.teacher_id = $1;
+    `;
+    const result = await pool.query(query, [teacher_id]);
+    return result.rows;
+};
+
+// Get Students in Class
+const getClassStudents = async (class_id) => {
+    const query = `
+        SELECT s.student_id, s.first_name, s.last_name, u.email
+        FROM students s
+        JOIN users u ON s.student_id = u.user_id
+        WHERE s.class_id = $1;
+    `;
+    const result = await pool.query(query, [class_id]);
+    return result.rows;
+};
+
+// Get Student Details
+const getStudentDetails = async (student_id) => {
+    const query = `
+        SELECT s.student_id, s.first_name, s.last_name, u.email, 
+               c.class_name, c.class_id
+        FROM students s
+        JOIN users u ON s.student_id = u.user_id
+        JOIN classes c ON s.class_id = c.class_id
+        WHERE s.student_id = $1;
+    `;
+    const result = await pool.query(query, [student_id]);
+    return result.rows[0];
+};
+
 module.exports = {
     verifyTeacher,
     getTeacherProfile,
@@ -128,4 +168,8 @@ module.exports = {
     uploadMaterial,
     createAssignment,
     getTeacherSubmissions,
+    // New exports
+    getTeacherClasses,
+    getClassStudents,
+    getStudentDetails
 };
