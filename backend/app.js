@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const adminRoutes = require('./routes/adminRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
+const parentRoutes = require('./routes/parentRoutes');
 require('dotenv').config();
 
 const cors = require('cors');
@@ -30,6 +31,7 @@ pool.query('SELECT NOW()', (err, res) => {
 app.use('/api/admin', adminRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/teacher', teacherRoutes);
+app.use('/api/parent', parentRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
