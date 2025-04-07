@@ -1,18 +1,13 @@
-// backend/controllers/teacherController.js
 const teacherModel = require('../models/teacherModel');
 
 // Teacher Login
 const loginTeacher = async (req, res) => {
     try {
         const { username, password } = req.body;
-
-        // Verify credentials and fetch teacher details
         const teacher = await teacherModel.verifyTeacher(username, password);
-
         if (!teacher) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-
         res.status(200).json({ message: 'Login successful', teacher });
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
@@ -39,7 +34,7 @@ const getSchedule = async (req, res) => {
         const { teacher_id } = req.query;
         const schedule = await teacherModel.getTeacherSchedule(teacher_id);
         if (schedule.length === 0) {
-            return res.status(200).json({ message: 'No schedules found for this teacher', schedule: [] });
+            return res.status(200).json({ message: 'No schedules found', schedule: [] });
         }
         res.status(200).json(schedule);
     } catch (error) {
@@ -51,61 +46,86 @@ const getSchedule = async (req, res) => {
 const recordAttendance = async (req, res) => {
     try {
         const { teacher_id, class_id, subject_id, semester_id, date, period_number, attendance } = req.body;
+        
+        // Validate teacher access
+        const isValid = await teacherModel.validateTeacherClassSubject(teacher_id, class_id, subject_id);
+        if (!isValid) {
+            return res.status(403).json({ message: 'Unauthorized for this class/subject' });
+        }
+
         const result = await teacherModel.recordAttendance(teacher_id, class_id, subject_id, semester_id, date, period_number, attendance);
-        res.status(201).json({ message: 'Attendance recorded successfully', attendance: result });
+        res.status(201).json({ message: 'Attendance recorded', attendance: result });
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
 
-// Assign Grades
+// Assign Grades (Updated with validation)
 const assignGrades = async (req, res) => {
     try {
         const { teacher_id, student_id, subject_id, semester_id, grade, comments } = req.body;
+        
+        const isValid = await teacherModel.validateTeacherAccess(teacher_id, student_id, subject_id);
+        if (!isValid) {
+            return res.status(403).json({ message: 'Unauthorized to grade this student' });
+        }
+
         const newGrade = await teacherModel.assignGrade(teacher_id, student_id, subject_id, semester_id, grade, comments);
-        res.status(201).json({ message: 'Grade assigned successfully', grade: newGrade });
+        res.status(201).json({ message: 'Grade assigned', grade: newGrade });
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
 
-// Upload Materials
+// Upload Materials (Updated with validation)
 const uploadMaterials = async (req, res) => {
     try {
         const { teacher_id, class_id, subject_id, semester_id, title, file_path } = req.body;
+        
+        const isValid = await teacherModel.validateTeacherClassSubject(teacher_id, class_id, subject_id);
+        if (!isValid) {
+            return res.status(403).json({ message: 'Unauthorized for this class/subject' });
+        }
+
         const material = await teacherModel.uploadMaterial(teacher_id, class_id, subject_id, semester_id, title, file_path);
-        res.status(201).json({ message: 'Material uploaded successfully', material });
+        res.status(201).json({ message: 'Material uploaded', material });
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
 
-// Create Assignment
+// Create Assignment (Updated with validation)
 const createAssignment = async (req, res) => {
     try {
         const { teacher_id, class_id, subject_id, semester_id, title, description, due_date, file_path } = req.body;
+        
+        const isValid = await teacherModel.validateTeacherClassSubject(teacher_id, class_id, subject_id);
+        if (!isValid) {
+            return res.status(403).json({ message: 'Unauthorized for this class/subject' });
+        }
+
         const assignment = await teacherModel.createAssignment(teacher_id, class_id, subject_id, semester_id, title, description, due_date, file_path);
-        res.status(201).json({ message: 'Assignment created successfully', assignment });
+        res.status(201).json({ message: 'Assignment created', assignment });
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
 
-// View Submissions
+// View Submissions (Updated with validation)
 const getSubmissions = async (req, res) => {
     try {
         const { teacher_id, class_id, subject_id } = req.query;
-        const submissions = await teacherModel.getTeacherSubmissions(teacher_id, class_id, subject_id);
-        if (submissions.length === 0) {
-            return res.status(200).json({ message: 'No submissions found for this teacher', submissions: [] });
+        
+        if (!teacher_id) {
+            return res.status(400).json({ message: 'Teacher ID required' });
         }
+
+        const submissions = await teacherModel.getTeacherSubmissions(teacher_id, class_id, subject_id);
         res.status(200).json(submissions);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
-
-// NEW CONTROLLER METHODS
 
 // Get Classes for Teacher
 const getTeacherClasses = async (req, res) => {
@@ -149,7 +169,6 @@ module.exports = {
     uploadMaterials,
     createAssignment,
     getSubmissions,
-    // New exports
     getTeacherClasses,
     getClassStudents,
     getStudentDetails

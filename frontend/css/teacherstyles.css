@@ -1,99 +1,188 @@
-/* frontend/css/styles.css */
+/* Base Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f9;
-}
-
-.login-container {
-    max-width: 400px;
-    margin: 100px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.login-container h2 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.login-container label {
-    display: block;
-    margin: 10px 0 5px;
-}
-
-.login-container input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.login-container button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.login-container button:hover {
-    background-color: #0056b3;
-}
-
-.error-message {
-    color: red;
-    text-align: center;
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
 }
 
 header {
-    background: #007bff;
-    color: #fff;
-    padding: 10px 20px;
+    background: #2c3e50;
+    color: white;
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-header button {
-    background: #fff;
-    color: #007bff;
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+#logoutButton {
+    background: #e74c3c;
+    color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 0.5rem 1rem;
     border-radius: 4px;
     cursor: pointer;
+    transition: background 0.3s;
 }
 
-header button:hover {
-    background: #f0f0f0;
+#logoutButton:hover {
+    background: #c0392b;
 }
 
 main {
-    padding: 20px;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 section {
-    margin-bottom: 30px;
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
+.hidden {
+    display: none;
+}
+
+/* Tables */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 1rem;
 }
 
-table th, table td {
-    border: 1px solid #ddd;
-    padding: 8px;
+th, td {
+    padding: 0.75rem;
     text-align: left;
+    border-bottom: 1px solid #ddd;
 }
 
-table th {
-    background-color: #f2f2f2;
+th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+tr:hover {
+    background-color: #f8f9fa;
+}
+
+.clickable {
+    color: #3498db;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.clickable:hover {
+    color: #2980b9;
+}
+
+/* Forms */
+.form-container {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+form {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1rem;
+    align-items: center;
+    max-width: 800px;
+}
+
+label {
+    font-weight: 500;
+}
+
+input, select, textarea {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+button[type="submit"] {
+    grid-column: 2;
+    padding: 0.75rem;
+    background: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button[type="submit"]:hover {
+    background: #1a252f;
+}
+
+/* Action Section */
+.action-section {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.action-section button {
+    padding: 0.75rem 1.5rem;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.action-section button:hover {
+    background: #2980b9;
+}
+
+.back-button {
+    background: #95a5a6;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    transition: background 0.3s;
+}
+
+.back-button:hover {
+    background: #7f8c8d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+    
+    button[type="submit"] {
+        grid-column: 1;
+    }
+    
+    .action-section {
+        flex-direction: column;
+    }
 }

@@ -5,58 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard</title>
     <link rel="stylesheet" href="css/teacherstyles.css">
-    <style>
-        /* OLD STYLES */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        
-        /* NEW STYLES */
-        .hidden { display: none; }
-        .clickable { 
-            cursor: pointer; 
-            color: blue; 
-            text-decoration: underline; 
-        }
-        .action-section { 
-            margin-top: 20px; 
-            padding: 15px; 
-            border: 1px solid #ddd; 
-            border-radius: 5px; 
-        }
-        .back-button { 
-            margin-bottom: 10px; 
-            padding: 5px 10px;
-            background: #f0f0f0;
-            border: 1px solid #ccc;
-            cursor: pointer;
-        }
-        form {
-            margin-top: 20px;
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 10px;
-            max-width: 600px;
-        }
-        form label {
-            text-align: right;
-            padding-right: 10px;
-        }
-        form button {
-            grid-column: 2;
-            padding: 8px;
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -64,12 +12,13 @@
         <button id="logoutButton">Logout</button>
     </header>
     <main>
-        <!-- OLD SECTIONS -->
+        <!-- Profile Section -->
         <section id="profile-section">
             <h2>Profile</h2>
             <div id="profile-details"></div>
         </section>
 
+        <!-- Schedule Section -->
         <section id="schedule-section">
             <h2>Schedule</h2>
             <table id="schedule-table">
@@ -87,7 +36,7 @@
             </table>
         </section>
 
-        <!-- NEW SECTIONS -->
+        <!-- Classes Section -->
         <section id="classes-section" class="hidden">
             <button id="backToSchedule" class="back-button">← Back to Schedule</button>
             <h2>Classes</h2>
@@ -102,6 +51,7 @@
             </table>
         </section>
 
+        <!-- Students Section -->
         <section id="students-section" class="hidden">
             <button id="backToClasses" class="back-button">← Back to Classes</button>
             <h2>Students</h2>
@@ -117,6 +67,7 @@
             </table>
         </section>
 
+        <!-- Student Details Section -->
         <section id="student-section" class="hidden">
             <button id="backToStudents" class="back-button">← Back to Students</button>
             <h2>Student: <span id="student-name"></span></h2>
@@ -130,38 +81,130 @@
                 <button id="createAssignmentBtn">Create Assignment</button>
                 <button id="viewSubmissionsBtn">View Submissions</button>
             </div>
+
+            <!-- Grade Assignment Form -->
+            <div id="grade-form" class="hidden form-container">
+                <h3>Assign Grade</h3>
+                <form id="gradeForm">
+                    <input type="hidden" id="grade-student-id">
+                    <input type="hidden" id="grade-teacher-id">
+                    
+                    <label for="grade-subject-id">Subject:</label>
+                    <select id="grade-subject-id" required></select>
+                    
+                    <label for="grade-semester-id">Semester:</label>
+                    <select id="grade-semester-id" required></select>
+                    
+                    <label for="grade-value">Grade:</label>
+                    <input type="number" id="grade-value" min="0" max="100" step="0.1" required>
+                    
+                    <label for="grade-comments">Comments:</label>
+                    <textarea id="grade-comments" rows="3"></textarea>
+                    
+                    <button type="submit">Submit Grade</button>
+                </form>
+            </div>
+
+            <!-- Material Upload Form -->
+            <div id="material-form" class="hidden form-container">
+                <h3>Upload Material</h3>
+                <form id="materialForm">
+                    <input type="hidden" id="material-teacher-id">
+                    
+                    <label for="material-class-id">Class:</label>
+                    <select id="material-class-id" required></select>
+                    
+                    <label for="material-subject-id">Subject:</label>
+                    <select id="material-subject-id" required></select>
+                    
+                    <label for="material-title">Title:</label>
+                    <input type="text" id="material-title" required>
+                    
+                    <label for="material-file">File Link:</label>
+                    <input type="url" id="material-file" required>
+                    
+                    <button type="submit">Upload Material</button>
+                </form>
+            </div>
+
+            <!-- Assignment Creation Form -->
+            <div id="assignment-form" class="hidden form-container">
+                <h3>Create Assignment</h3>
+                <form id="assignmentForm">
+                    <input type="hidden" id="assignment-teacher-id">
+                    
+                    <label for="assignment-class-id">Class:</label>
+                    <select id="assignment-class-id" required></select>
+                    
+                    <label for="assignment-subject-id">Subject:</label>
+                    <select id="assignment-subject-id" required></select>
+                    
+                    <label for="assignment-title">Title:</label>
+                    <input type="text" id="assignment-title" required>
+                    
+                    <label for="assignment-description">Description:</label>
+                    <textarea id="assignment-description" rows="3" required></textarea>
+                    
+                    <label for="assignment-due-date">Due Date:</label>
+                    <input type="datetime-local" id="assignment-due-date" required>
+                    
+                    <label for="assignment-file">File Link:</label>
+                    <input type="url" id="assignment-file">
+                    
+                    <button type="submit">Create Assignment</button>
+                </form>
+            </div>
+
+            <!-- Submissions View -->
+            <div id="submissions-view" class="hidden">
+                <button id="backToStudentFromSubmissions" class="back-button">← Back to Student</button>
+                <h3>Submissions</h3>
+                <table id="submissions-table">
+                    <thead>
+                        <tr>
+                            <th>Assignment</th>
+                            <th>Subject</th>
+                            <th>Submitted File</th>
+                            <th>Date</th>
+                            <th>Grade</th>
+                            <th>Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </section>
 
-        <!-- OLD ATTENDANCE FORM (UPDATED) -->
+        <!-- Attendance Form -->
         <section id="attendance-section" class="hidden">
             <button id="backToStudentFromAttendance" class="back-button">← Back to Student</button>
             <h2>Record Attendance</h2>
             <form id="attendanceForm">
-                <input type="hidden" id="student-id" name="student_id">
-                <input type="hidden" id="teacher-id" name="teacher_id">
+                <input type="hidden" id="student-id">
+                <input type="hidden" id="teacher-id">
                 
-                <label for="class-id">Class ID:</label>
-                <input type="number" id="class-id" name="class_id" required>
-
-                <label for="subject-id">Subject ID:</label>
-                <input type="number" id="subject-id" name="subject_id" required>
-
-                <label for="semester-id">Semester ID:</label>
-                <input type="number" id="semester-id" name="semester_id" required>
-
+                <label for="class-id">Class:</label>
+                <select id="class-id" required></select>
+                
+                <label for="subject-id">Subject:</label>
+                <select id="subject-id" required></select>
+                
+                <label for="semester-id">Semester:</label>
+                <select id="semester-id" required></select>
+                
                 <label for="date">Date:</label>
-                <input type="date" id="date" name="date" required>
-
+                <input type="date" id="date" required>
+                
                 <label for="period-number">Period Number:</label>
-                <input type="number" id="period-number" name="period_number" required>
-
+                <input type="number" id="period-number" min="1" max="8" required>
+                
                 <label for="status">Status:</label>
-                <select id="status" name="status" required>
+                <select id="status" required>
                     <option value="present">Present</option>
                     <option value="absent">Absent</option>
                     <option value="late">Late</option>
                 </select>
-
+                
                 <button type="submit">Submit Attendance</button>
             </form>
         </section>

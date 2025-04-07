@@ -1,4 +1,3 @@
-// backend/models/teacherModel.js
 const pool = require('../config/db');
 
 // Verify Teacher Credentials
@@ -28,7 +27,8 @@ const getTeacherProfile = async (teacher_id) => {
 // Get Teacher Schedule
 const getTeacherSchedule = async (teacher_id) => {
     const query = `
-        SELECT c.class_name, s.subject_name, sch.day_of_week, sch.period_number, sch.start_time, sch.end_time
+        SELECT c.class_name, s.subject_name, sch.day_of_week, sch.period_number, 
+               sch.start_time, sch.end_time, sch.class_id, sch.subject_id
         FROM schedules sch
         JOIN classes c ON sch.class_id = c.class_id
         JOIN subjects s ON sch.subject_id = s.subject_id
@@ -39,12 +39,36 @@ const getTeacherSchedule = async (teacher_id) => {
     return result.rows;
 };
 
+// Validate Teacher Access
+const validateTeacherAccess = async (teacher_id, student_id, subject_id) => {
+    const query = `
+        SELECT 1 FROM class_teacher_subject cts
+        JOIN students s ON cts.class_id = s.class_id
+        WHERE cts.teacher_id = $1 AND s.student_id = $2 AND cts.subject_id = $3;
+    `;
+    const result = await pool.query(query, [teacher_id, student_id, subject_id]);
+    return result.rowCount > 0;
+};
+
+// Validate Teacher Class-Subject
+const validateTeacherClassSubject = async (teacher_id, class_id, subject_id) => {
+    const query = `
+        SELECT 1 FROM class_teacher_subject
+        WHERE teacher_id = $1 AND class_id = $2 AND subject_id = $3;
+    `;
+    const result = await pool.query(query, [teacher_id, class_id, subject_id]);
+    return result.rowCount > 0;
+};
+
 // Record Attendance
 const recordAttendance = async (teacher_id, class_id, subject_id, semester_id, date, period_number, attendance) => {
     const query = `
         INSERT INTO attendance (student_id, class_id, teacher_id, subject_id, semester_id, date, period_number, status)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        ON CONFLICT (student_id, date, period_number) 
+        DO UPDATE SET status = EXCLUDED.status;
     `;
+    
     for (const record of attendance) {
         await pool.query(query, [
             record.student_id,
@@ -54,7 +78,7 @@ const recordAttendance = async (teacher_id, class_id, subject_id, semester_id, d
             semester_id,
             date,
             period_number,
-            record.status,
+            record.status
         ]);
     }
     return attendance;
@@ -65,6 +89,8 @@ const assignGrade = async (teacher_id, student_id, subject_id, semester_id, grad
     const query = `
         INSERT INTO grades (student_id, teacher_id, subject_id, semester_id, grade, comments)
         VALUES ($1, $2, $3, $4, $5, $6)
+        ON CONFLICT (student_id, subject_id, semester_id)
+        DO UPDATE SET grade = EXCLUDED.grade, comments = EXCLUDED.comments
         RETURNING *;
     `;
     const result = await pool.query(query, [student_id, teacher_id, subject_id, semester_id, grade, comments]);
@@ -73,12 +99,16 @@ const assignGrade = async (teacher_id, student_id, subject_id, semester_id, grad
 
 // Upload Material
 const uploadMaterial = async (teacher_id, class_id, subject_id, semester_id, title, file_path) => {
+    const effectiveSemesterId = semester_id || (await pool.query(
+        'SELECT semester_id FROM semesters WHERE is_active = TRUE LIMIT 1'
+    )).rows[0]?.semester_id;
+
     const query = `
         INSERT INTO materials (teacher_id, class_id, subject_id, semester_id, title, file_path)
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *;
     `;
-    const result = await pool.query(query, [teacher_id, class_id, subject_id, semester_id, title, file_path]);
+    const result = await pool.query(query, [teacher_id, class_id, subject_id, effectiveSemesterId, title, file_path]);
     return result.rows[0];
 };
 
@@ -96,12 +126,22 @@ const createAssignment = async (teacher_id, class_id, subject_id, semester_id, t
 // Get Teacher Submissions
 const getTeacherSubmissions = async (teacher_id, class_id, subject_id) => {
     let query = `
-        SELECT st.first_name || ' ' || st.last_name AS student_name, a.title AS assignment_title, s.subject_name,
-               sb.submitted_file_path, sb.submission_date, sb.grade, sb.feedback
-        FROM submissions sb
-        JOIN assignments a ON sb.assignment_id = a.assignment_id
-        JOIN students st ON sb.student_id = st.student_id
-        JOIN subjects s ON a.subject_id = s.subject_id
+        SELECT 
+            s.submission_id,
+            st.student_id,
+            st.first_name || ' ' || st.last_name AS student_name,
+            a.assignment_id,
+            a.title AS assignment_title,
+            subj.subject_id,
+            subj.subject_name,
+            s.submitted_file_path,
+            s.submission_date,
+            s.grade,
+            s.feedback
+        FROM submissions s
+        JOIN assignments a ON s.assignment_id = a.assignment_id
+        JOIN students st ON s.student_id = st.student_id
+        JOIN subjects subj ON a.subject_id = subj.subject_id
         WHERE a.teacher_id = $1
     `;
     const params = [teacher_id];
@@ -115,11 +155,10 @@ const getTeacherSubmissions = async (teacher_id, class_id, subject_id) => {
         params.push(subject_id);
     }
 
+    query += ` ORDER BY s.submission_date DESC`;
     const result = await pool.query(query, params);
     return result.rows;
 };
-
-// NEW MODEL METHODS
 
 // Get Classes for Teacher
 const getTeacherClasses = async (teacher_id) => {
@@ -149,7 +188,7 @@ const getClassStudents = async (class_id) => {
 const getStudentDetails = async (student_id) => {
     const query = `
         SELECT s.student_id, s.first_name, s.last_name, u.email, 
-               c.class_name, c.class_id
+               c.class_id, c.class_name
         FROM students s
         JOIN users u ON s.student_id = u.user_id
         JOIN classes c ON s.class_id = c.class_id
@@ -163,12 +202,13 @@ module.exports = {
     verifyTeacher,
     getTeacherProfile,
     getTeacherSchedule,
+    validateTeacherAccess,
+    validateTeacherClassSubject,
     recordAttendance,
     assignGrade,
     uploadMaterial,
     createAssignment,
     getTeacherSubmissions,
-    // New exports
     getTeacherClasses,
     getClassStudents,
     getStudentDetails

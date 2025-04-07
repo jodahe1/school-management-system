@@ -1,42 +1,33 @@
-// backend/routes/teacherRoutes.js
 const express = require('express');
 const teacherController = require('../controllers/teacherController');
 
 const router = express.Router();
 
-// Teacher Login
+// Authentication
 router.post('/login', teacherController.loginTeacher);
 
-// View Profile
+// Profile Management
 router.get('/profile', teacherController.getProfile);
 
-// View Schedule
+// Schedule Viewing
 router.get('/schedule', teacherController.getSchedule);
 
-// Record Attendance
+// Class Management
+router.get('/classes', teacherController.getTeacherClasses);
+router.get('/students', teacherController.getClassStudents);
+router.get('/student', teacherController.getStudentDetails);
+
+// Attendance
 router.post('/attendance', teacherController.recordAttendance);
 
-// Assign Grades
+// Grading
 router.post('/grades', teacherController.assignGrades);
 
-// Upload Materials
+// Materials
 router.post('/materials', teacherController.uploadMaterials);
 
-// Create Assignment
+// Assignments
 router.post('/assignments', teacherController.createAssignment);
-
-// View Submissions
 router.get('/submissions', teacherController.getSubmissions);
-
-// NEW ROUTES
-
-// Get Classes for Teacher
-router.get('/classes', teacherController.getTeacherClasses);
-
-// Get Students in Class
-router.get('/students', teacherController.getClassStudents);
-
-// Get Student Details
-router.get('/student', teacherController.getStudentDetails);
 
 module.exports = router;
