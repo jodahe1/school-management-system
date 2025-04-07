@@ -5,6 +5,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
 const parentRoutes = require('./routes/parentRoutes');
+const messageBoardRoutes = require('./routes/messageBoardRoutes');
 require('dotenv').config();
 
 const cors = require('cors');
@@ -32,7 +33,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/parent', parentRoutes);
-
+app.use('/api/message-board', messageBoardRoutes); // Mount message board routes
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
