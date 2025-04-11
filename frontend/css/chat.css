@@ -1,15 +1,10 @@
-/* Reset and base styles */
-* {
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
     background-color: #f5f5f5;
     color: #333;
-    line-height: 1.6;
 }
 
 .container {
@@ -22,12 +17,13 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 0;
+    padding: 15px 0;
     border-bottom: 1px solid #ddd;
     margin-bottom: 20px;
 }
 
 h1 {
+    margin: 0;
     color: #2c3e50;
 }
 
@@ -46,24 +42,30 @@ h1 {
     cursor: pointer;
 }
 
+#logout-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Chat Container */
 .chat-container {
     display: flex;
     height: calc(100vh - 120px);
-    gap: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: white;
 }
 
 .sidebar {
     width: 300px;
-    background-color: white;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-right: 1px solid #ddd;
     display: flex;
     flex-direction: column;
 }
 
 .user-controls {
-    margin-bottom: 20px;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
 }
 
 .user-controls select {
@@ -75,64 +77,91 @@ h1 {
 }
 
 .message-list {
-    flex-grow: 1;
+    flex: 1;
     overflow-y: auto;
-}
-
-.message-item {
     padding: 10px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
 }
 
-.message-item:hover {
+.message-preview {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #eee;
+}
+
+.message-preview:hover {
     background-color: #f9f9f9;
 }
 
-.message-item.active {
+.message-preview.active {
     background-color: #e3f2fd;
+    border-color: #bbdefb;
+}
+
+.message-preview h4 {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+}
+
+.message-preview p {
+    margin: 0;
+    font-size: 12px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .message-area {
-    flex-grow: 1;
+    flex: 1;
     display: flex;
     flex-direction: column;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .messages {
-    flex-grow: 1;
+    flex: 1;
     padding: 20px;
     overflow-y: auto;
 }
 
 .message {
     margin-bottom: 15px;
-    padding: 10px 15px;
-    border-radius: 8px;
     max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 18px;
+    position: relative;
 }
 
 .message.sent {
-    background-color: #e3f2fd;
+    background-color: #dcf8c6;
     margin-left: auto;
-    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .message.received {
     background-color: #f1f1f1;
     margin-right: auto;
-    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
 .message-header {
     display: flex;
     justify-content: space-between;
     margin-bottom: 5px;
-    font-size: 0.9em;
-    color: #666;
+    font-size: 12px;
+    color: #555;
+}
+
+.message-text {
+    word-wrap: break-word;
+}
+
+.message-time {
+    font-size: 11px;
+    color: #999;
+    text-align: right;
+    margin-top: 5px;
 }
 
 .message-input {
@@ -142,16 +171,16 @@ h1 {
     gap: 10px;
 }
 
-#message-text {
-    flex-grow: 1;
+.message-input textarea {
+    flex: 1;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     resize: none;
-    height: 80px;
+    height: 60px;
 }
 
-#send-btn {
+.message-input button {
     padding: 10px 20px;
     background-color: #2c3e50;
     color: white;
@@ -160,6 +189,24 @@ h1 {
     cursor: pointer;
 }
 
-#send-btn:hover {
+.message-input button:hover {
     background-color: #1a252f;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .chat-container {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .message {
+        max-width: 85%;
+    }
 }
