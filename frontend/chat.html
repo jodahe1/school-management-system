@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>School Message Board</title>
-    <link rel="stylesheet" href="css/chat.css">
+    <link rel="stylesheet" href="./css/chat.css">
 </head>
 <body>
     <div class="container">
@@ -19,15 +19,35 @@
         <div class="chat-container">
             <div class="sidebar">
                 <div class="user-controls">
-                    <select id="recipient-role">
-                        <option value="">Select recipient type</option>
-                        <option value="teacher">Teacher</option>
-                        <option value="parent">Parent</option>
-                        <option value="student">Student</option>
-                    </select>
-                    <select id="student-select" disabled>
-                        <option value="">Select a student</option>
-                    </select>
+                    <!-- Controls for teachers -->
+                    <div id="teacher-controls">
+                        <select id="recipient-role">
+                            <option value="">Select recipient type</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="parent">Parent</option>
+                            <option value="student">Student</option>
+                        </select>
+                        <select id="student-select" disabled>
+                            <option value="">Select a student</option>
+                        </select>
+                    </div>
+
+                    <!-- Controls for parents -->
+                    <div id="parent-controls">
+                        <select id="student-select" disabled>
+                            <option value="">Select your child</option>
+                        </select>
+                    </div>
+
+                    <!-- Controls for students -->
+                    <div id="student-controls">
+                        <select id="teacher-select" disabled>
+                            <option value="">Select teacher</option>
+                        </select>
+                        <select id="subject-select" disabled>
+                            <option value="">Select subject</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="message-list" id="message-list">
                     <!-- Messages will be loaded here -->

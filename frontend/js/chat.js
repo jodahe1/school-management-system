@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoutBtn = document.getElementById('logout-btn');
     const recipientRoleSelect = document.getElementById('recipient-role');
     const studentSelect = document.getElementById('student-select');
+    const subjectSelect = document.getElementById('subject-select');
+    const teacherSelect = document.getElementById('teacher-select');
     const messageList = document.getElementById('message-list');
     const messagesContainer = document.getElementById('messages');
     const messageText = document.getElementById('message-text');
@@ -13,23 +15,30 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentUser = null;
     let currentStudentId = null;
     let currentRecipientRole = null;
+    let currentSubjectId = null;
+    let currentTeacherId = null;
     let allMessages = [];
     let students = [];
+    let teachers = [];
+    let subjects = [];
 
     // Initialize the application
     async function init() {
-        // Check if user is logged in (in a real app, you'd have proper auth)
-        const userData = await fetchCurrentUser();
+        // Get user data from session storage
+        const userData = JSON.parse(sessionStorage.getItem('currentUser'));
         if (!userData) {
-            window.location.href = 'login.html';
+            redirectToLogin();
             return;
         }
 
         currentUser = userData;
         usernameDisplay.textContent = currentUser.username;
 
-        // Load students based on user role
-        await loadStudents();
+        // Load initial data based on user role
+        await loadInitialData();
+
+        // Set up UI based on user role
+        setupUIForRole();
 
         // Set up event listeners
         setupEventListeners();
@@ -38,78 +47,112 @@ document.addEventListener('DOMContentLoaded', function() {
         await loadMessages();
     }
 
-    // Fetch current user data (mock - replace with actual API call)
-    async function fetchCurrentUser() {
-        try {
-            // In a real app, you'd get this from your authentication system
-            // This is just for demonstration
-            const response = await fetch('/api/current-user');
-            if (!response.ok) {
-                throw new Error('Failed to fetch user data');
-            }
-            return await response.json();
-            
-            // For testing purposes, you can use this mock data:
-            /*
-            return {
-                user_id: 1,
-                username: 'JohnDoe',
-                role: 'teacher', // or 'parent', 'student'
-                teacher_id: 1,  // if role is teacher
-                parent_id: null, // if role is parent
-                student_id: null // if role is student
-            };
-            */
-        } catch (error) {
-            console.error('Error fetching user:', error);
-            return null;
-        }
+    // Redirect to appropriate login page
+    function redirectToLogin() {
+        // In a real app, you might have different login pages
+        // For this example, we'll redirect to a generic login
+        window.location.href = 'studentLogin.html';
     }
 
-    // Load students based on user role
-    async function loadStudents() {
+    // Load initial data based on user role
+    async function loadInitialData() {
         try {
-            let url = '';
             if (currentUser.role === 'teacher') {
-                url = `/api/teacher/${currentUser.teacher_id}/students`;
-            } else if (currentUser.role === 'parent') {
-                url = `/api/parent/${currentUser.parent_id}/students`;
-            } else {
-                // Students can only message their teachers
-                studentSelect.disabled = true;
-                return;
+                // Load teacher's students and subjects
+                const [studentsRes, subjectsRes] = await Promise.all([
+                    fetch(`/api/teachers/${currentUser.user_id}/students`),
+                    fetch(`/api/teachers/${currentUser.user_id}/subjects`)
+                ]);
+                
+                if (!studentsRes.ok || !subjectsRes.ok) {
+                    throw new Error('Failed to load teacher data');
+                }
+                
+                students = await studentsRes.json();
+                subjects = await subjectsRes.json();
+            } 
+            else if (currentUser.role === 'parent') {
+                // Load parent's children
+                const response = await fetch(`/api/parents/${currentUser.user_id}/students`);
+                if (!response.ok) throw new Error('Failed to load parent data');
+                students = await response.json();
+            } 
+            else if (currentUser.role === 'student') {
+                // Load student's teachers and subjects
+                const [teachersRes, subjectsRes] = await Promise.all([
+                    fetch(`/api/students/${currentUser.user_id}/teachers`),
+                    fetch(`/api/students/${currentUser.user_id}/subjects`)
+                ]);
+                
+                if (!teachersRes.ok || !subjectsRes.ok) {
+                    throw new Error('Failed to load student data');
+                }
+                
+                teachers = await teachersRes.json();
+                subjects = await subjectsRes.json();
             }
-
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error('Failed to fetch students');
-            }
-
-            students = await response.json();
-            populateStudentSelect(students);
         } catch (error) {
-            console.error('Error loading students:', error);
-            alert('Failed to load students');
+            console.error('Error loading initial data:', error);
+            alert('Failed to load initial data');
         }
     }
 
-    // Populate student select dropdown
-    function populateStudentSelect(students) {
-        studentSelect.innerHTML = '<option value="">Select a student</option>';
-        students.forEach(student => {
+    // Set up UI based on user role
+    function setupUIForRole() {
+        if (currentUser.role === 'teacher') {
+            // Teachers can message parents or students
+            populateSelect(studentSelect, students, 'Select student');
+            populateSelect(subjectSelect, subjects, 'Select subject');
+            document.getElementById('teacher-controls').style.display = 'none';
+        } 
+        else if (currentUser.role === 'parent') {
+            // Parents can message teachers
+            populateSelect(studentSelect, students, 'Select student');
+            recipientRoleSelect.value = 'teacher';
+            document.getElementById('subject-controls').style.display = 'none';
+            document.getElementById('teacher-controls').style.display = 'none';
+        } 
+        else if (currentUser.role === 'student') {
+            // Students can message teachers
+            populateSelect(teacherSelect, teachers, 'Select teacher');
+            populateSelect(subjectSelect, subjects, 'Select subject');
+            recipientRoleSelect.value = 'teacher';
+            document.getElementById('student-controls').style.display = 'none';
+        }
+    }
+
+    // Populate a select element with options
+    function populateSelect(selectElement, items, defaultText) {
+        selectElement.innerHTML = `<option value="">${defaultText}</option>`;
+        items.forEach(item => {
             const option = document.createElement('option');
-            option.value = student.student_id;
-            option.textContent = student.name || `Student ${student.student_id}`;
-            studentSelect.appendChild(option);
+            option.value = item.id;
+            option.textContent = item.name;
+            selectElement.appendChild(option);
         });
-        studentSelect.disabled = false;
+        selectElement.disabled = false;
     }
 
     // Set up event listeners
     function setupEventListeners() {
         logoutBtn.addEventListener('click', handleLogout);
-        recipientRoleSelect.addEventListener('change', handleRecipientRoleChange);
-        studentSelect.addEventListener('change', handleStudentSelect);
+        
+        if (recipientRoleSelect) {
+            recipientRoleSelect.addEventListener('change', handleRecipientRoleChange);
+        }
+        
+        if (studentSelect) {
+            studentSelect.addEventListener('change', handleStudentSelect);
+        }
+        
+        if (subjectSelect) {
+            subjectSelect.addEventListener('change', handleSubjectSelect);
+        }
+        
+        if (teacherSelect) {
+            teacherSelect.addEventListener('change', handleTeacherSelect);
+        }
+        
         sendBtn.addEventListener('click', handleSendMessage);
         messageText.addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -121,24 +164,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle logout
     function handleLogout() {
-        // In a real app, you'd call your logout API
-        localStorage.removeItem('authToken');
-        window.location.href = 'login.html';
+        sessionStorage.removeItem('currentUser');
+        redirectToLogin();
     }
 
-    // Handle recipient role change
+    // Handle recipient role change (for teachers)
     function handleRecipientRoleChange(e) {
         currentRecipientRole = e.target.value;
-        
-        // Enable/disable student select based on role
-        if (currentRecipientRole === 'teacher' || currentRecipientRole === 'parent') {
-            studentSelect.disabled = false;
-        } else {
-            studentSelect.disabled = true;
-            currentStudentId = null;
-        }
-        
-        // Load messages for the selected recipient type
         loadMessages();
     }
 
@@ -148,20 +180,42 @@ document.addEventListener('DOMContentLoaded', function() {
         loadMessages();
     }
 
-    // Load messages
+    // Handle subject selection
+    function handleSubjectSelect(e) {
+        currentSubjectId = e.target.value;
+        loadMessages();
+    }
+
+    // Handle teacher selection (for students)
+    function handleTeacherSelect(e) {
+        currentTeacherId = e.target.value;
+        loadMessages();
+    }
+
+    // Load messages from backend
     async function loadMessages() {
         try {
-            let url = '/api/message-board/messages';
             const params = new URLSearchParams();
             params.append('user_id', currentUser.user_id);
             params.append('role', currentUser.role);
-            
-            if (currentRecipientRole && currentStudentId) {
-                params.append('recipient_role', currentRecipientRole);
-                params.append('student_id', currentStudentId);
+
+            if (currentUser.role === 'teacher') {
+                if (currentStudentId) params.append('student_id', currentStudentId);
+                if (currentSubjectId) params.append('subject_id', currentSubjectId);
+                if (currentRecipientRole) params.append('recipient_role', currentRecipientRole);
+            } 
+            else if (currentUser.role === 'parent') {
+                if (currentStudentId) params.append('student_id', currentStudentId);
+                params.append('recipient_role', 'teacher');
+            } 
+            else if (currentUser.role === 'student') {
+                if (currentTeacherId) params.append('teacher_id', currentTeacherId);
+                if (currentSubjectId) params.append('subject_id', currentSubjectId);
+                params.append('recipient_role', 'teacher');
             }
 
-            const response = await fetch(`${url}?${params.toString()}`);
+            const response = await fetch(`/api/message-board/messages?${params.toString()}`);
+            
             if (!response.ok) {
                 throw new Error('Failed to fetch messages');
             }
@@ -185,18 +239,29 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Group messages by conversation (student + recipient role)
+        // Group messages by conversation
         const conversations = {};
         allMessages.forEach(msg => {
-            const key = `${msg.student_id}-${msg.recipient_role}`;
+            let key;
+            if (currentUser.role === 'teacher') {
+                key = `${msg.student_id}-${msg.recipient_role}-${msg.subject_id}`;
+            } else if (currentUser.role === 'parent') {
+                key = `${msg.student_id}-teacher`;
+            } else {
+                key = `${msg.teacher_id}-${msg.subject_id}`;
+            }
+
             if (!conversations[key]) {
                 conversations[key] = {
                     student_id: msg.student_id,
+                    teacher_id: msg.teacher_id,
+                    subject_id: msg.subject_id,
                     recipient_role: msg.recipient_role,
-                    student_name: msg.student_name || `Student ${msg.student_id}`,
+                    student_name: msg.student_name,
+                    teacher_name: msg.teacher_name,
+                    subject_name: msg.subject_name,
                     last_message: msg.message_text,
-                    last_message_time: msg.posted_at,
-                    unread: false // You could track unread status
+                    last_message_time: msg.posted_at
                 };
             }
         });
@@ -205,21 +270,65 @@ document.addEventListener('DOMContentLoaded', function() {
         Object.values(conversations).forEach(convo => {
             const preview = document.createElement('div');
             preview.className = 'message-preview';
-            if (convo.student_id == currentStudentId && convo.recipient_role == currentRecipientRole) {
-                preview.classList.add('active');
+            
+            // Determine if this conversation is active
+            let isActive = false;
+            if (currentUser.role === 'teacher') {
+                isActive = convo.student_id == currentStudentId && 
+                          convo.recipient_role == currentRecipientRole &&
+                          convo.subject_id == currentSubjectId;
+            } else if (currentUser.role === 'parent') {
+                isActive = convo.student_id == currentStudentId;
+            } else {
+                isActive = convo.teacher_id == currentTeacherId && 
+                          convo.subject_id == currentSubjectId;
+            }
+
+            if (isActive) preview.classList.add('active');
+            
+            // Create preview content based on user role
+            let previewContent = '';
+            if (currentUser.role === 'teacher') {
+                previewContent = `
+                    <h4>${convo.student_name} (${convo.recipient_role})</h4>
+                    <p>${convo.subject_name}</p>
+                    <p>${convo.last_message}</p>
+                    <small>${formatTime(convo.last_message_time)}</small>
+                `;
+            } else if (currentUser.role === 'parent') {
+                previewContent = `
+                    <h4>${convo.student_name} - Teacher</h4>
+                    <p>${convo.last_message}</p>
+                    <small>${formatTime(convo.last_message_time)}</small>
+                `;
+            } else {
+                previewContent = `
+                    <h4>${convo.teacher_name} - ${convo.subject_name}</h4>
+                    <p>${convo.last_message}</p>
+                    <small>${formatTime(convo.last_message_time)}</small>
+                `;
             }
             
-            preview.innerHTML = `
-                <h4>${convo.student_name} (${convo.recipient_role})</h4>
-                <p>${convo.last_message}</p>
-                <small>${formatTime(convo.last_message_time)}</small>
-            `;
+            preview.innerHTML = previewContent;
             
             preview.addEventListener('click', () => {
-                currentStudentId = convo.student_id;
-                currentRecipientRole = convo.recipient_role;
-                studentSelect.value = currentStudentId;
-                recipientRoleSelect.value = currentRecipientRole;
+                if (currentUser.role === 'teacher') {
+                    currentStudentId = convo.student_id;
+                    currentRecipientRole = convo.recipient_role;
+                    currentSubjectId = convo.subject_id;
+                    studentSelect.value = currentStudentId;
+                    recipientRoleSelect.value = currentRecipientRole;
+                    subjectSelect.value = currentSubjectId;
+                } else if (currentUser.role === 'parent') {
+                    currentStudentId = convo.student_id;
+                    studentSelect.value = currentStudentId;
+                } else {
+                    currentTeacherId = convo.teacher_id;
+                    currentSubjectId = convo.subject_id;
+                    teacherSelect.value = currentTeacherId;
+                    subjectSelect.value = currentSubjectId;
+                }
+                
                 renderMessages();
                 
                 // Update active state
@@ -235,21 +344,42 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderMessages() {
         messagesContainer.innerHTML = '';
         
-        if (!currentStudentId || !currentRecipientRole) {
-            messagesContainer.innerHTML = '<p>Select a student and recipient type to view messages</p>';
+        // Check if we have enough selection criteria
+        let isValidSelection = false;
+        if (currentUser.role === 'teacher') {
+            isValidSelection = currentStudentId && currentRecipientRole && currentSubjectId;
+        } else if (currentUser.role === 'parent') {
+            isValidSelection = currentStudentId;
+        } else {
+            isValidSelection = currentTeacherId && currentSubjectId;
+        }
+
+        if (!isValidSelection) {
+            messagesContainer.innerHTML = '<p>Please make all required selections to view messages</p>';
             return;
         }
 
-        const filteredMessages = allMessages.filter(msg => 
-            msg.student_id == currentStudentId && 
-            msg.recipient_role == currentRecipientRole
-        );
+        // Filter messages based on current selections
+        const filteredMessages = allMessages.filter(msg => {
+            if (currentUser.role === 'teacher') {
+                return msg.student_id == currentStudentId && 
+                       msg.recipient_role == currentRecipientRole &&
+                       msg.subject_id == currentSubjectId;
+            } else if (currentUser.role === 'parent') {
+                return msg.student_id == currentStudentId && 
+                       msg.recipient_role == 'teacher';
+            } else {
+                return msg.teacher_id == currentTeacherId && 
+                       msg.subject_id == currentSubjectId;
+            }
+        });
 
         if (filteredMessages.length === 0) {
             messagesContainer.innerHTML = '<p>No messages in this conversation</p>';
             return;
         }
 
+        // Display messages
         filteredMessages.forEach(msg => {
             const isSent = msg.sender_id == currentUser.user_id;
             const messageEl = document.createElement('div');
@@ -274,29 +404,64 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle sending a message
     async function handleSendMessage() {
         const text = messageText.value.trim();
-        if (!text || !currentStudentId || !currentRecipientRole) {
-            alert('Please select a student, recipient type, and enter a message');
+        
+        // Validate inputs based on user role
+        let isValid = false;
+        let errorMessage = '';
+        
+        if (currentUser.role === 'teacher') {
+            isValid = currentStudentId && currentRecipientRole && currentSubjectId && text;
+            errorMessage = 'Please select student, recipient type, subject, and enter a message';
+        } else if (currentUser.role === 'parent') {
+            isValid = currentStudentId && text;
+            errorMessage = 'Please select student and enter a message';
+        } else {
+            isValid = currentTeacherId && currentSubjectId && text;
+            errorMessage = 'Please select teacher, subject, and enter a message';
+        }
+
+        if (!isValid) {
+            alert(errorMessage);
             return;
         }
 
         try {
+            // Prepare message data based on user role
+            const messageData = {
+                sender_id: currentUser.user_id,
+                message_text: text
+            };
+
+            if (currentUser.role === 'teacher') {
+                messageData.student_id = currentStudentId;
+                messageData.recipient_role = currentRecipientRole;
+                messageData.subject_id = currentSubjectId;
+            } else if (currentUser.role === 'parent') {
+                messageData.student_id = currentStudentId;
+                messageData.recipient_role = 'teacher';
+            } else {
+                messageData.teacher_id = currentTeacherId;
+                messageData.subject_id = currentSubjectId;
+                messageData.recipient_role = 'teacher';
+            }
+
             const response = await fetch('/api/message-board/post', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    sender_id: currentUser.user_id,
-                    student_id: currentStudentId,
-                    recipient_role: currentRecipientRole,
-                    message_text: text
-                })
+                body: JSON.stringify(messageData)
             });
 
             if (!response.ok) {
                 throw new Error('Failed to send message');
             }
 
+            const newMessage = await response.json();
+            
+            // Add the new message to our local state
+            allMessages.unshift(newMessage.data);
+            
             // Clear input and reload messages
             messageText.value = '';
             await loadMessages();
