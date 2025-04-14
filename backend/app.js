@@ -1,6 +1,6 @@
-// backend/app.js
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const adminRoutes = require('./routes/adminRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
@@ -8,7 +8,6 @@ const parentRoutes = require('./routes/parentRoutes');
 const messageBoardRoutes = require('./routes/messageBoardRoutes');
 require('dotenv').config();
 
-const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -33,13 +32,15 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/parent', parentRoutes);
-app.use('/api/message-board', messageBoardRoutes); // Mount message board routes
+app.use('/api/message-board', messageBoardRoutes);
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
+// Start server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

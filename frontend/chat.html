@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Chat</title>
+    <title>Student Chat</title>
     <link rel="stylesheet" href="css/chat.css">
 </head>
 <body>
     <div class="chat-container">
         <div class="chat-header">
             <h2>Messages</h2>
+            <select id="teacherSelect" class="teacher-select">
+                <option value="" disabled selected>Loading teachers...</option>
+            </select>
         </div>
         
         <div class="messages" id="messagesContainer">
-            <div class="loading-messages">Loading messages...</div>
+            <div class="loading-messages">Please select a teacher</div>
         </div>
         
         <div class="input-area">
-            <input type="text" id="messageInput" placeholder="Type your message...">
-            <button id="sendButton">Send</button>
+            <input type="text" id="messageInput" placeholder="Select a teacher first" disabled>
+            <button id="sendButton" disabled>Send</button>
         </div>
     </div>
 
