@@ -1,45 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat</title>
-  <link rel="stylesheet" href="css/chat.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Chat</title>
+    <link rel="stylesheet" href="css/chat.css">
 </head>
-<body class="chat-page">
-  <div class="chat-container">
-    <div class="chat-header">
-      <h2><i class="fas fa-comments"></i> Messages</h2>
-      <div class="chat-actions">
-        <select id="chatRecipient">
-          <option value="">Select recipient...</option>
-        </select>
-        <button id="newChat"><i class="fas fa-plus"></i> New Chat</button>
-      </div>
-    </div>
-    
-    <div class="chat-main">
-      <div class="chat-list" id="chatList">
-        <div class="chat-list-item loading">
-          <div class="loading-animation"></div>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Messages</h2>
         </div>
-      </div>
-      
-      <div class="chat-thread" id="chatThread">
-        <div class="no-chat-selected">
-          <i class="fas fa-comment-alt"></i>
-          <p>Select a recipient to start chatting</p>
+        
+        <div class="messages" id="messagesContainer">
+            <div class="loading-messages">Loading messages...</div>
         </div>
-      </div>
+        
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="Type your message...">
+            <button id="sendButton">Send</button>
+        </div>
     </div>
-    
-    <div class="chat-input">
-      <textarea id="chatMessage" placeholder="Type your message here..." disabled></textarea>
-      <button id="sendMessage" disabled><i class="fas fa-paper-plane"></i> Send</button>
-    </div>
-  </div>
 
-  <script src="js/chat.js" type="module"></script>
+    <script src="js/chat.js"></script>
 </body>
 </html>
