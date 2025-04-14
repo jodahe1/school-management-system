@@ -6,7 +6,7 @@ if (!student) {
 }
 
 // API base URL
-const API_BASE_URL = 'http://localhost:5000/api/student';
+const API_BASE_URL = 'http://localhost:5000';
 
 // Display student name
 document.getElementById('studentName').textContent = student.username || 'Student';
@@ -41,7 +41,7 @@ function showToast(message, isError = true) {
 // Fetch and display grades
 async function fetchGrades() {
   const grades = await fetchWithErrorHandling(
-    `${student.user_id}/grades`,
+    `api/student/${student.user_id}/grades`,
     'Failed to load grades'
   );
   
@@ -63,7 +63,7 @@ async function fetchGrades() {
 // Fetch and display attendance
 async function fetchAttendance() {
   const attendance = await fetchWithErrorHandling(
-    `${student.user_id}/attendance`,
+    `api/student/${student.user_id}/attendance`,
     'Failed to load attendance'
   );
   
@@ -85,7 +85,7 @@ async function fetchAttendance() {
 // Fetch and display materials
 async function fetchMaterials() {
   const materials = await fetchWithErrorHandling(
-    `${student.user_id}/materials`,
+    `api/student/${student.user_id}/materials`,
     'Failed to load materials'
   );
   
@@ -107,7 +107,7 @@ async function fetchMaterials() {
 // Fetch and display assignments
 async function fetchAssignments() {
   const assignments = await fetchWithErrorHandling(
-    `${student.user_id}/assignments`,
+    `api/student/${student.user_id}/assignments`,
     'Failed to load assignments'
   );
 
@@ -150,7 +150,7 @@ async function submitAssignment(assignmentId) {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/${student.user_id}/assignments/submit`, {
+    const response = await fetch(`${API_BASE_URL}/api/student/${student.user_id}/assignments/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ assignmentId, submittedFilePath }),
@@ -172,11 +172,14 @@ async function submitAssignment(assignmentId) {
 // Check for unread messages
 async function checkUnreadMessages() {
   try {
-    const response = await fetch(`${API_BASE_URL}/${student.user_id}/messages/unread`);
+    const response = await fetch(`${API_BASE_URL}/api/message-board/messages?user_id=${student.user_id}&role=student`);
     if (!response.ok) throw new Error('Failed to check messages');
     
-    const data = await response.json();
-    updateMessageBadge(data.unreadCount || 0);
+    const messages = await response.json();
+    // Get last read timestamp from localStorage
+    const lastRead = localStorage.getItem('lastMessageRead') || '1970-01-01T00:00:00Z';
+    const unreadCount = messages.filter(msg => new Date(msg.posted_at) > new Date(lastRead)).length;
+    updateMessageBadge(unreadCount);
   } catch (error) {
     console.error('Error checking messages:', error);
   }
