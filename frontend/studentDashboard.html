@@ -4,11 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Dashboard</title>
-  <!-- Updated CSS link -->
   <link rel="stylesheet" href="css/studentDashboard.css">
-  <!-- Chart.js for grade trend visualization -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="dashboard-page">
@@ -18,13 +15,17 @@
       <p id="motivationalQuote">Keep shining and achieve your goals!</p>
     </div>
     <div class="header-right">
+      <a href="#chat-section" class="chat-btn" id="chatBtn">
+        <i class="fas fa-comments"></i> Messages
+        <span class="notification-badge" id="messageBadge">0</span>
+      </a>
       <button class="notifications-btn" id="notificationsBtn">
         <i class="fas fa-bell"></i>
         <span class="notification-badge" id="notificationBadge">0</span>
       </button>
-      <a href="#" class="logout-btn" id="logoutBtn">
+      <button class="logout-btn" id="logoutBtn">
         <i class="fas fa-sign-out-alt"></i> Logout
-      </a>
+      </button>
     </div>
   </header>
 
@@ -160,35 +161,18 @@
       </div>
     </section>
 
-    <!-- Chat Section -->
-    <section class="chat-section">
-      <div class="section-header">
-        <h2><i class="fas fa-comments"></i> Chat</h2>
-        <div class="chat-actions">
-          <button id="newChat"><i class="fas fa-plus"></i> New Chat</button>
-        </div>
-      </div>
-      <div class="chat-container">
-        <div class="chat-list" id="chatList">
-          <div class="chat-list-item loading">
-            <div class="loading-animation"></div>
-          </div>
-        </div>
-        <div class="chat-thread" id="chatThread">
-          <div class="no-chat-selected">
-            <i class="fas fa-comment-alt"></i>
-            <p>Select a chat to view messages</p>
-          </div>
-        </div>
-      </div>
-      <div class="chat-input">
-        <input type="text" id="chatMessage" placeholder="Type a message..." disabled>
-        <button id="sendMessage" disabled><i class="fas fa-paper-plane"></i> Send</button>
-      </div>
-    </section>
-  </main>
+   <!-- Replace the entire chat section in studentDashboard.html with this: -->
+<section id="chat-section" class="chat-section">
+  <div class="section-header">
+    <h2><i class="fas fa-comments"></i> Messages</h2>
+    <button id="openChatWindow" class="open-chat-btn">
+      <i class="fas fa-external-link-alt"></i> Open in Full Window
+    </button>
+  </div>
+  <iframe src="chat.html" class="chat-iframe" id="chatIframe"></iframe>
+</section>
 
-  <!-- Notifications Panel (hidden by default) -->
+  <!-- Notifications Panel -->
   <div class="notifications-panel" id="notificationsPanel">
     <div class="notifications-header">
       <h3>Notifications</h3>

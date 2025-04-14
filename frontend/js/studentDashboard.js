@@ -1,4 +1,3 @@
-// Updated studentDashboard.js
 // Load student data from localStorage
 const student = JSON.parse(localStorage.getItem('student'));
 if (!student) {
@@ -22,7 +21,6 @@ async function fetchWithErrorHandling(endpoint, errorMessage) {
     return await response.json();
   } catch (error) {
     console.error(errorMessage, error);
-    // Show user-friendly error message
     showToast(errorMessage);
     return null;
   }
@@ -171,12 +169,40 @@ async function submitAssignment(assignmentId) {
   }
 }
 
+// Check for unread messages
+async function checkUnreadMessages() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/${student.user_id}/messages/unread`);
+    if (!response.ok) throw new Error('Failed to check messages');
+    
+    const data = await response.json();
+    updateMessageBadge(data.unreadCount || 0);
+  } catch (error) {
+    console.error('Error checking messages:', error);
+  }
+}
+
+// Update message notification badge
+function updateMessageBadge(count) {
+  const badge = document.getElementById('messageBadge');
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
 // Initialize all data fetches when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   fetchGrades();
   fetchAttendance();
   fetchMaterials();
   fetchAssignments();
+  checkUnreadMessages();
+
+  // Set interval to check for new messages every 30 seconds
+  setInterval(checkUnreadMessages, 30000);
 
   // Logout functionality
   document.getElementById('logoutBtn').addEventListener('click', () => {

@@ -1,71 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Message Board</title>
-    <link rel="stylesheet" href="./css/chat.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat</title>
+  <link rel="stylesheet" href="css/chat.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>School Message Board</h1>
-            <div class="user-info">
-                <span id="username-display"></span>
-                <button id="logout-btn">Logout</button>
-            </div>
-        </header>
-
-        <div class="chat-container">
-            <div class="sidebar">
-                <div class="user-controls">
-                    <!-- Controls for teachers -->
-                    <div id="teacher-controls">
-                        <select id="recipient-role">
-                            <option value="">Select recipient type</option>
-                            <option value="teacher">Teacher</option>
-                            <option value="parent">Parent</option>
-                            <option value="student">Student</option>
-                        </select>
-                        <select id="student-select" disabled>
-                            <option value="">Select a student</option>
-                        </select>
-                    </div>
-
-                    <!-- Controls for parents -->
-                    <div id="parent-controls">
-                        <select id="student-select" disabled>
-                            <option value="">Select your child</option>
-                        </select>
-                    </div>
-
-                    <!-- Controls for students -->
-                    <div id="student-controls">
-                        <select id="teacher-select" disabled>
-                            <option value="">Select teacher</option>
-                        </select>
-                        <select id="subject-select" disabled>
-                            <option value="">Select subject</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="message-list" id="message-list">
-                    <!-- Messages will be loaded here -->
-                </div>
-            </div>
-
-            <div class="message-area">
-                <div class="messages" id="messages">
-                    <!-- Conversation will be displayed here -->
-                </div>
-                <div class="message-input">
-                    <textarea id="message-text" placeholder="Type your message here..."></textarea>
-                    <button id="send-btn">Send</button>
-                </div>
-            </div>
-        </div>
+<body class="chat-page">
+  <div class="chat-container">
+    <div class="chat-header">
+      <h2><i class="fas fa-comments"></i> Messages</h2>
+      <div class="chat-actions">
+        <select id="chatRecipient">
+          <option value="">Select recipient...</option>
+        </select>
+        <button id="newChat"><i class="fas fa-plus"></i> New Chat</button>
+      </div>
     </div>
+    
+    <div class="chat-main">
+      <div class="chat-list" id="chatList">
+        <div class="chat-list-item loading">
+          <div class="loading-animation"></div>
+        </div>
+      </div>
+      
+      <div class="chat-thread" id="chatThread">
+        <div class="no-chat-selected">
+          <i class="fas fa-comment-alt"></i>
+          <p>Select a recipient to start chatting</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="chat-input">
+      <textarea id="chatMessage" placeholder="Type your message here..." disabled></textarea>
+      <button id="sendMessage" disabled><i class="fas fa-paper-plane"></i> Send</button>
+    </div>
+  </div>
 
-    <script src="js/chat.js"></script>
+  <script src="js/chat.js" type="module"></script>
 </body>
 </html>
