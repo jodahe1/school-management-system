@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Chat</title>
+    <link rel="stylesheet" href="../css/teacherChat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="chat-header">
+        <a href="teacherDashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        <h1>Chat</h1>
+        <span id="teacherName">[Teacher Name]</span>
+    </header>
+
+    <main class="chat-container">
+        <section class="chat-sidebar">
+            <h2>Classes</h2>
+            <select id="classSelect">
+                <option value="">Select a class</option>
+            </select>
+            <h2>Students</h2>
+            <ul id="studentList" class="recipient-list">
+                <li class="loading">Select a class to view students...</li>
+            </ul>
+        </section>
+
+        <section class="chat-main">
+            <div class="recipient-selector">
+                <label for="recipientRole">Send to:</label>
+                <select id="recipientRole">
+                    <option value="">Select recipient</option>
+                    <option value="student">Student</option>
+                    <option value="parent">Parent</option>
+                </select>
+                <span id="selectedStudent">[No student selected]</span>
+            </div>
+            <div id="chatMessages" class="chat-messages">
+                <p class="no-messages">No messages selected</p>
+            </div>
+            <form id="messageForm" class="message-form">
+                <textarea id="messageText" placeholder="Type your message..." required></textarea>
+                <button type="submit"><i class="fas fa-paper-plane"></i> Send</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="./js/teacherChat.js"></script>
+</body>
+</html>

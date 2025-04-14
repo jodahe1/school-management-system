@@ -74,9 +74,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('submissions-view').classList.remove('hidden');
     });
 
+    // Check for unread messages
+    async function checkUnreadMessages() {
+        try {
+            const response = await fetch(`http://localhost:5000/api/message-board/messages?user_id=${teacherId}&role=teacher`);
+            if (!response.ok) throw new Error('Failed to check messages');
+            
+            const messages = await response.json();
+            const lastRead = localStorage.getItem('lastMessageRead') || '1970-01-01T00:00:00Z';
+            const unreadCount = messages.filter(msg => new Date(msg.posted_at) > new Date(lastRead)).length;
+            updateMessageBadge(unreadCount);
+        } catch (error) {
+            console.error('Error checking messages:', error);
+        }
+    }
+
+    // Update message notification badge
+    function updateMessageBadge(count) {
+        const badge = document.getElementById('messageBadge');
+        if (count > 0) {
+            badge.textContent = count;
+            badge.style.display = 'inline-block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
     // Load initial data
     await loadSchedule();
     await loadTeacherClasses();
+    await checkUnreadMessages();
+
+    // Refresh messages every 30 seconds
+    setInterval(checkUnreadMessages, 30000);
 
     // Form submissions
     document.getElementById('attendanceForm').addEventListener('submit', handleAttendanceSubmit);
@@ -505,6 +535,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Logout
     document.getElementById('logoutButton').addEventListener('click', () => {
         localStorage.removeItem('teacher');
-        window.location.href = 'teacherLogin.html';
+        window.location.href = 'teacherLogin.html');
     });
 });

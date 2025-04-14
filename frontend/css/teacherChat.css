@@ -1,0 +1,193 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f4f6f9;
+}
+
+.chat-header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chat-header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.back-btn {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.back-btn i {
+    margin-right: 5px;
+}
+
+.chat-container {
+    display: flex;
+    height: calc(100vh - 70px);
+}
+
+.chat-sidebar {
+    width: 250px;
+    background-color: #ffffff;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.chat-sidebar h2 {
+    font-size: 18px;
+    margin: 0 0 10px;
+}
+
+.chat-sidebar select {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.recipient-list {
+    list-style: none;
+    padding: 0;
+}
+
+.recipient-list li {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.recipient-list li:hover {
+    background-color: #e9ecef;
+}
+
+.recipient-list li.selected {
+    background-color: #007bff;
+    color: white;
+}
+
+.recipient-list .loading {
+    color: #888;
+}
+
+.chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.recipient-selector {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.recipient-selector label {
+    margin-right: 10px;
+}
+
+.recipient-selector select {
+    padding: 8px;
+    font-size: 16px;
+    margin-right: 20px;
+}
+
+.recipient-selector span {
+    font-style: italic;
+}
+
+.chat-messages {
+    flex: 1;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.message {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 70%;
+}
+
+.message.sent {
+    background-color: #007bff;
+    color: white;
+    margin-left: auto;
+}
+
+.message.received {
+    background-color: #e9ecef;
+    margin-right: auto;
+}
+
+.message p {
+    margin: 0 0 5px;
+}
+
+.message .timestamp {
+    font-size: 12px;
+    color: #666;
+    display: block;
+    text-align: right;
+}
+
+.no-messages {
+    text-align: center;
+    color: #888;
+    margin-top: 20px;
+}
+
+.message-form {
+    display: flex;
+    align-items: center;
+}
+
+.message-form textarea {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: none;
+    height: 60px;
+    margin-right: 10px;
+}
+
+.message-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.message-form button:hover {
+    background-color: #0056b3;
+}
+
+.message-form button i {
+    margin-right: 5px;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    z-index: 100...
+
+Something went wrong, please refresh to reconnect or try again.
