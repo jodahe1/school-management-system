@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('[id$="-teacher-id"]').forEach(el => {
         el.value = teacherId;
     });
+
     document.getElementById('teacher-id').value = teacherId;
 
     // Display profile
@@ -535,6 +536,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Logout
     document.getElementById('logoutButton').addEventListener('click', () => {
         localStorage.removeItem('teacher');
-        window.location.href = 'teacherLogin.html');
+        window.location.href = 'teacherLogin.html';
     });
 });
