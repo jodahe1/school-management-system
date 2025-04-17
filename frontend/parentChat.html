@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Chat</title>
-    <link rel="stylesheet" href="./css/teacherChat.css">
+    <title>Parent Chat</title>
+    <link rel="stylesheet" href="./css/parentChat.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <header class="chat-header">
-        <a href="teacherDashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        <a href="parentDashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
         <h1>Chat</h1>
-        <span id="teacherName">[Teacher Name]</span>
+        <span id="parentName">[Parent Name]</span>
     </header>
 
     <main class="chat-container">
         <section class="chat-sidebar">
-            <h2>Classes</h2>
-            <select id="classSelect">
-                <option value="">Select a class</option>
-            </select>
-            <h2>Students</h2>
+            <h2>Child</h2>
             <ul id="studentList" class="recipient-list">
-                <li class="loading">Select a class to view students...</li>
+                <li class="loading">Loading child...</li>
+            </ul>
+            <h2>Teachers</h2>
+            <ul id="teacherList" class="recipient-list">
+                <li class="loading">Loading teachers...</li>
             </ul>
         </section>
 
@@ -31,10 +31,10 @@
                 <label for="recipientRole">Send to:</label>
                 <select id="recipientRole">
                     <option value="">Select recipient</option>
-                    <option value="student">Student</option>
-                    <option value="parent">Parent</option>
+                    <option value="student">Child</option>
+                    <option value="teacher">Teacher</option>
                 </select>
-                <span id="selectedStudent">[No student selected]</span>
+                <span id="selectedRecipient">[No recipient selected]</span>
             </div>
             <div id="chatMessages" class="chat-messages">
                 <p class="no-messages">No messages selected</p>
@@ -46,6 +46,6 @@
         </section>
     </main>
 
-    <script src="./js/teacherChat.js"></script>
+    <script src="./js/parentChat.js"></script>
 </body>
 </html>
