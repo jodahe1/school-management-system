@@ -63,18 +63,12 @@ if (loginForm) {
 
       if (!response.ok) {
         const errData = await response.json();
-        throw new Error(errData.message || 'Invalid username or password');
+        throw new Error(errData.error || 'Invalid username or password');
       }
 
       const data = await response.json();
-      // Store parent data (modify backend to return full user info if needed)
-      const parentData = {
-        user_id: data.parent_id,
-        first_name: username, // Placeholder; update backend to return names
-        last_name: '',
-        email: `${username}@school.com` // Placeholder
-      };
-      localStorage.setItem('parent', JSON.stringify(parentData));
+      // Store parent data from backend response
+      localStorage.setItem('parent', JSON.stringify(data.parent));
       window.location.href = 'parentDashboard.html';
     } catch (error) {
       if (errorMessage) {

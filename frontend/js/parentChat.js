@@ -9,7 +9,7 @@ if (!parent) {
 const API_BASE_URL = 'http://localhost:5000';
 
 // Display parent name
-document.getElementById('parentName').textContent = `${parent.first_name} ${parent.last_name}` || 'Parent';
+document.getElementById('parentName').textContent = parent.username || 'Parent';
 
 // Helper function for API calls
 async function fetchWithErrorHandling(endpoint, errorMessage) {
@@ -72,7 +72,7 @@ async function fetchChild() {
 // Fetch teachers
 async function fetchTeachers() {
     const teachers = await fetchWithErrorHandling(
-        `api/message-board/teachers?parent_id=${parent.user_id}`,
+        `api/message-board/teachers-for-parent?parent_id=${parent.user_id}`,
         'Failed to load teachers'
     );
     
@@ -111,10 +111,11 @@ async function fetchMessages(recipientRole, recipientId) {
     // Filter messages for the selected recipient
     const filteredMessages = messages ? messages.filter(msg => {
         if (recipientRole === 'student') {
-            return msg.student_id === parseInt(recipientId) && msg.recipient_role === 'student';
+            return msg.student_id === parseInt(recipientId) && 
+                   (msg.recipient_role === 'student' || msg.sender_id === parseInt(recipientId));
         } else {
-            return (msg.sender_id === parseInt(recipientId) && msg.sender_role === 'teacher') ||
-                   (msg.recipient_id === parseInt(recipientId) && msg.recipient_role === 'teacher');
+            return (msg.recipient_role === 'teacher' && msg.recipient_id === parseInt(recipientId)) ||
+                   (msg.sender_id === parseInt(recipientId) && msg.recipient_role === 'parent');
         }
     }) : [];
     
@@ -142,7 +143,7 @@ async function fetchMessages(recipientRole, recipientId) {
 async function sendMessage(event) {
     event.preventDefault();
     
-    const recipientRole = document.getElementById('recipientRole').value;
+    const recipientRole = document.getElementById('selectedRecipient').dataset.role;
     const messageText = document.getElementById('messageText').value.trim();
     const selectedRecipient = document.getElementById('selectedRecipient');
     const recipientId = selectedRecipient.dataset.id;
@@ -174,6 +175,14 @@ async function sendMessage(event) {
             payload.student_id = parseInt(recipientId);
         } else {
             payload.recipient_id = parseInt(recipientId);
+            // Include student_id for teacher messages (select first child as context)
+            const children = await fetchWithErrorHandling(
+                `api/parent/children?parent_id=${parent.user_id}`,
+                'Failed to load child information'
+            );
+            if (children && children.length > 0) {
+                payload.student_id = children[0].student_id;
+            }
         }
 
         const response = await fetch(`${API_BASE_URL}/api/message-board/post`, {

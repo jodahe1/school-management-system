@@ -1,6 +1,5 @@
-// controllers/parentController.js
-
 const ParentModel = require('../models/parentModel');
+const db = require('../config/db');
 
 // Parent Login
 exports.login = async (req, res) => {
@@ -12,8 +11,23 @@ exports.login = async (req, res) => {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
 
-        // Return parent_id on successful login
-        res.status(200).json({ message: 'Login successful', parent_id: parent.parent_id });
+        // Fetch user data from users table
+        const userQuery = `
+            SELECT user_id, username, email
+            FROM users
+            WHERE user_id = $1
+        `;
+        const userResult = await db.query(userQuery, [parent.parent_id]);
+        const user = userResult.rows[0];
+
+        res.status(200).json({
+            message: 'Login successful',
+            parent: {
+                user_id: user.user_id,
+                username: user.username,
+                email: user.email
+            }
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
