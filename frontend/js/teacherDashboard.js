@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('[id$="-teacher-id"]').forEach(el => {
         el.value = teacherId;
     });
-
     document.getElementById('teacher-id').value = teacherId;
 
     // Display profile
