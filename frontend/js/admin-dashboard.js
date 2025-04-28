@@ -18,7 +18,7 @@ document.getElementById('delete-students-btn').addEventListener('click', () => {
 // Fetch Analytics Data
 const fetchAnalytics = async () => {
     try {
-        const response = await fetch('http://localhost:5000/api/admin/analytics');
+        const response = await fetch('http://localhost:5000/api/admins/analytics');
         const data = await response.json();
 
         document.getElementById('total-students').textContent = data.total_students || 0;
@@ -46,7 +46,7 @@ document.getElementById('add-student-form').addEventListener('submit', async (ev
     };
 
     try {
-        const response = await fetch('http://localhost:5000/api/admin/add-student', {
+        const response = await fetch('http://localhost:5000/api/students', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
@@ -57,6 +57,7 @@ document.getElementById('add-student-form').addEventListener('submit', async (ev
             document.getElementById('student-message').textContent = 'Student added successfully!';
             document.getElementById('student-message').style.color = 'green';
             document.getElementById('add-student-form').reset();
+            fetchAnalytics(); // Refresh dashboard counts after adding
         } else {
             document.getElementById('student-message').textContent = result.message || 'An error occurred';
             document.getElementById('student-message').style.color = 'red';
@@ -81,7 +82,7 @@ document.getElementById('add-teacher-form').addEventListener('submit', async (ev
     };
 
     try {
-        const response = await fetch('http://localhost:5000/api/admin/add-teacher', {
+        const response = await fetch('http://localhost:5000/api/teachers', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
@@ -92,6 +93,7 @@ document.getElementById('add-teacher-form').addEventListener('submit', async (ev
             document.getElementById('teacher-message').textContent = 'Teacher added successfully!';
             document.getElementById('teacher-message').style.color = 'green';
             document.getElementById('add-teacher-form').reset();
+            fetchAnalytics(); // Refresh dashboard counts after adding
         } else {
             document.getElementById('teacher-message').textContent = result.message || 'An error occurred';
             document.getElementById('teacher-message').style.color = 'red';
@@ -116,7 +118,7 @@ document.getElementById('add-parent-form').addEventListener('submit', async (eve
     };
 
     try {
-        const response = await fetch('http://localhost:5000/api/admin/add-parent', {
+        const response = await fetch('http://localhost:5000/api/parents', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
@@ -127,6 +129,7 @@ document.getElementById('add-parent-form').addEventListener('submit', async (eve
             document.getElementById('parent-message').textContent = 'Parent added successfully!';
             document.getElementById('parent-message').style.color = 'green';
             document.getElementById('add-parent-form').reset();
+            fetchAnalytics(); // Refresh dashboard counts after adding
         } else {
             document.getElementById('parent-message').textContent = result.message || 'An error occurred';
             document.getElementById('parent-message').style.color = 'red';

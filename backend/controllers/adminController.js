@@ -30,25 +30,24 @@ const loginAdmin = async (req, res) => {
 // Fetch Analytics
 const getAnalytics = async (req, res) => {
     try {
+        const allUsers = await adminModel.getAllUsers();
+
+        console.log(allUsers); // ⬅️ ADD THIS LINE
+
         const analytics = {
-            total_students: 0,
-            total_teachers: 0,
-            total_parents: 0,
-            total_admins: 0,
+            total_students: allUsers.filter(user => user.role === 'student').length,
+            total_teachers: allUsers.filter(user => user.role === 'teacher').length,
+            total_parents: allUsers.filter(user => user.role === 'parent').length,
+            total_admins: allUsers.filter(user => user.role === 'admin').length
         };
-        const studentCount = await adminModel.getStudentsByClass();
-        const teacherCount = await adminModel.getAllTeachers();
-        const parentCount = await adminModel.getAllParents();
-        const adminCount = await adminModel.getAllAdmins();
-        analytics.total_students = studentCount.length;
-        analytics.total_teachers = teacherCount.length;
-        analytics.total_parents = parentCount.length;
-        analytics.total_admins = adminCount.length;
+
         res.status(200).json(analytics);
     } catch (error) {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
+
+
 
 // Add Student
 const addStudent = async (req, res) => {

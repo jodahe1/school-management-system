@@ -355,10 +355,119 @@ const getScheduleById = async (scheduleId) => {
         throw error;
     }
 };
+// Create Student
+const createStudent = async (username, password, email, firstName, lastName, dob, classId, parentId) => {
+    try {
+        const userQuery = `
+            INSERT INTO users (username, password_hash, email, role)
+            VALUES ($1, $2, $3, 'student')
+            RETURNING user_id;
+        `;
+        const userRes = await pool.query(userQuery, [username, password, email]);
+        const studentId = userRes.rows[0].user_id;
+
+        const studentQuery = `
+            INSERT INTO students (student_id, first_name, last_name, date_of_birth, class_id, parent_id)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING *;
+        `;
+        const values = [studentId, firstName, lastName, dob, classId, parentId];
+        const result = await pool.query(studentQuery, values);
+
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Create Teacher
+const createTeacher = async (username, password, email, firstName, lastName, subjectTeaches) => {
+    try {
+        const userQuery = `
+            INSERT INTO users (username, password_hash, email, role)
+            VALUES ($1, $2, $3, 'teacher')
+            RETURNING user_id;
+        `;
+        const userRes = await pool.query(userQuery, [username, password, email]);
+        const teacherId = userRes.rows[0].user_id;
+
+        const teacherQuery = `
+            INSERT INTO teachers (teacher_id, first_name, last_name, subject_teaches)
+            VALUES ($1, $2, $3, $4)
+            RETURNING *;
+        `;
+        const values = [teacherId, firstName, lastName, subjectTeaches];
+        const result = await pool.query(teacherQuery, values);
+
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Create Parent
+const createParent = async (username, password, email, firstName, lastName, phoneNumber) => {
+    try {
+        const userQuery = `
+            INSERT INTO users (username, password_hash, email, role)
+            VALUES ($1, $2, $3, 'parent')
+            RETURNING user_id;
+        `;
+        const userRes = await pool.query(userQuery, [username, password, email]);
+        const parentId = userRes.rows[0].user_id;
+
+        const parentQuery = `
+            INSERT INTO parents (parent_id, first_name, last_name, phone_number)
+            VALUES ($1, $2, $3, $4)
+            RETURNING *;
+        `;
+        const values = [parentId, firstName, lastName, phoneNumber];
+        const result = await pool.query(parentQuery, values);
+
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Get All Parents
+const getAllParents = async () => {
+    try {
+        const query = `
+            SELECT 
+                p.parent_id, u.username, u.email, p.first_name, p.last_name, p.phone_number
+            FROM parents p
+            JOIN users u ON p.parent_id = u.user_id;
+        `;
+        const result = await pool.query(query);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+// Fetch All Admins
+const getAllUsers = async () => {
+    try {
+        const query = `
+            SELECT 
+                user_id, username, email, role
+            FROM users
+        `;
+        const result = await pool.query(query);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
 
 module.exports = {
     createAdmin,
     verifyAdmin,
+    getAllUsers,
+    createStudent,
+    createTeacher,
+    createParent,
+    getAllParents,
     getAllClasses,
     getStudentsByClass,
     getStudentDetails,
