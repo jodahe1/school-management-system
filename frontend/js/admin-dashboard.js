@@ -103,7 +103,10 @@ document.getElementById('add-teacher-form').addEventListener('submit', async (ev
         document.getElementById('teacher-message').style.color = 'red';
     }
 });
-
+// Redirect to Manage Schedules Page
+document.getElementById('manage-schedules-btn').addEventListener('click', () => {
+    window.location.href = 'manage-schedules.html';
+});
 // Add Parent Form Submission
 document.getElementById('add-parent-form').addEventListener('submit', async (event) => {
     event.preventDefault();
