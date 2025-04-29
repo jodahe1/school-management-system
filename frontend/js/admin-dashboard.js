@@ -18,7 +18,7 @@ document.getElementById('delete-students-btn').addEventListener('click', () => {
 // Fetch Analytics Data
 const fetchAnalytics = async () => {
     try {
-        const response = await fetch('http://localhost:5000/api/admins/analytics');
+        const response = await fetch('http://localhost:5000/api/admin/analytics');
         const data = await response.json();
 
         document.getElementById('total-students').textContent = data.total_students || 0;
@@ -46,7 +46,7 @@ document.getElementById('add-student-form').addEventListener('submit', async (ev
     };
 
     try {
-        const response = await fetch('http://localhost:5000/api/students', {
+        const response = await fetch('http://localhost:5000/api/admin/students', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
@@ -82,7 +82,7 @@ document.getElementById('add-teacher-form').addEventListener('submit', async (ev
     };
 
     try {
-        const response = await fetch('http://localhost:5000/api/teachers', {
+        const response = await fetch('http://localhost:5000/api/admin/teachers', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
@@ -118,7 +118,7 @@ document.getElementById('add-parent-form').addEventListener('submit', async (eve
     };
 
     try {
-        const response = await fetch('http://localhost:5000/api/parents', {
+        const response = await fetch('http://localhost:5000/api/admin/parents', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
