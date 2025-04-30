@@ -227,13 +227,28 @@ const getAllSchedules = async () => {
 // Add Schedule
 const addSchedule = async (classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime, createdBy) => {
     try {
-        const query = `
+        // Ensure class-teacher-subject relationship exists
+        const checkQuery = `
+            SELECT 1 FROM class_teacher_subject
+            WHERE class_id = $1 AND teacher_id = $2 AND subject_id = $3
+        `;
+        const checkRes = await pool.query(checkQuery, [classId, teacherId, subjectId]);
+        if (checkRes.rowCount === 0) {
+            const insertRelationQuery = `
+                INSERT INTO class_teacher_subject (class_id, teacher_id, subject_id)
+                VALUES ($1, $2, $3)
+            `;
+            await pool.query(insertRelationQuery, [classId, teacherId, subjectId]);
+        }
+
+        // Add schedule
+        const scheduleQuery = `
             INSERT INTO schedules (class_id, teacher_id, subject_id, semester_id, day_of_week, period_number, start_time, end_time, created_by)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             RETURNING *;
         `;
         const values = [classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime, createdBy];
-        const result = await pool.query(query, values);
+        const result = await pool.query(scheduleQuery, values);
         return result.rows[0];
     } catch (error) {
         throw error;
@@ -459,6 +474,21 @@ const getAllUsers = async () => {
         throw error;
     }
 };
+// join teacher with class Subject
+const ensureClassTeacherSubject = async (classId, teacherId, subjectId) => {
+    const existsQuery = `
+        SELECT 1 FROM class_teacher_subject
+        WHERE class_id = $1 AND teacher_id = $2 AND subject_id = $3
+    `;
+    const insertQuery = `
+        INSERT INTO class_teacher_subject (class_id, teacher_id, subject_id)
+        VALUES ($1, $2, $3)
+    `;
+    const res = await pool.query(existsQuery, [classId, teacherId, subjectId]);
+    if (res.rowCount === 0) {
+        await pool.query(insertQuery, [classId, teacherId, subjectId]);
+    }
+};
 
 module.exports = {
     createAdmin,
@@ -486,5 +516,6 @@ module.exports = {
     getAllTeachersForDropdown,
     getAllSubjectsForDropdown,
     getAllSemestersForDropdown,
-    getScheduleById
+    getScheduleById,
+    ensureClassTeacherSubject
 };

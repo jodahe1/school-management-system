@@ -229,8 +229,7 @@ const fetchSchedules = async (req, res) => {
 // Add Schedule
 const addSchedule = async (req, res) => {
     try {
-        const { classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime, createdBy } =
-            req.body;
+        const { classId, teacherId, subjectId, semesterId, dayOfWeek, periodNumber, startTime, endTime, createdBy } = req.body;
         const newSchedule = await adminModel.addSchedule(
             classId,
             teacherId,
@@ -247,6 +246,7 @@ const addSchedule = async (req, res) => {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
+
 
 // Update Schedule
 const updateSchedule = async (req, res) => {
