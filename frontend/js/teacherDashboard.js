@@ -278,45 +278,65 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('Failed to load submissions');
         }
     }
-
     async function loadGradeFormData() {
         try {
-            // Load subjects for dropdown
-            const response = await fetch(`http://localhost:5000/api/teacher/schedule?teacher_id=${teacherId}`);
-            const schedule = await response.json();
-            
+            // 1. Get student and teacher info
+            const studentId = document.getElementById('student-id').value;
+            document.getElementById('grade-student-id').value = studentId;
+    
+            // 2. Fetch schedule and student data in parallel (faster)
+            const [schedule, student] = await Promise.all([
+                fetch(`http://localhost:5000/api/teacher/schedule?teacher_id=${teacherId}`)
+                    .then(res => res.ok ? res.json() : Promise.reject('Failed to load schedule')),
+                fetch(`http://localhost:5000/api/teacher/student?student_id=${studentId}`)
+                    .then(res => res.ok ? res.json() : Promise.reject('Failed to load student'))
+            ]);
+    
+            // 3. Get valid subjects (teacher teaches + student's class)
+            const validSubjects = schedule.filter(item => 
+                item.class_id === student.class_id
+            );
+    
+            // 4. Populate subject dropdown (unique subjects only)
             const subjectSelect = document.getElementById('grade-subject-id');
-            subjectSelect.innerHTML = '';
-            
-            const uniqueSubjects = [...new Set(schedule.map(item => item.subject_id))];
-            uniqueSubjects.forEach(subjectId => {
-                const subject = schedule.find(item => item.subject_id === subjectId);
+            subjectSelect.innerHTML = ''; // Clear existing options
+    
+            // Remove duplicate subjects
+            const uniqueSubjects = [];
+            validSubjects.forEach(item => {
+                if (!uniqueSubjects.some(sub => sub.subject_id === item.subject_id)) {
+                    uniqueSubjects.push({
+                        subject_id: item.subject_id,
+                        subject_name: item.subject_name,
+                        // Track if this is the "most relevant" subject (e.g., current class)
+                        isCurrent: item.class_id === student.class_id // Adjust logic if needed
+                    });
+                }
+            });
+    
+            // Add subjects to dropdown
+            uniqueSubjects.forEach(subject => {
                 const option = document.createElement('option');
                 option.value = subject.subject_id;
                 option.textContent = subject.subject_name;
                 subjectSelect.appendChild(option);
             });
-
-            // Load semesters
-            const semestersResponse = await fetch('http://localhost:5000/api/semesters');
-            const semesters = await semestersResponse.json();
-            
-            const semesterSelect = document.getElementById('grade-semester-id');
-            semesterSelect.innerHTML = '';
-            
-            semesters.forEach(semester => {
-                const option = document.createElement('option');
-                option.value = semester.semester_id;
-                option.textContent = semester.semester_name;
-                if (semester.is_active) option.selected = true;
-                semesterSelect.appendChild(option);
-            });
-
-            // Set student ID
-            document.getElementById('grade-student-id').value = document.getElementById('student-id').value;
+    
+            // 5. AUTO-SELECT THE FIRST SUBJECT (or a specific one)
+            if (uniqueSubjects.length > 0) {
+                subjectSelect.value = uniqueSubjects[0].subject_id; // Select first subject by default
+                // OR: Select a specific subject if you have logic for it
+                // Example: subjectSelect.value = "MATH101"; 
+            }
+    
+            // 6. Set semester (simplified)
+            document.getElementById('grade-semester-id').innerHTML = `
+                <option value="1" selected>Current Semester</option>
+            `;
+    
         } catch (error) {
-            console.error('Error loading grade form data:', error);
-            alert('Failed to load grade form data');
+            console.error('Error loading grade form:', error);
+            alert(`Error: ${error.message || 'Failed to load form'}`);
         }
     }
 
@@ -428,7 +448,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('Failed to record attendance');
         }
     }
-
     async function handleGradeSubmit(e) {
         e.preventDefault();
         
@@ -440,28 +459,27 @@ document.addEventListener('DOMContentLoaded', async () => {
             grade: document.getElementById('grade-value').value,
             comments: document.getElementById('grade-comments').value
         };
-
+        
         try {
             const response = await fetch('http://localhost:5000/api/teacher/grades', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
-
-            const result = await response.json();
+            
             if (response.ok) {
-                alert('Grade assigned successfully!');
-                showStudentSubsection(null);
+                alert('Grade submitted successfully!');
+                showStudentSubsection(null); // Close the form
             } else {
-                alert(`Error: ${result.message}`);
+                const errorData = await response.json();
+                alert(`Error: ${errorData.message || 'Failed to submit grade'}`);
             }
         } catch (error) {
-            console.error('Error assigning grade:', error);
-            alert('Failed to assign grade');
+            console.error('Submission error:', error);
+            alert('Network error - please try again.');
         }
     }
+ 
 
     async function handleMaterialSubmit(e) {
         e.preventDefault();
