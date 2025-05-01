@@ -6,6 +6,7 @@
     <title>Teacher Dashboard</title>
     <link rel="stylesheet" href="./css/teacherstyles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
 </head>
 <body>
     <header>
@@ -58,20 +59,57 @@
             </table>
         </section>
 
-        <!-- Students Section -->
+        <!-- Students Section (Updated for Bulk Attendance) -->
         <section id="students-section" class="hidden">
             <button id="backToClasses" class="back-button">← Back to Classes</button>
-            <h2>Students</h2>
+            <h2>Class: <span id="current-class-name"></span></h2>
+            
+            <!-- Bulk Attendance Controls -->
+            <div class="attendance-controls">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="attendance-subject">Subject:</label>
+                        <select id="attendance-subject" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="attendance-date">Date:</label>
+                        <input type="date" id="attendance-date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="attendance-period">Period:</label>
+                        <select id="attendance-period" class="form-control">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
+                </div>
+                <a href="classroom.html" id="start-attendance" class="attendance-btn" data-class-id="">
+                    <i class="fas fa-clipboard-check"></i> Start Attendance
+                </a>
+            </div>
+
+            <!-- Students Table with Attendance Status -->
             <table id="students-table">
                 <thead>
                     <tr>
                         <th>Student ID</th>
                         <th>Name</th>
                         <th>Email</th>
+                        <th class="attendance-status-header hidden">Status</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
+
+            <button id="submit-attendance" class="submit-btn hidden">
+                <i class="fas fa-save"></i> Submit Attendance
+            </button>
         </section>
 
         <!-- Student Details Section -->
@@ -182,7 +220,7 @@
             </div>
         </section>
 
-        <!-- Attendance Form -->
+        <!-- Individual Attendance Form -->
         <section id="attendance-section" class="hidden">
             <button id="backToStudentFromAttendance" class="back-button">← Back to Student</button>
             <h2>Record Attendance</h2>

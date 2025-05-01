@@ -186,3 +186,34 @@ button[type="submit"]:hover {
         flex-direction: column;
     }
 }
+
+/* Attendance Specific Styles */
+.attendance-controls {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.attendance-btn {
+    background: #17a2b8;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.attendance-btn:hover {
+    background: #138496;
+}
+
+.status-select {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+}
+
+.submit-btn.hidden {
+    display: none;
+}
