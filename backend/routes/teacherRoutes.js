@@ -29,5 +29,6 @@ router.post('/materials', teacherController.uploadMaterials);
 // Assignments
 router.post('/assignments', teacherController.createAssignment);
 router.get('/submissions', teacherController.getSubmissions);
+router.get('/students-by-context', teacherController.getStudentsForContext);
 
 module.exports = router;

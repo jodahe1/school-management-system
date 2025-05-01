@@ -197,6 +197,19 @@ const getStudentDetails = async (student_id) => {
     const result = await pool.query(query, [student_id]);
     return result.rows[0];
 };
+const getStudentsForContext = async (teacher_id, class_id, subject_id, semester_id) => {
+    const isValid = await validateTeacherClassSubject(teacher_id, class_id, subject_id);
+    if (!isValid) return null;
+
+    const query = `
+        SELECT s.student_id, s.first_name, s.last_name, u.email
+        FROM students s
+        JOIN users u ON s.student_id = u.user_id
+        WHERE s.class_id = $1
+    `;
+    const result = await pool.query(query, [class_id]);
+    return result.rows;
+};
 
 module.exports = {
     verifyTeacher,
@@ -211,5 +224,6 @@ module.exports = {
     getTeacherSubmissions,
     getTeacherClasses,
     getClassStudents,
-    getStudentDetails
+    getStudentDetails,
+    getStudentsForContext
 };

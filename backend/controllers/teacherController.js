@@ -159,6 +159,16 @@ const getStudentDetails = async (req, res) => {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
+const getStudentsForContext = async (req, res) => {
+    const { teacher_id, class_id, subject_id, semester_id } = req.query;
+    const students = await teacherModel.getStudentsForContext(teacher_id, class_id, subject_id, semester_id);
+    
+    if (!students) {
+        return res.status(403).json({ message: 'Unauthorized or invalid context' });
+    }
+
+    res.status(200).json(students);
+};
 
 module.exports = {
     loginTeacher,
@@ -171,5 +181,6 @@ module.exports = {
     getSubmissions,
     getTeacherClasses,
     getClassStudents,
-    getStudentDetails
+    getStudentDetails,
+    getStudentsForContext
 };
