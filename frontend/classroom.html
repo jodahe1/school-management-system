@@ -1,65 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classroom Attendance</title>
-    <link rel="stylesheet" href="./css/classroom.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Classroom Attendance</title>
+  <link rel="stylesheet" href="./css/classroom.css" />
 </head>
 <body>
-    <div class="classroom-container">
-        <h1>Classroom Attendance</h1>
-        
-        <!-- Class/Subject Selection -->
-        <div class="form-group">
-            <label for="class-select">Class:</label>
-            <select id="class-select" class="form-control">
-                <option value="">-- Select Class --</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="subject-select">Subject:</label>
-            <select id="subject-select" class="form-control" disabled>
-                <option value="">-- Select Subject --</option>
-            </select>
-        </div>
-        
-        <!-- Date/Period Input -->
-        <div class="form-row">
-            <div class="form-group">
-                <label for="attendance-date">Date:</label>
-                <input type="date" id="attendance-date" class="form-control" value="">
-            </div>
-            
-            <div class="form-group">
-                <label for="period-number">Period:</label>
-                <select id="period-number" class="form-control">
-                    <option value="1">Period 1</option>
-                    <option value="2">Period 2</option>
-                    <!-- Add more periods as needed -->
-                </select>
-            </div>
-        </div>
-        
-        <!-- Student List -->
-        <div class="student-list-container">
-            <h3>Students</h3>
-            <table id="student-table">
-                <thead>
-                    <tr>
-                        <th>Student ID</th>
-                        <th>Name</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-        
-        <button id="submit-attendance" class="submit-btn">Submit Attendance</button>
+  <div class="classroom-container">
+    <h1>Classroom Attendance</h1>
+
+    <!-- Class/Subject Selection -->
+    <div class="form-group">
+      <label for="class-select">Class:</label>
+      <select id="class-select" class="form-control">
+        <option value="">-- Select Class --</option>
+      </select>
     </div>
 
-    <script src="./js/classroom.js"></script>
+    <div class="form-group">
+      <label for="subject-select">Subject:</label>
+      <select id="subject-select" class="form-control" disabled>
+        <option value="">-- Select Subject --</option>
+      </select>
+    </div>
+
+    <!-- Date/Period Input -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="attendance-date">Date:</label>
+        <input type="date" id="attendance-date" class="form-control" value="" />
+      </div>
+
+      <div class="form-group">
+        <label for="period-number">Period:</label>
+        <select id="period-number" class="form-control">
+          <option value="1">Period 1</option>
+          <option value="2">Period 2</option>
+          <option value="3">Period 3</option>
+          <option value="4">Period 4</option>
+          <option value="5">Period 5</option>
+          <option value="6">Period 6</option>
+          <option value="7">Period 7</option>
+          <option value="8">Period 8</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Student List -->
+    <div class="student-list-container">
+      <h3>Students</h3>
+      <table id="student-table">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th class="attendance-status-header hidden">Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Buttons -->
+    <button id="start-attendance" class="btn btn-primary">Start Attendance</button>
+    <button id="submit-attendance" class="submit-btn hidden">Submit Attendance</button>
+  </div>
+
+  <script src="./js/classroom.js"></script>
 </body>
 </html>
