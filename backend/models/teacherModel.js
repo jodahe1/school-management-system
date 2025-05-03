@@ -210,7 +210,41 @@ const getStudentsForContext = async (teacher_id, class_id, subject_id, semester_
     const result = await pool.query(query, [class_id]);
     return result.rows;
 };
+// Create announcement
+const createAnnouncement = async (teacher_id, class_id, subject_id, semester_id, title, content, file_path) => {
+    const query = `
+        INSERT INTO announcements 
+        (teacher_id, class_id, subject_id, semester_id, title, content, file_path)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING *;
+    `;
+    const result = await pool.query(query, [teacher_id, class_id, subject_id, semester_id, title, content, file_path]);
+    return result.rows[0];
+};
 
+// Get class announcements
+const getClassAnnouncements = async (class_id, semester_id) => {
+    const query = `
+        SELECT a.*, t.first_name || ' ' || t.last_name AS teacher_name
+        FROM announcements a
+        JOIN teachers t ON a.teacher_id = t.teacher_id
+        WHERE a.class_id = $1
+        AND (a.semester_id = $2 OR $2 IS NULL)
+        ORDER BY a.created_at DESC;
+    `;
+    const result = await pool.query(query, [class_id, semester_id || null]);
+    return result.rows;
+};
+
+// Validate teacher access for class
+const validateTeacherClass = async (teacher_id, class_id) => {
+    const query = `
+        SELECT 1 FROM class_teacher_subject
+        WHERE teacher_id = $1 AND class_id = $2;
+    `;
+    const result = await pool.query(query, [teacher_id, class_id]);
+    return result.rowCount > 0;
+};
 module.exports = {
     verifyTeacher,
     getTeacherProfile,
@@ -225,5 +259,8 @@ module.exports = {
     getTeacherClasses,
     getClassStudents,
     getStudentDetails,
-    getStudentsForContext
+    getStudentsForContext,
+    createAnnouncement,
+    getClassAnnouncements,
+    validateTeacherClass
 };

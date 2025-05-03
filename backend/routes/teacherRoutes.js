@@ -31,4 +31,6 @@ router.post('/assignments', teacherController.createAssignment);
 router.get('/submissions', teacherController.getSubmissions);
 router.get('/students-by-context', teacherController.getStudentsForContext);
 
+router.post('/announcements', teacherController.createAnnouncement);
+router.get('/announcements', teacherController.getClassAnnouncements);
 module.exports = router;

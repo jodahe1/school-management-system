@@ -169,7 +169,50 @@ const getStudentsForContext = async (req, res) => {
 
     res.status(200).json(students);
 };
+// Create announcement
+const createAnnouncement = async (req, res) => {
+    try {
+        const { teacher_id, class_id, subject_id, semester_id, title, content } = req.body;
+        const file_path = req.file?.path;
 
+        // Validate teacher access
+        const isValidClass = await teacherModel.validateTeacherClass(teacher_id, class_id);
+        if (!isValidClass) {
+            return res.status(403).json({ message: 'Unauthorized for this class' });
+        }
+
+        // Create announcement
+        const announcement = await teacherModel.createAnnouncement(
+            teacher_id, class_id, subject_id, semester_id, title, content, file_path
+        );
+        
+        res.status(201).json({ message: 'Announcement created', announcement });
+    } catch (error) {
+        res.status(500).json({ 
+            message: 'Database error', 
+            error: error.message 
+        });
+    }
+};
+
+// Get class announcements
+const getClassAnnouncements = async (req, res) => {
+    try {
+        const { class_id, semester_id } = req.query;
+        
+        if (!class_id) {
+            return res.status(400).json({ message: 'Class ID required' });
+        }
+
+        const announcements = await teacherModel.getClassAnnouncements(class_id, semester_id);
+        res.status(200).json(announcements);
+    } catch (error) {
+        res.status(500).json({ 
+            message: 'Database error', 
+            error: error.message 
+        });
+    }
+};
 module.exports = {
     loginTeacher,
     getProfile,
@@ -182,5 +225,7 @@ module.exports = {
     getTeacherClasses,
     getClassStudents,
     getStudentDetails,
-    getStudentsForContext
+    getStudentsForContext,
+    createAnnouncement,
+    getClassAnnouncements
 };
