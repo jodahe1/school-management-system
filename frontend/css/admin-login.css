@@ -1,59 +1,177 @@
 /* frontend/css/admin-login.css */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    font-family: 'Manrope', sans-serif;
+    background: #121212;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    color: #e0e0e0;
 }
 
+/* **Floating Gradient Circles (Subtle Depth)** */
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(50, 80, 220, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 80% 70%, rgba(220, 50, 120, 0.1) 0%, transparent 20%);
+    animation: float 20s ease infinite alternate;
+    z-index: -1;
+}
+
+@keyframes float {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(-5%, 5%); }
+    100% { transform: translate(5%, -5%); }
+}
+
+/* **Main Card (Glass Morphism Lite)** */
 .container {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    background: rgba(30, 30, 30, 0.8);
+    padding: 2.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+    width: 380px;
+    transform: scale(0.98);
+    opacity: 0;
+    animation: fadeIn 0.6s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; transform: scale(1); }
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 700;
+    position: relative;
 }
 
+h1::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #4f46e5, #a855f7);
+    margin: 0.8rem auto 0;
+    border-radius: 3px;
+    transform: scaleX(0);
+    transform-origin: center;
+    animation: lineGrow 0.8s 0.5s ease-out forwards;
+}
+
+@keyframes lineGrow {
+    to { transform: scaleX(1); }
+}
+
+/* **Input Fields (Smooth Focus Effect)** */
 form label {
     display: block;
-    margin-top: 10px;
-    font-weight: bold;
+    margin-top: 1.5rem;
+    font-weight: 600;
+    color: #a0a0a0;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
 }
 
 form input {
     width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: rgba(40, 40, 40, 0.6);
+    color: #fff;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
 }
 
+form input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    background: rgba(50, 50, 50, 0.8);
+}
+
+/* **Login Button (Gradient + Hover Lift)** */
 form button {
     width: 100%;
-    padding: 10px;
-    margin-top: 20px;
-    background-color: #007bff;
+    padding: 1rem;
+    margin-top: 2rem;
+    background: linear-gradient(135deg, #4f46e5, #a855f7);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    transform: translateY(0);
 }
 
 form button:hover {
-    background-color: #0056b3;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
 }
 
+form button:active {
+    transform: translateY(0);
+}
+
+/* **Message Popup (Smooth Fade-In)** */
 #message {
-    margin-top: 20px;
+    margin-top: 1.5rem;
     text-align: center;
-    font-weight: bold;
+    font-weight: 500;
+    padding: 1rem;
+    border-radius: 8px;
+    background: rgba(40, 40, 40, 0.6);
+    color: #a0a0a0;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+}
+
+#message.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* **Loading Spinner (For Form Submission)** */
+button.loading {
+    position: relative;
+    color: transparent;
+}
+
+button.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -10px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }

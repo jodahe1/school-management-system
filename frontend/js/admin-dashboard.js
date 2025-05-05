@@ -142,6 +142,33 @@ document.getElementById('add-parent-form').addEventListener('submit', async (eve
         document.getElementById('parent-message').style.color = 'red';
     }
 });
-
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle sidebar navigation
+    const navLinks = document.querySelectorAll('.sidebar-nav a');
+    const contentSections = document.querySelectorAll('.content-section');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all links and sections
+            navLinks.forEach(navLink => navLink.parentElement.classList.remove('active'));
+            contentSections.forEach(section => section.classList.remove('active'));
+            
+            // Add active class to clicked link
+            this.parentElement.classList.add('active');
+            
+            // Show corresponding section
+            const targetId = this.getAttribute('href').substring(1);
+            document.getElementById(targetId).classList.add('active');
+        });
+    });
+    
+    // Initialize with dashboard visible
+    document.querySelector('.sidebar-nav li.active a').click();
+    
+    // Form submission handlers would go here
+    // ...
+});
 // Initialize the Dashboard
 fetchAnalytics();
