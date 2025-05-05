@@ -132,6 +132,55 @@ const getChatMessages = async (studentId, limit = 50, offset = 0) => {
         throw error;
     }
 };
+// Get all announcements for a student
+const getStudentAnnouncements = async (studentId) => {
+    try {
+        const query = `
+            SELECT a.*, t.first_name || ' ' || t.last_name AS teacher_name
+            FROM student_announcements sa
+            JOIN announcements a ON sa.announcement_id = a.announcement_id
+            JOIN teachers t ON a.teacher_id = t.teacher_id
+            WHERE sa.student_id = $1
+            ORDER BY a.created_at DESC;
+        `;
+        const result = await pool.query(query, [studentId]);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Get unread announcements count
+const getUnreadAnnouncementsCount = async (studentId) => {
+    try {
+        const query = `
+            SELECT COUNT(*) 
+            FROM student_announcements sa
+            JOIN announcements a ON sa.announcement_id = a.announcement_id
+            WHERE sa.student_id = $1 AND sa.is_read = FALSE;
+        `;
+        const result = await pool.query(query, [studentId]);
+        return parseInt(result.rows[0].count);
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Mark announcement as read
+const markAnnouncementAsRead = async (studentId, announcementId) => {
+    try {
+        const query = `
+            UPDATE student_announcements
+            SET is_read = TRUE
+            WHERE student_id = $1 AND announcement_id = $2
+            RETURNING *;
+        `;
+        const result = await pool.query(query, [studentId, announcementId]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
 
 module.exports = {
     loginStudent,
@@ -142,4 +191,7 @@ module.exports = {
     getAssignments,
     submitAssignment,
     getChatMessages,
+    getStudentAnnouncements,
+    getUnreadAnnouncementsCount,
+    markAnnouncementAsRead
 };

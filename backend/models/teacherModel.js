@@ -212,16 +212,40 @@ const getStudentsForContext = async (teacher_id, class_id, subject_id, semester_
 };
 // Create announcement
 const createAnnouncement = async (teacher_id, class_id, subject_id, semester_id, title, content, file_path) => {
-    const query = `
-        INSERT INTO announcements 
-        (teacher_id, class_id, subject_id, semester_id, title, content, file_path)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-        RETURNING *;
-    `;
-    const result = await pool.query(query, [teacher_id, class_id, subject_id, semester_id, title, content, file_path]);
-    return result.rows[0];
-};
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
 
+        // 1. Create the announcement
+        const announcementQuery = `
+            INSERT INTO announcements 
+            (teacher_id, class_id, subject_id, semester_id, title, content, file_path)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING *;
+        `;
+        const announcementResult = await client.query(announcementQuery, [
+            teacher_id, class_id, subject_id, semester_id, title, content, file_path
+        ]);
+        const announcement = announcementResult.rows[0];
+
+        // 2. Link to students in the same class
+        const linkQuery = `
+            INSERT INTO student_announcements (announcement_id, student_id)
+            SELECT $1, student_id 
+            FROM students 
+            WHERE class_id = $2;
+        `;
+        await client.query(linkQuery, [announcement.announcement_id, class_id]);
+
+        await client.query('COMMIT');
+        return announcement;
+    } catch (error) {
+        await client.query('ROLLBACK');
+        throw error;
+    } finally {
+        client.release();
+    }
+};
 // Get class announcements
 const getClassAnnouncements = async (class_id, semester_id) => {
     const query = `
@@ -234,6 +258,19 @@ const getClassAnnouncements = async (class_id, semester_id) => {
     `;
     const result = await pool.query(query, [class_id, semester_id || null]);
     return result.rows;
+};
+const linkAnnouncementToStudents = async (announcementId, classId) => {
+    try {
+        const query = `
+            INSERT INTO student_announcements (announcement_id, student_id)
+            SELECT $1, student_id 
+            FROM students 
+            WHERE class_id = $2;
+        `;
+        await pool.query(query, [announcementId, classId]);
+    } catch (error) {
+        throw error;
+    }
 };
 
 // Validate teacher access for class

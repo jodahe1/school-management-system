@@ -27,5 +27,8 @@ router.post('/:studentId/assignments/submit', studentController.submitAssignment
 
 // Fetch Chat Messages (Paginated)
 router.get('/:studentId/chat-messages', studentController.getChatMessages);
-
+// Student Announcements
+router.get('/:studentId/announcements', studentController.getStudentAnnouncements);
+router.get('/:studentId/announcements/unread-count', studentController.getUnreadAnnouncementsCount);
+router.put('/:studentId/announcements/:announcementId/mark-read', studentController.markAnnouncementAsRead);
 module.exports = router;

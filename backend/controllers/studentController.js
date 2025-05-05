@@ -121,7 +121,40 @@ const getChatMessages = async (req, res) => {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
+// Get all announcements for student
+const getStudentAnnouncements = async (req, res) => {
+    try {
+        const { studentId } = req.params;
+        const announcements = await studentModel.getStudentAnnouncements(studentId);
+        res.status(200).json(announcements);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+// Get unread announcements count
+const getUnreadAnnouncementsCount = async (req, res) => {
+    try {
+        const { studentId } = req.params;
+        const count = await studentModel.getUnreadAnnouncementsCount(studentId);
+        res.status(200).json({ count });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
 
+// Mark announcement as read
+const markAnnouncementAsRead = async (req, res) => {
+    try {
+        const { studentId, announcementId } = req.params;
+        const result = await studentModel.markAnnouncementAsRead(studentId, announcementId);
+        if (!result) {
+            return res.status(404).json({ message: 'Announcement not found' });
+        }
+        res.status(200).json({ message: 'Announcement marked as read' });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
 module.exports = {
     loginStudent,
     getStudentInfo,
@@ -131,4 +164,7 @@ module.exports = {
     getAssignments,
     submitAssignment,
     getChatMessages,
+    getStudentAnnouncements,
+    getUnreadAnnouncementsCount,
+    markAnnouncementAsRead
 };
