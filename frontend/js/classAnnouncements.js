@@ -31,6 +31,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadClasses(teacherId) {
     try {
         const response = await fetch(`http://localhost:5000/api/teacher/classes?teacher_id=${teacherId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const classes = await response.json();
         const select = document.getElementById('announcement-class');
         select.innerHTML = '<option value="">Select Class</option>';
@@ -51,6 +54,9 @@ async function loadClasses(teacherId) {
 async function loadSubjects(teacherId, classId) {
     try {
         const response = await fetch(`http://localhost:5000/api/teacher/schedule?teacher_id=${teacherId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const schedule = await response.json();
         const select = document.getElementById('announcement-subject');
         select.innerHTML = '<option value="">All Subjects</option>';
@@ -74,62 +80,84 @@ async function loadSubjects(teacherId, classId) {
 }
 
 // Setup announcement form submission
+// Updated setupAnnouncementForm function
 function setupAnnouncementForm(teacherId) {
     document.getElementById('announcementForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const classId = document.getElementById('announcement-class').value;
         const subjectId = document.getElementById('announcement-subject').value || null;
-        const semesterId = 6; // Hardcoded default value
+        const semesterId = 6; // Hardcoded as requested
+        const title = document.getElementById('announcement-title').value;
+        const content = document.getElementById('announcement-content').value;
         
         if (!classId) {
             alert('Please select a class');
             return;
         }
-
-        const formData = new FormData();
-        formData.append('teacher_id', teacherId);
-        formData.append('class_id', classId);
-        formData.append('subject_id', subjectId);
-        formData.append('semester_id', semesterId);
-        formData.append('title', document.getElementById('announcement-title').value);
-        formData.append('content', document.getElementById('announcement-content').value);
-        
-        const fileInput = document.getElementById('announcement-file');
-        if (fileInput.files[0]) {
-            formData.append('file', fileInput.files[0]);
+        if (!title || !content) {
+            alert('Please fill in both title and content');
+            return;
         }
 
         try {
+            // Create the exact same structure that works in Postman
+            const payload = {
+                teacher_id: teacherId,
+                class_id: classId,
+                subject_id: subjectId,
+                semester_id: semesterId,
+                title: title,
+                content: content,
+                file: "http://localhost:5000/api/teacher/announcements" // Matching Postman
+            };
+
+            console.log("Submitting:", payload); // Debug log
+
             const response = await fetch('http://localhost:5000/api/teacher/announcements', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json' // Crucial header
+                },
+                body: JSON.stringify(payload) // Stringify the object
             });
             
-            if (response.ok) {
-                alert('Announcement posted successfully!');
-                document.getElementById('announcementForm').reset();
-                if (classId) {
-                    loadRecentAnnouncements(classId, semesterId);
-                }
-            } else {
+            if (!response.ok) {
                 const error = await response.json();
-                alert(`Error: ${error.message}`);
+                console.error("Backend error:", error);
+                throw new Error(error.message || 'Failed to post announcement');
+            }
+
+            const result = await response.json();
+            console.log("Success:", result); // Debug log
+            alert('Announcement posted successfully!');
+            document.getElementById('announcementForm').reset();
+            
+            // Refresh announcements list
+            if (classId) {
+                await loadRecentAnnouncements(classId, semesterId);
             }
         } catch (error) {
-            console.error('Error posting announcement:', error);
-            alert('Failed to post announcement');
+            console.error('Full error:', {
+                message: error.message,
+                stack: error.stack,
+                time: new Date().toISOString()
+            });
+            alert(`Error: ${error.message}`);
         }
     });
 }
-
 // Load recent announcements for selected class and semester
 async function loadRecentAnnouncements(classId, semesterId) {
     try {
         const response = await fetch(
-            `http://localhost:5000/api/teacher/announcements?class_id=${classId}` + 
-            (semesterId ? `&semester_id=${semesterId}` : '')
+            `http://localhost:5000/api/teacher/announcements?class_id=${classId}&semester_id=${semesterId}`
         );
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const announcements = await response.json();
         const tbody = document.getElementById('announcements-table');
         tbody.innerHTML = '';
