@@ -1,121 +1,268 @@
-/* General Styles */
-:root {
-    --primary-color: #4a6fa5;
-    --secondary-color: #6b8cae;
-    --accent-color: #4fc3f7;
-    --danger-color: #e57373;
-    --success-color: #81c784;
-    --warning-color: #ffb74d;
-    --dark-color: #2c3e50;
-    --light-color: #f5f7fa;
-    --sidebar-width: 250px;
-    --header-height: 70px;
-    --card-radius: 10px;
-    --transition-speed: 0.3s;
-}
+/* admin-dashboard.css */
 
+/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    background-color: #f0f2f5;
-    color: #333;
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #2E3440 0%, #3B4252 100%);
+    color: #ECEFF4;
     line-height: 1.6;
+    min-height: 100vh;
 }
 
-/* Dashboard Layout */
+/* Subtle Rain Animation */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="20" y="30" width="1" height="5" fill="%233B4252"/><rect x="60" y="50" width="1" height="5" fill="%233B4252"/><rect x="80" y="20" width="1" height="5" fill="%233B4252"/></svg>') repeat;
+    opacity: 0.15;
+    animation: rain 6s linear infinite;
+    z-index: -1;
+}
+
+/* CRT Scanline Effect */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(transparent 50%, rgba(59, 66, 82, 0.1) 51%, transparent 52%);
+    background-size: 100% 4px;
+    animation: scanline 4s linear infinite;
+    z-index: -1;
+}
+
+@keyframes rain {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+@keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+/* Glitch Animation */
+@keyframes glitch {
+    0% { transform: translate(0); }
+    2% { transform: translate(-1px, 1px); }
+    4% { transform: translate(1px, -1px); }
+    6% { transform: translate(0); }
+    100% { transform: translate(0); }
+}
+
+/* Flicker Animation */
+@keyframes flicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.95; }
+    100% { opacity: 1; }
+}
+
+/* Dashboard Container */
 .dashboard-container {
     display: flex;
     min-height: 100vh;
 }
 
+/* Sidebar */
 .sidebar {
-    width: var(--sidebar-width);
-    background: var(--dark-color);
-    color: white;
-    position: fixed;
-    height: 100vh;
-    transition: all var(--transition-speed) ease;
-    z-index: 100;
+    width: 250px;
+    background: rgba(46, 52, 64, 0.9);
+    border-right: 1px solid #3B4252;
+    display: flex;
+    flex-direction: column;
+    animation: flicker 1.5s ease infinite;
 }
 
 .sidebar-header {
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-bottom: 1px solid #3B4252;
 }
 
 .sidebar-header h2 {
+    font-family: 'Fira Mono', monospace;
+    font-size: 1.5rem;
+    color: #4C566A;
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 1.2rem;
+    gap: 0.5rem;
+    animation: glitch 2s infinite;
 }
 
 .sidebar-nav {
-    padding: 20px 0;
+    flex-grow: 1;
+    padding: 1rem 0;
 }
 
 .sidebar-nav ul {
     list-style: none;
 }
 
-.sidebar-nav li {
-    margin-bottom: 5px;
+.sidebar-nav ul li {
+    margin: 0.5rem 0;
 }
 
-.sidebar-nav a {
+/* Default Sidebar Link Styling (for Add Student, Add Teacher, Add Parent) */
+.sidebar-nav ul li a {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 20px;
-    color: rgba(255, 255, 255, 0.8);
+    padding: 0.75rem 1.5rem;
+    color: #ECEFF4;
     text-decoration: none;
-    transition: all var(--transition-speed) ease;
+    font-size: 1rem;
+    font-family: 'Roboto', sans-serif;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
-.sidebar-nav a:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    padding-left: 25px;
+.sidebar-nav ul li a i {
+    margin-right: 0.75rem;
 }
 
-.sidebar-nav li.active a {
-    background: var(--primary-color);
-    color: white;
+.sidebar-nav ul li a:hover,
+.sidebar-nav ul li.active a {
+    background: rgba(76, 86, 106, 0.2);
+    color: #4C566A;
 }
 
+/* Quick Actions Styling for Specific Sidebar Links */
+.sidebar-nav ul li a[href="#dashboard"],
+.sidebar-nav ul li a[href="#edit-students-parents"],
+.sidebar-nav ul li a[href="#manage-teachers"],
+.sidebar-nav ul li a[href="#delete-students"],
+.sidebar-nav ul li a[href="#manage-schedules"] {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    margin: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-family: 'Fira Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.sidebar-nav ul li a[href="#dashboard"] {
+    background: rgba(76, 86, 106, 0.2);
+    color: #ECEFF4;
+    border: 1px solid #4C566A;
+}
+
+.sidebar-nav ul li a[href="#edit-students-parents"] {
+    background: rgba(94, 129, 172, 0.2);
+    color: #ECEFF4;
+    border: 1px solid #4C566A;
+}
+
+.sidebar-nav ul li a[href="#manage-teachers"] {
+    background: rgba(67, 76, 94, 0.2);
+    color: #ECEFF4;
+    border: 1px solid #4C566A;
+}
+
+.sidebar-nav ul li a[href="#delete-students"] {
+    background: rgba(86, 66, 82, 0.2);
+    color: #ECEFF4;
+    border: 1px solid #4C566A;
+}
+
+.sidebar-nav ul li a[href="#manage-schedules"] {
+    background: rgba(59, 66, 82, 0.2);
+    color: #ECEFF4;
+    border: 1px solid #4C566A;
+}
+
+.sidebar-nav ul li a[href="#dashboard"]:hover,
+.sidebar-nav ul li a[href="#edit-students-parents"]:hover,
+.sidebar-nav ul li a[href="#manage-teachers"]:hover,
+.sidebar-nav ul li a[href="#delete-students"]:hover,
+.sidebar-nav ul li a[href="#manage-schedules"]:hover,
+.sidebar-nav ul li.active a[href="#dashboard"],
+.sidebar-nav ul li.active a[href="#edit-students-parents"],
+.sidebar-nav ul li.active a[href="#manage-teachers"],
+.sidebar-nav ul li.active a[href="#delete-students"],
+.sidebar-nav ul li.active a[href="#manage-schedules"] {
+    background: #4C566A;
+    color: #2E3440;
+    transform: translateY(-1px);
+}
+
+/* Sidebar Footer */
 .sidebar-footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    padding: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-top: 1px solid #3B4252;
 }
 
 .sidebar-footer a {
     display: flex;
     align-items: center;
-    gap: 10px;
-    color: rgba(255, 255, 255, 0.8);
+    color: #ECEFF4;
     text-decoration: none;
-    transition: all var(--transition-speed) ease;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+.sidebar-footer a i {
+    margin-right: 0.75rem;
 }
 
 .sidebar-footer a:hover {
-    color: white;
+    color: #4C566A;
 }
 
+/* Main Content */
 .main-content {
-    flex: 1;
-    margin-left: var(--sidebar-width);
-    transition: all var(--transition-speed) ease;
+    flex-grow: 1;
+    padding: 2rem;
+    background: rgba(46, 52, 64, 0.9);
 }
 
+/* Main Header */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.main-header h1 {
+    font-family: 'Fira Mono', monospace;
+    font-size: 2rem;
+    color: #4C566A;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: glitch 2s infinite;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-info span {
+    font-size: 1rem;
+    color: #ECEFF4;
+}
+
+.user-avatar i {
+    font-size: 2rem;
+    color: #4C566A;
+}
+
+/* Content Section */
 .content-section {
     display: none;
 }
@@ -124,298 +271,540 @@ body {
     display: block;
 }
 
-.main-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    height: var(--header-height);
-    position: sticky;
-    top: 0;
-    z-index: 90;
-}
-
-.main-header h1 {
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--light-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: var(--primary-color);
-}
-
 .content-wrapper {
-    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* Analytics Section */
 .analytics {
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
 }
 
 .analytics h2 {
-    margin-bottom: 20px;
+    font-family: 'Fira Mono', monospace;
+    font-size: 1.5rem;
+    color: #ECEFF4;
+    margin-bottom: 1rem;
     display: flex;
     align-items: center;
-    gap: 10px;
-    color: var(--dark-color);
+    gap: 0.5rem;
 }
 
 #analytics-data {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
 }
 
 .card {
-    background: white;
-    border-radius: var(--card-radius);
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    background: rgba(59, 66, 82, 0.2);
+    border-radius: 6px;
+    padding: 1rem;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 1rem;
+    transition: transform 0.2s ease;
+    animation: flicker 1.5s ease infinite;
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transform: scale(1.03);
 }
 
 .card-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: white;
-}
-
-.card-icon.students {
-    background: var(--primary-color);
-}
-
-.card-icon.teachers {
-    background: var(--success-color);
-}
-
-.card-icon.parents {
-    background: var(--accent-color);
-}
-
-.card-icon.admins {
-    background: var(--warning-color);
+    font-size: 2rem;
+    color: #4C566A;
 }
 
 .card-info h3 {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 5px;
+    font-size: 1.25rem;
+    color: #ECEFF4;
+    margin-bottom: 0.5rem;
 }
 
 .card-info p {
     font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--dark-color);
+    color: #4C566A;
 }
 
-/* Quick Actions */
+/* Quick Actions Section */
 .quick-actions {
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
 }
 
 .quick-actions h2 {
-    margin-bottom: 20px;
+    font-family: 'Fira Mono', monospace;
+    font-size: 1.5rem;
+    color: #ECEFF4;
+    margin-bottom: 1rem;
     display: flex;
     align-items: center;
-    gap: 10px;
-    color: var(--dark-color);
+    gap: 0.5rem;
 }
 
 .action-buttons {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
+    gap: 1rem;
 }
 
 .action-btn {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: white;
-    border-radius: var(--card-radius);
+    padding: 1rem;
+    border-radius: 6px;
     text-decoration: none;
-    color: var(--dark-color);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: all var(--transition-speed) ease;
+    font-family: 'Fira Mono', monospace;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .action-btn i {
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.action-btn span {
-    font-weight: 500;
+    margin-right: 0.75rem;
+    font-size: 1.25rem;
 }
 
 .action-btn.edit {
-    color: var(--primary-color);
+    background: rgba(94, 129, 172, 0.2);
+    color: #ECEFF4;
+    border: 1px solid #4C566A;
 }
 
 .action-btn.manage {
-    color: var(--success-color);
+    background: rgba(67, 76, 94, 0.2);
+    color: #ECEFF4;
+    border: 1px solid #4C566A;
 }
 
 .action-btn.delete {
-    color: var(--danger-color);
+    background: rgba(86, 66, 82, 0.2);
+    color: #ECEFF4;
+    border: 1px solid #4C566A;
 }
 
 .action-btn.schedule {
-    color: var(--accent-color);
+    background: rgba(59, 66, 82, 0.2);
+    color: #ECEFF4;
+    border: 1px solid #4C566A;
 }
 
 .action-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    background: #4C566A;
+    color: #2E3440;
+    transform: translateY(-1px);
+}
+
+/* General Container for Embedded Pages */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background: rgba(46, 52, 64, 0.9);
+    border-radius: 8px;
+    border: 1px solid #3B4252;
+}
+
+/* Classes Section */
+#classes-section {
+    padding: 1rem;
+    background: rgba(59, 66, 82, 0.2);
+    border-radius: 6px;
+    animation: flicker 1.5s ease infinite;
+}
+
+#classes-section h2 {
+    font-family: 'Fira Mono', monospace;
+    font-size: 1.25rem;
+    color: #ECEFF4;
+    margin-bottom: 1rem;
+}
+
+#classes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+/* Students Section */
+#students-section {
+    padding: 1rem;
+    background: rgba(59, 66, 82, 0.2);
+    border-radius: 6px;
+    animation: flicker 1.5s ease infinite;
+}
+
+#students-section h2 {
+    font-family: 'Fira Mono', monospace;
+    font-size: 1.25rem;
+    color: #ECEFF4;
+    margin-bottom: 1rem;
+}
+
+#students-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+/* Student Details Section */
+#student-details-section {
+    padding: 1rem;
+    background: rgba(67, 76, 94, 0.9);
+    border-radius: 6px;
+    animation: flicker 1.5s ease infinite;
+}
+
+#student-details-section h2,
+#student-details-section h3 {
+    font-family: 'Fira Mono', monospace;
+    font-size: 1.25rem;
+    color: #ECEFF4;
+    margin-bottom: 1rem;
+}
+
+#edit-student-form {
+    display: grid;
+    gap: 1rem;
+}
+
+#edit-student-form label {
+    font-size: 1rem;
+    color: #ECEFF4;
+}
+
+#edit-student-form input {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #3B4252;
+    border-radius: 4px;
+    background: rgba(46, 52, 64, 0.5);
+    color: #ECEFF4;
+    transition: border-color 0.2s ease;
+}
+
+#edit-student-form input:focus {
+    border-color: #4C566A;
+    outline: none;
+}
+
+#edit-student-form button {
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-family: 'Fira Mono', monospace;
+    font-weight: 500;
+    border: 1px solid #4C566A;
+    border-radius: 4px;
+    background: rgba(76, 86, 106, 0.2);
+    color: #ECEFF4;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+#edit-student-form button:hover {
+    background: #4C566A;
+    color: #2E3440;
+    transform: translateY(-1px);
+}
+
+/* Teachers List */
+.teachers-list {
+    padding: 1rem;
+    background: rgba(59, 66, 82, 0.2);
+    border-radius: 6px;
+    animation: flicker 1.5s ease infinite;
+}
+
+.teachers-list h2 {
+    font-family: 'Fira Mono', monospace;
+    font-size: 1.25rem;
+    color: #ECEFF4;
+    margin-bottom: 1rem;
+}
+
+#teachers-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+/* Delete Confirmation Section */
+#delete-confirmation-section {
+    padding: 1rem;
+    background: rgba(67, 76, 94, 0.9);
+    border-radius: 6px;
+    animation: flicker 1.5s ease infinite;
+}
+
+#delete-confirmation-section h2 {
+    font-family: 'Fira Mono', monospace;
+    font-size: 1.25rem;
+    color: #ECEFF4;
+    margin-bottom: 1rem;
+}
+
+#delete-confirmation-section p {
+    font-size: 1rem;
+    color: #ECEFF4;
+    margin-bottom: 1rem;
+}
+
+#confirm-delete-btn,
+#cancel-delete-btn {
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-family: 'Fira Mono', monospace;
+    font-weight: 500;
+    border: 1px solid #4C566A;
+    border-radius: 4px;
+    background: rgba(76, 86, 106, 0.2);
+    color: #ECEFF4;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+#confirm-delete-btn:hover,
+#cancel-delete-btn:hover {
+    background: #4C566A;
+    color: #2E3440;
+    transform: translateY(-1px);
+}
+
+/* Schedules Section */
+#schedules-section {
+    padding: 1rem;
+    background: rgba(59, 66, 82, 0.2);
+    border-radius: 6px;
+    animation: flicker 1.5s ease infinite;
+}
+
+#schedules-section h2 {
+    font-family: 'Fira Mono', monospace;
+    font-size: 1.25rem;
+    color: #ECEFF4;
+    margin-bottom: 1rem;
+}
+
+#schedules-list {
+    display: grid;
+    gap: 1rem;
+}
+
+#add-new-schedule-btn {
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-family: 'Fira Mono', monospace;
+    font-weight: 500;
+    border: 1px solid #4C566A;
+    border-radius: 4px;
+    background: rgba(76, 86, 106, 0.2);
+    color: #ECEFF4;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+#add-new-schedule-btn:hover {
+    background: #4C566A;
+    color: #2E3440;
+    transform: translateY(-1px);
+}
+
+/* Schedule Form Section */
+#schedule-form-section {
+    padding: 1rem;
+    background: rgba(67, 76, 94, 0.9);
+    border-radius: 6px;
+    animation: flicker 1.5s ease infinite;
+}
+
+#schedule-form-section h2 {
+    font-family: 'Fira Mono', monospace;
+    font-size: 1.25rem;
+    color: #ECEFF4;
+    margin-bottom: 1rem;
+}
+
+#schedule-form {
+    display: grid;
+    gap: 1rem;
+}
+
+#schedule-form label {
+    font-size: 1rem;
+    color: #ECEFF4;
+}
+
+#schedule-form input,
+#schedule-form select {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #3B4252;
+    border-radius: 4px;
+    background: rgba(46, 52, 64, 0.5);
+    color: #ECEFF4;
+    transition: border-color 0.2s ease;
+}
+
+#schedule-form input:focus,
+#schedule-form select:focus {
+    border-color: #4C566A;
+    outline: none;
+}
+
+#schedule-form button {
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-family: 'Fira Mono', monospace;
+    font-weight: 500;
+    border: 1px solid #4C566A;
+    border-radius: 4px;
+    background: rgba(76, 86, 106, 0.2);
+    color: #ECEFF4;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+#schedule-form button:hover {
+    background: #4C566A;
+    color: #2E3440;
+    transform: translateY(-1px);
 }
 
 /* Add Forms */
 .add-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-width: 800px;
+    display: grid;
+    gap: 1rem;
+    max-width: 600px;
     margin: 0 auto;
 }
 
 .form-row {
-    display: flex;
-    gap: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
 }
 
 .form-group {
-    flex: 1;
     display: flex;
     flex-direction: column;
 }
 
 .form-group label {
-    margin-bottom: 5px;
-    font-size: 0.9rem;
-    color: #666;
-    font-weight: 500;
+    font-size: 1rem;
+    color: #ECEFF4;
+    margin-bottom: 0.5rem;
 }
 
 .form-group input {
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 0.9rem;
-    transition: all var(--transition-speed) ease;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #3B4252;
+    border-radius: 4px;
+    background: rgba(46, 52, 64, 0.5);
+    color: #ECEFF4;
+    transition: border-color 0.2s ease;
 }
 
 .form-group input:focus {
+    border-color: #4C566A;
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.1);
 }
 
 .submit-btn {
-    padding: 12px;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-family: 'Fira Mono', monospace;
     font-weight: 500;
+    border: 1px solid #4C566A;
+    border-radius: 4px;
+    background: rgba(76, 86, 106, 0.2);
+    color: #ECEFF4;
     cursor: pointer;
-    transition: all var(--transition-speed) ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
+    gap: 0.5rem;
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .submit-btn:hover {
-    background: #3a5a8f;
+    background: #4C566A;
+    color: #2E3440;
+    transform: translateY(-1px);
 }
 
-.message {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 5px;
+/* Messages */
+.message,
+#update-message,
+#delete-message {
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    color: #4C566A;
+    margin-top: 1rem;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 992px) {
-    .sidebar {
-        width: 70px;
-        overflow: hidden;
-    }
-    
-    .sidebar-header h2 span,
-    .sidebar-nav a span,
-    .sidebar-footer a span {
-        display: none;
-    }
-    
-    .sidebar-nav a {
-        justify-content: center;
-        padding: 12px 0;
-    }
-    
-    .main-content {
-        margin-left: 70px;
-    }
-}
-
-@media (max-width: 768px) {
-    .form-row {
+/* Responsive Design */
+@media (max-width: 900px) {
+    .dashboard-container {
         flex-direction: column;
-        gap: 15px;
     }
-    
-    #analytics-data {
-        grid-template-columns: 1fr 1fr;
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #3B4252;
     }
-    
+
+    .main-content {
+        padding: 1rem;
+    }
+
     .action-buttons {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 576px) {
-    #analytics-data {
-        grid-template-columns: 1fr;
+@media (max-width: 600px) {
+    .main-header h1 {
+        font-size: 1.75rem;
     }
-    
-    .action-buttons {
-        grid-template-columns: 1fr;
+
+    .analytics h2,
+    .quick-actions h2 {
+        font-size: 1.25rem;
+    }
+
+    .card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .sidebar,
+    .main-header h1,
+    .card,
+    .teachers-list,
+    #classes-section,
+    #students-section,
+    #student-details-section,
+    #delete-confirmation-section,
+    #schedules-section,
+    #schedule-form-section,
+    body::after,
+    body::before {
+        transition: none;
+        animation: none;
+        transform: none;
     }
 }

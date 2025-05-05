@@ -1,69 +1,276 @@
-/* frontend/css/delete-students.css */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+/* delete-students.css */
+
+/* Reset and Base Styles */
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #f5f6f5;
+    color: #1a1a1a;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+    }
+}
+
+/* Container */
 .container {
     max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, Optimizer, 0.1);
+    transition: transform 0.3s ease;
 }
 
+@media (prefers-color-scheme: dark) {
+    .container {
+        background: #2a2a2a;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+}
+
+.container:hover {
+    transform: translateY(-2px);
+}
+
+/* Typography */
 h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #007bff;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
+    letter-spacing: -0.5px;
 }
 
-#classes-list, #students-list {
+h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    h2 {
+        color: #e0e0e0;
+    }
+}
+
+/* Sections */
+section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    transition: opacity 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+    section {
+        background: #333333;
+    }
+}
+
+/* Classes List */
+#classes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.class-item {
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.class-item:hover,
+.class-item.selected {
+    background: #007bff;
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+@media (prefers-color-scheme: dark) {
+    .class-item {
+        background: #444444;
+        border-color: #555555;
+    }
+}
+
+/* Students List */
+#students-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.student-item {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
 }
 
-#classes-list button, #students-list button {
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
+.student-item:hover {
+    background: #f1f5f9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+    .student-item {
+        background: #444444;
+        border-color: #555555;
+    }
+    .student-item:hover {
+        background: #555555;
+    }
+}
+
+.student-item span {
+    font-weight: 500;
+}
+
+/* Buttons */
+button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
 }
 
-#classes-list button:hover, #students-list button:hover {
-    background-color: #0056b3;
+button:focus {
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
 }
 
-#delete-confirmation-section {
-    text-align: center;
-    margin-top: 20px;
+.delete-btn {
+    background: #dc3545;
+    color: #ffffff;
 }
 
-#delete-confirmation-section button {
-    padding: 10px 20px;
-    margin: 5px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.delete-btn:hover {
+    background: #c82333;
 }
 
 #confirm-delete-btn {
-    background-color: #dc3545;
-    color: white;
+    background: #dc3545;
+    color: #ffffff;
+    margin-right: 1rem;
+}
+
+#confirm-delete-btn:hover {
+    background: #c82333;
 }
 
 #cancel-delete-btn {
-    background-color: #6c757d;
-    color: white;
+    background: #6c757d;
+    color: #ffffff;
 }
 
+#cancel-delete-btn:hover {
+    background: #5a6268;
+}
+
+/* Messages */
 #delete-message {
-    margin-top: 10px;
     text-align: center;
-    font-weight: bold;
+    font-weight: 500;
+    color: #28a745;
+    margin-top: 1rem;
+}
+
+#delete-message.error {
+    color: #dc3545;
+}
+
+/* Confirmation Section */
+#delete-confirmation-section p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+#delete-confirmation-section strong {
+    color: #dc3545;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    .container {
+        padding: 1.5rem;
+    }
+
+    #classes-list,
+    #students-list {
+        grid-template-columns: 1fr;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    #confirm-delete-btn {
+        margin-right: 0;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+section:not([style*="display: none"]) {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .container:hover,
+    .class-item,
+    .student-item,
+    button,
+    section:not([style*="display: none"]) {
+        transition: none;
+        animation: none;
+        transform: none;
+    }
 }
