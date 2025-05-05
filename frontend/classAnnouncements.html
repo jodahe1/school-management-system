@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Announcements</title>
+    <link rel="stylesheet" href="./css/teacherstyles2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Teacher Dashboard</h1>
+            <div class="header-actions">
+                <a href="teacherChat.html" class="chat-btn"><i class="fas fa-comments"></i> Chat</a>
+            </div>
+        </header>
+
+        <aside class="dashboard-sidebar">
+            <button onclick="showSection('class-announcements-section')" class="sidebar-btn active">
+                <i class="fas fa-bullhorn"></i> Class Announcements
+            </button>
+            <!-- Keep other sidebar buttons from original dashboard -->
+        </aside>
+
+        <main class="dashboard-main">
+            <!-- Class Announcements Section -->
+            <section id="class-announcements-section" class="dashboard-section active">
+                <h2>Create Announcement</h2>
+                
+                <form id="announcementForm" class="dashboard-form">
+                    <div class="form-group">
+                        <label for="announcement-class">Class:</label>
+                        <select id="announcement-class" required>
+                            <option value="">Select Class</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="announcement-subject">Subject:</label>
+                        <select id="announcement-subject">
+                            <option value="">Select Subject</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="announcement-title">Title:</label>
+                        <input type="text" id="announcement-title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="announcement-content">Content:</label>
+                        <textarea id="announcement-content" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="announcement-file">Attachment:</label>
+                        <input type="file" id="announcement-file">
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Post Announcement</button>
+                </form>
+
+                <h2>Recent Announcements</h2>
+                <div class="table-container">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Class</th>
+                                <th>Subject</th>
+                                <th>Date</th>
+                                <th>Teacher</th>
+                            </tr>
+                        </thead>
+                        <tbody id="announcements-table">
+                            <!-- Announcements will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="./js/classAnnouncements.js"></script>
+</body>
+</html>
