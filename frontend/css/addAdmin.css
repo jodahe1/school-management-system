@@ -1,59 +1,148 @@
 /* frontend/css/addAdmin.css */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    font-family: 'Rajdhani', 'Titillium Web', 'Orbitron', sans-serif;
+    background: radial-gradient(circle at center, #0f2027 0%, #203a43 50%, #2c5364 100%);
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    color: #e0e0e0;
 }
 
 .container {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    background: rgba(20, 30, 40, 0.9);
+    padding: 2.5rem;
+    border-radius: 0;
+    box-shadow: 0 0 20px rgba(0, 150, 255, 0.3);
+    width: 400px;
+    border: 1px solid rgba(0, 150, 255, 0.2);
+    border-top: 3px solid #0096ff;
+    position: relative;
+    overflow: hidden;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #0096ff, transparent);
+    animation: scanline 3s linear infinite;
+}
+
+@keyframes scanline {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
+    color: #0096ff;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(0, 150, 255, 0.5);
 }
 
 form label {
     display: block;
-    margin-top: 10px;
-    font-weight: bold;
+    margin-top: 1.5rem;
+    font-weight: 500;
+    color: #a0b0c0;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
 }
 
 form input {
     width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 0.9rem 1rem 0.9rem 3rem;
+    margin-top: 0.5rem;
+    border: 1px solid #2a3a4a;
+    border-radius: 0;
+    font-size: 0.95rem;
+    background-color: rgba(10, 20, 30, 0.7);
+    color: #e0e0e0;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    font-family: 'Courier New', monospace;
+}
+
+form input:focus {
+    outline: none;
+    border-color: #0096ff;
+    box-shadow: 0 0 0 2px rgba(0, 150, 255, 0.3);
+    background-color: rgba(15, 30, 45, 0.9);
 }
 
 form button {
     width: 100%;
-    padding: 10px;
-    margin-top: 20px;
-    background-color: #28a745;
-    color: white;
+    padding: 1rem;
+    margin-top: 2.5rem;
+    background: linear-gradient(to right, #0062ff, #0096ff);
+    color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 0;
     cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 100, 255, 0.4);
+    position: relative;
+    overflow: hidden;
 }
 
 form button:hover {
-    background-color: #218838;
+    background: linear-gradient(to right, #0096ff, #0062ff);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 100, 255, 0.6);
+}
+
+form button:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(0, 100, 255, 0.4);
 }
 
 #message {
-    margin-top: 20px;
+    margin-top: 1.5rem;
     text-align: center;
-    font-weight: bold;
+    font-weight: 500;
+    padding: 0.8rem;
+    border-radius: 0;
+    font-size: 0.9rem;
+    background-color: rgba(0, 50, 100, 0.3);
+    border-left: 3px solid #0096ff;
+    color: #a0b0c0;
 }
+
+/* Terminal-style input indicators */
+#username {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%230096ff' viewBox='0 0 16 16'%3E%3Cpath d='M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 1rem center;
+    background-size: 1rem;
+}
+
+#email {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%230096ff' viewBox='0 0 16 16'%3E%3Cpath d='M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 1rem center;
+    background-size: 1rem;
+}
+
+#password {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%230096ff' viewBox='0 0 16 16'%3E%3Cpath d='M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 1rem center;
+    background-size: 1rem;
+}
+
+/* Add this to your HTML head for the fonts */
+/*  */

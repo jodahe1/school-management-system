@@ -16,7 +16,7 @@ document.getElementById('adminForm').addEventListener('submit', async (event) =>
 
     try {
         // Send POST request to backend
-        const response = await fetch('http://localhost:5000/api/admin/add', {
+        const response = await fetch('http://localhost:5000/api/admins/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -1,292 +1,150 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    // Check if student is logged in
+document.addEventListener('DOMContentLoaded', () => {
     const student = JSON.parse(localStorage.getItem('student'));
+
     if (!student) {
-        window.location.href = 'studentLogin.html';
+        window.location.href = '../studentLogin.html';
         return;
     }
 
-    // Set student info in sidebar
     document.getElementById('studentName').textContent = `${student.first_name} ${student.last_name}`;
-    document.getElementById('studentClass').textContent = `Class: ${student.class_name}`; // Remove fallback
+    document.getElementById('studentClass').textContent = `Class: ${student.class_name}`;
 
-    // DOM Elements
     const announcementList = document.getElementById('announcementList');
     const filterSubject = document.getElementById('filterSubject');
     const filterDate = document.getElementById('filterDate');
-    const logoutBtn = document.getElementById('logoutBtn');
     const unreadCount = document.getElementById('unreadCount');
-    const modal = document.getElementById('announcementModal');
-    const closeModal = document.querySelector('.close-modal');
+    const logoutBtn = document.getElementById('logoutBtn');
 
-    // Load announcements
+    const modal = document.getElementById('announcementModal');
+    const closeModal = modal.querySelector('.close-modal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalTeacher = document.getElementById('modalTeacher');
+    const modalDate = document.getElementById('modalDate');
+    const modalSubject = document.getElementById('modalSubject');
+    const modalContent = document.getElementById('modalContent');
+    const modalAttachment = document.getElementById('modalAttachment');
+
     let announcements = [];
-    let subjects = new Set();
-    
-    // Fetch announcements from API
+
     async function fetchAnnouncements() {
         try {
-            announcementList.innerHTML = `
-                <div class="loading-spinner">
-                    <div class="spinner"></div>
-                    <p>Loading announcements...</p>
-                </div>
-            `;
-            
-            const response = await fetch(`http://localhost:5000/api/student/${student.student_id}/announcements`);
-            
-            if (!response.ok) {
-                throw new Error('Failed to fetch announcements');
-            }
-            
-            announcements = await response.json();
+            const res = await fetch(`http://localhost:5000/api/student/${student.student_id}/announcements`);
+            if (!res.ok) throw new Error('Failed to fetch announcements');
+
+            announcements = await res.json();
+            renderFilterOptions(announcements);
             renderAnnouncements(announcements);
-            updateUnreadCount();
-            
-            // Clear existing options first
-            filterSubject.innerHTML = '<option value="all">All Subjects</option>';
-            
-            // Extract unique subjects from announcements
-            const uniqueSubjects = new Set();
-            announcements.forEach(ann => {
-                if (ann.subject_name && ann.subject_name.trim() !== '') {
-                    uniqueSubjects.add(ann.subject_name);
-                }
-            });
-    
-            // Add subject options
-            uniqueSubjects.forEach(subject => {
-                const option = document.createElement('option');
-                option.value = subject;
-                option.textContent = subject;
-                filterSubject.appendChild(option);
-            });
-    
+            updateUnreadCount(announcements);
         } catch (error) {
-            console.error('Error fetching announcements:', error);
-            announcementList.innerHTML = `
-                <div class="error-message">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <p>${error.message}</p>
-                    <button id="retryButton">Retry</button>
-                </div>
-            `;
-            document.getElementById('retryButton').addEventListener('click', fetchAnnouncements);
+            console.error('Error:', error);
+            announcementList.innerHTML = `<p class="error-message">Error loading announcements.</p>`;
         }
     }
 
-    // Render announcements to the DOM
+    function renderFilterOptions(data) {
+        const subjects = [...new Set(data.map(a => a.subject_name))];
+        subjects.forEach(subject => {
+            const option = document.createElement('option');
+            option.value = subject;
+            option.textContent = subject;
+            filterSubject.appendChild(option);
+        });
+    }
+
     function renderAnnouncements(data) {
-        if (data.length === 0) {
-            announcementList.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-bullhorn"></i>
-                    <p>No announcements found</p>
-                </div>
-            `;
+        announcementList.innerHTML = '';
+
+        if (!data.length) {
+            announcementList.innerHTML = '<p>No announcements found.</p>';
             return;
         }
-        
-        announcementList.innerHTML = '';
-        
+
         data.forEach(announcement => {
-            const announcementCard = document.createElement('div');
-            announcementCard.className = `announcement-card ${announcement.is_read ? '' : 'unread'}`;
-            announcementCard.dataset.id = announcement.announcement_id;
-            
-            const date = new Date(announcement.created_at).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            announcementCard.innerHTML = `
-                <div class="announcement-header">
-                    <h3 class="announcement-title">
-                        ${announcement.title}
-                        ${announcement.is_important ? '<i class="fas fa-exclamation-circle"></i>' : ''}
-                    </h3>
-                    <span class="announcement-date">${date}</span>
-                </div>
-                <div class="announcement-meta">
-                    <span class="announcement-teacher">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        ${announcement.teacher_name}
-                    </span>
-                </div>
-                <div class="announcement-content">
-                    ${announcement.content}
-                </div>
-                <div class="announcement-footer">
-                    <span class="announcement-subject">${announcement.subject_name || 'General'}</span>
-                    ${announcement.file_path ? `
-                        <span class="announcement-attachment">
-                            <i class="fas fa-paperclip"></i>
-                            Attachment
-                        </span>
-                    ` : ''}
-                </div>
+            const card = document.createElement('div');
+            card.className = `announcement-card ${announcement.is_important ? 'important' : ''} ${announcement.is_read ? 'read' : 'unread'}`;
+            card.innerHTML = `
+                <h3>${announcement.title}</h3>
+                <p class="meta">
+                    <span>${announcement.teacher_name}</span> |
+                    <span>${announcement.subject_name}</span> |
+                    <span>${new Date(announcement.created_at).toLocaleString()}</span>
+                </p>
+                <p>${announcement.content.slice(0, 100)}...</p>
             `;
-            
-            announcementList.appendChild(announcementCard);
-            
-            // Add click event to view full announcement
-            announcementCard.addEventListener('click', () => viewAnnouncement(announcement));
+            card.addEventListener('click', () => openModal(announcement));
+            announcementList.appendChild(card);
         });
     }
 
-    // View full announcement in modal
-    function viewAnnouncement(announcement) {
-        const modalTitle = document.getElementById('modalTitle');
-        const modalTeacher = document.getElementById('modalTeacher');
-        const modalDate = document.getElementById('modalDate');
-        const modalSubject = document.getElementById('modalSubject');
-        const modalContent = document.getElementById('modalContent');
-        const modalAttachment = document.getElementById('modalAttachment');
-        
-        const date = new Date(announcement.created_at).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        
+    function openModal(announcement) {
         modalTitle.textContent = announcement.title;
-        modalTeacher.innerHTML = `<i class="fas fa-chalkboard-teacher"></i> ${announcement.teacher_name}`;
-        modalDate.innerHTML = `<i class="far fa-clock"></i> ${date}`;
-        modalSubject.innerHTML = `<i class="fas fa-book"></i> ${announcement.subject_name || 'General'}`;
-        modalContent.innerHTML = announcement.content;
-        
+        modalTeacher.textContent = `Teacher: ${announcement.teacher_name}`;
+        modalDate.textContent = `Date: ${new Date(announcement.created_at).toLocaleString()}`;
+        modalSubject.textContent = `Subject: ${announcement.subject_name}`;
+        modalContent.textContent = announcement.content;
+
         if (announcement.file_path) {
             modalAttachment.innerHTML = `
-                <p><strong>Attachment:</strong></p>
-                <a href="${announcement.file_path}" target="_blank">
-                    <i class="fas fa-paperclip"></i>
-                    Download File
-                </a>
+                <a href="http://localhost:5000${announcement.file_path}" target="_blank">View Attachment</a>
             `;
         } else {
             modalAttachment.innerHTML = '';
         }
-        
-        // Mark as read if unread
-        if (!announcement.is_read) {
-            markAsRead(announcement.announcement_id);
-        }
-        
-        modal.style.display = 'flex';
+
+        modal.style.display = 'block';
+        announcement.is_read = true;
+        updateUnreadCount(announcements);
+        renderAnnouncements(applyFiltersAndSort());
     }
 
-    // Mark announcement as read
-    async function markAsRead(announcementId) {
-        try {
-            const response = await fetch(
-                `http://localhost:5000/api/student/${student.student_id}/announcements/${announcementId}/mark-read`,
-                { method: 'PUT' }
-            );
-            
-            if (response.ok) {
-                // Update local data
-                const announcement = announcements.find(a => a.announcement_id == announcementId);
-                if (announcement) {
-                    announcement.is_read = true;
-                    updateUnreadCount();
-                    
-                    // Update UI
-                    const card = document.querySelector(`.announcement-card[data-id="${announcementId}"]`);
-                    if (card) {
-                        card.classList.remove('unread');
-                    }
-                }
-            }
-        } catch (error) {
-            console.error('Error marking as read:', error);
-        }
+    function updateUnreadCount(data) {
+        const unread = data.filter(a => !a.is_read).length;
+        unreadCount.textContent = unread;
+        unreadCount.style.display = unread > 0 ? 'inline-block' : 'none';
     }
 
-    // Update unread count badge
-    async function updateUnreadCount() {
-        try {
-            const response = await fetch(
-                `http://localhost:5000/api/student/${student.student_id}/announcements/unread-count`
-            );
-            
-            if (response.ok) {
-                const data = await response.json();
-                unreadCount.textContent = data.count || '0';
-                
-                if (data.count > 0) {
-                    unreadCount.style.display = 'flex';
-                } else {
-                    unreadCount.style.display = 'none';
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching unread count:', error);
-        }
-    }
-
-    // Filter announcements
-    function filterAnnouncements() {
-        const subjectFilter = filterSubject.value;
-        const dateFilter = filterDate.value;
-        
+    function applyFiltersAndSort() {
         let filtered = [...announcements];
-        
-        // Apply subject filter
-        if (subjectFilter !== 'all') {
-            filtered = filtered.filter(ann => 
-                ann.subject_name === subjectFilter
-            );
+
+        const subject = filterSubject.value;
+        if (subject !== 'all') {
+            filtered = filtered.filter(a => a.subject_name === subject);
         }
-        
-        // Apply date filter
-        if (dateFilter === 'newest') {
+
+        if (filterDate.value === 'newest') {
             filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         } else {
             filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
         }
-        
-        renderAnnouncements(filtered);
+
+        return filtered;
     }
 
-    // Event Listeners
-    filterSubject.addEventListener('change', filterAnnouncements);
-    filterDate.addEventListener('change', filterAnnouncements);
-    
-    logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('student');
-        window.location.href = 'studentLogin.html';
+    filterSubject.addEventListener('change', () => {
+        const result = applyFiltersAndSort();
+        renderAnnouncements(result);
     });
-    
+
+    filterDate.addEventListener('change', () => {
+        const result = applyFiltersAndSort();
+        renderAnnouncements(result);
+    });
+
     closeModal.addEventListener('click', () => {
         modal.style.display = 'none';
     });
-    
+
     window.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.style.display = 'none';
         }
     });
 
-    // Initial load
-    await fetchAnnouncements();
-});
-// Add this function to handle API errors
-function handleApiError(error) {
-    console.error('API Error:', error);
-    announcementList.innerHTML = `
-        <div class="error-message">
-            <i class="fas fa-exclamation-circle"></i>
-            <p>${error.message || 'Failed to load announcements'}</p>
-            <button id="retryButton" class="retry-btn">
-                <i class="fas fa-sync-alt"></i> Try Again
-            </button>
-        </div>
-    `;
-    document.getElementById('retryButton').addEventListener('click', fetchAnnouncements);
-}
+    logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('student');
+        window.location.href = '../studentLogin.html';
+    });
 
+    // Initial load
+    fetchAnnouncements();
+});
