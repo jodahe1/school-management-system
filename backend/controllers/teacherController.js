@@ -80,7 +80,8 @@ const assignGrades = async (req, res) => {
 // Upload Materials (Updated with validation)
 const uploadMaterials = async (req, res) => {
     try {
-        const { teacher_id, class_id, subject_id, semester_id, title, file_path } = req.body;
+        const { teacher_id, class_id, subject_id, semester_id, title } = req.body;
+        const file_path = req.file?.path;
         
         const isValid = await teacherModel.validateTeacherClassSubject(teacher_id, class_id, subject_id);
         if (!isValid) {
@@ -97,7 +98,8 @@ const uploadMaterials = async (req, res) => {
 // Create Assignment (Updated with validation)
 const createAssignment = async (req, res) => {
     try {
-        const { teacher_id, class_id, subject_id, semester_id, title, description, due_date, file_path } = req.body;
+        const { teacher_id, class_id, subject_id, semester_id, title, description, due_date } = req.body;
+        const file_path = req.file?.path;
         
         const isValid = await teacherModel.validateTeacherClassSubject(teacher_id, class_id, subject_id);
         if (!isValid) {
@@ -159,43 +161,61 @@ const getStudentDetails = async (req, res) => {
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
-const getStudentsForContext = async (req, res) => {
-    const { teacher_id, class_id, subject_id, semester_id } = req.query;
-    const students = await teacherModel.getStudentsForContext(teacher_id, class_id, subject_id, semester_id);
-    
-    if (!students) {
-        return res.status(403).json({ message: 'Unauthorized or invalid context' });
-    }
 
-    res.status(200).json(students);
+const getStudentsForContext = async (req, res) => {
+    try {
+        const { teacher_id, class_id, subject_id, semester_id } = req.query;
+        const students = await teacherModel.getStudentsForContext(teacher_id, class_id, subject_id, semester_id);
+        
+        if (!students) {
+            return res.status(403).json({ message: 'Unauthorized or invalid context' });
+        }
+
+        res.status(200).json(students);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
 };
-// Create announcement
+
+// Create Announcement
 const createAnnouncement = async (req, res) => {
     try {
-        const { teacher_id, class_id, subject_id, semester_id, title, content } = req.body;
+        const { teacher_id, class_id, subject_id, semester_id, title, content, is_important } = req.body;
         const file_path = req.file?.path;
 
         // Validate teacher access
-        const isValidClass = await teacherModel.validateTeacherClass(teacher_id, class_id);
-        if (!isValidClass) {
-            return res.status(403).json({ message: 'Unauthorized for this class' });
+        const isValid = await teacherModel.validateTeacherClassSubject(teacher_id, class_id, subject_id);
+        if (!isValid) {
+            return res.status(403).json({ message: 'Unauthorized for this class/subject' });
         }
 
         // Create announcement
-        const announcement = await teacherModel.createAnnouncement(
-            teacher_id, class_id, subject_id, semester_id, title, content, file_path
+        const result = await teacherModel.createAnnouncement(
+            teacher_id,
+            class_id,
+            subject_id,
+            semester_id,
+            title,
+            content,
+            file_path,
+            is_important || false
         );
-        
-        res.status(201).json({ message: 'Announcement created', announcement });
+
+        res.status(201).json({
+            message: 'Announcement created successfully',
+            announcement_id: result.announcement_id,
+            students_notified: result.students_notified
+        });
     } catch (error) {
+        console.error('Announcement creation failed:', error);
         res.status(500).json({ 
-            message: 'Database error', 
+            message: 'Failed to create announcement',
             error: error.message 
         });
     }
 };
 
-// Get class announcements
+// Get Class Announcements
 const getClassAnnouncements = async (req, res) => {
     try {
         const { class_id, semester_id } = req.query;
@@ -213,6 +233,7 @@ const getClassAnnouncements = async (req, res) => {
         });
     }
 };
+
 module.exports = {
     loginTeacher,
     getProfile,

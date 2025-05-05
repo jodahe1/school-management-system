@@ -1,6 +1,5 @@
 const express = require('express');
 const teacherController = require('../controllers/teacherController');
-
 const router = express.Router();
 
 // Authentication
@@ -31,6 +30,8 @@ router.post('/assignments', teacherController.createAssignment);
 router.get('/submissions', teacherController.getSubmissions);
 router.get('/students-by-context', teacherController.getStudentsForContext);
 
+// Announcements
 router.post('/announcements', teacherController.createAnnouncement);
 router.get('/announcements', teacherController.getClassAnnouncements);
+
 module.exports = router;

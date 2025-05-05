@@ -60,28 +60,50 @@ const validateTeacherClassSubject = async (teacher_id, class_id, subject_id) => 
     return result.rowCount > 0;
 };
 
+// Validate Teacher Class
+const validateTeacherClass = async (teacher_id, class_id) => {
+    const query = `
+        SELECT 1 FROM class_teacher_subject
+        WHERE teacher_id = $1 AND class_id = $2;
+    `;
+    const result = await pool.query(query, [teacher_id, class_id]);
+    return result.rowCount > 0;
+};
+
 // Record Attendance
 const recordAttendance = async (teacher_id, class_id, subject_id, semester_id, date, period_number, attendance) => {
-    const query = `
-        INSERT INTO attendance (student_id, class_id, teacher_id, subject_id, semester_id, date, period_number, status)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        ON CONFLICT (student_id, date, period_number) 
-        DO UPDATE SET status = EXCLUDED.status;
-    `;
-    
-    for (const record of attendance) {
-        await pool.query(query, [
-            record.student_id,
-            class_id,
-            teacher_id,
-            subject_id,
-            semester_id,
-            date,
-            period_number,
-            record.status
-        ]);
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        
+        const query = `
+            INSERT INTO attendance (student_id, class_id, teacher_id, subject_id, semester_id, date, period_number, status)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            ON CONFLICT (student_id, date, period_number) 
+            DO UPDATE SET status = EXCLUDED.status;
+        `;
+        
+        for (const record of attendance) {
+            await client.query(query, [
+                record.student_id,
+                class_id,
+                teacher_id,
+                subject_id,
+                semester_id,
+                date,
+                period_number,
+                record.status
+            ]);
+        }
+        
+        await client.query('COMMIT');
+        return attendance;
+    } catch (error) {
+        await client.query('ROLLBACK');
+        throw error;
+    } finally {
+        client.release();
     }
-    return attendance;
 };
 
 // Assign Grade
@@ -197,6 +219,7 @@ const getStudentDetails = async (student_id) => {
     const result = await pool.query(query, [student_id]);
     return result.rows[0];
 };
+
 const getStudentsForContext = async (teacher_id, class_id, subject_id, semester_id) => {
     const isValid = await validateTeacherClassSubject(teacher_id, class_id, subject_id);
     if (!isValid) return null;
@@ -210,35 +233,54 @@ const getStudentsForContext = async (teacher_id, class_id, subject_id, semester_
     const result = await pool.query(query, [class_id]);
     return result.rows;
 };
-// Create announcement
-const createAnnouncement = async (teacher_id, class_id, subject_id, semester_id, title, content, file_path) => {
+
+// Create Announcement
+const createAnnouncement = async (teacher_id, class_id, subject_id, semester_id, title, content, file_path, is_important = false) => {
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
 
-        // 1. Create the announcement
+        // Create announcement
         const announcementQuery = `
             INSERT INTO announcements 
-            (teacher_id, class_id, subject_id, semester_id, title, content, file_path)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
-            RETURNING *;
+            (teacher_id, class_id, subject_id, semester_id, title, content, file_path, is_important)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            RETURNING announcement_id;
         `;
         const announcementResult = await client.query(announcementQuery, [
-            teacher_id, class_id, subject_id, semester_id, title, content, file_path
+            teacher_id, 
+            class_id, 
+            subject_id, 
+            semester_id, 
+            title, 
+            content, 
+            file_path,
+            is_important
         ]);
-        const announcement = announcementResult.rows[0];
 
-        // 2. Link to students in the same class
+        // Link to students
         const linkQuery = `
-            INSERT INTO student_announcements (announcement_id, student_id)
-            SELECT $1, student_id 
+            INSERT INTO student_announcements 
+            (announcement_id, student_id, is_read)
+            SELECT $1, student_id, FALSE
             FROM students 
-            WHERE class_id = $2;
+            WHERE class_id = $2
+            RETURNING student_id;
         `;
-        await client.query(linkQuery, [announcement.announcement_id, class_id]);
+        const linkResult = await client.query(linkQuery, [
+            announcementResult.rows[0].announcement_id, 
+            class_id
+        ]);
+
+        if (linkResult.rows.length === 0) {
+            throw new Error('No students found in this class');
+        }
 
         await client.query('COMMIT');
-        return announcement;
+        return { 
+            announcement_id: announcementResult.rows[0].announcement_id,
+            students_notified: linkResult.rowCount
+        };
     } catch (error) {
         await client.query('ROLLBACK');
         throw error;
@@ -246,48 +288,34 @@ const createAnnouncement = async (teacher_id, class_id, subject_id, semester_id,
         client.release();
     }
 };
-// Get class announcements
+
+// Get Class Announcements
 const getClassAnnouncements = async (class_id, semester_id) => {
     const query = `
-        SELECT a.*, t.first_name || ' ' || t.last_name AS teacher_name
+        SELECT 
+            a.*, 
+            t.first_name || ' ' || t.last_name AS teacher_name,
+            s.subject_name,
+            c.class_name
         FROM announcements a
         JOIN teachers t ON a.teacher_id = t.teacher_id
+        LEFT JOIN subjects s ON a.subject_id = s.subject_id
+        LEFT JOIN classes c ON a.class_id = c.class_id
         WHERE a.class_id = $1
         AND (a.semester_id = $2 OR $2 IS NULL)
         ORDER BY a.created_at DESC;
     `;
-    const result = await pool.query(query, [class_id, semester_id || null]);
+    const result = await pool.query(query, [class_id, semester_id]);
     return result.rows;
 };
-const linkAnnouncementToStudents = async (announcementId, classId) => {
-    try {
-        const query = `
-            INSERT INTO student_announcements (announcement_id, student_id)
-            SELECT $1, student_id 
-            FROM students 
-            WHERE class_id = $2;
-        `;
-        await pool.query(query, [announcementId, classId]);
-    } catch (error) {
-        throw error;
-    }
-};
 
-// Validate teacher access for class
-const validateTeacherClass = async (teacher_id, class_id) => {
-    const query = `
-        SELECT 1 FROM class_teacher_subject
-        WHERE teacher_id = $1 AND class_id = $2;
-    `;
-    const result = await pool.query(query, [teacher_id, class_id]);
-    return result.rowCount > 0;
-};
 module.exports = {
     verifyTeacher,
     getTeacherProfile,
     getTeacherSchedule,
     validateTeacherAccess,
     validateTeacherClassSubject,
+    validateTeacherClass,
     recordAttendance,
     assignGrade,
     uploadMaterial,
@@ -298,6 +326,5 @@ module.exports = {
     getStudentDetails,
     getStudentsForContext,
     createAnnouncement,
-    getClassAnnouncements,
-    validateTeacherClass
+    getClassAnnouncements
 };

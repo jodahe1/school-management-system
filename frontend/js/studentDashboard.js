@@ -195,7 +195,33 @@ function updateMessageBadge(count) {
     badge.style.display = 'none';
   }
 }
+// Add this to your initialization code
+async function updateAnnouncementBadge() {
+  try {
+    const student = JSON.parse(localStorage.getItem('student'));
+    if (!student) return;
+    
+    const response = await fetch(
+      `http://localhost:5000/api/student/${student.student_id}/announcements/unread-count`
+    );
+    
+    if (response.ok) {
+      const data = await response.json();
+      const badge = document.getElementById('announcementBadge');
+      badge.textContent = data.count || '0';
+      badge.style.display = data.count > 0 ? 'flex' : 'none';
+    }
+  } catch (error) {
+    console.error('Error updating announcement badge:', error);
+  }
+}
 
+// Call this when the page loads and periodically
+document.addEventListener('DOMContentLoaded', () => {
+  updateAnnouncementBadge();
+  // Update every 5 minutes
+  setInterval(updateAnnouncementBadge, 300000);
+});
 // Initialize all data fetches when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   fetchGrades();

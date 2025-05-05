@@ -136,10 +136,25 @@ const getChatMessages = async (studentId, limit = 50, offset = 0) => {
 const getStudentAnnouncements = async (studentId) => {
     try {
         const query = `
-            SELECT a.*, t.first_name || ' ' || t.last_name AS teacher_name
+            SELECT 
+                a.announcement_id,
+                a.title,
+                a.content,
+                a.file_path,
+                a.created_at,
+                a.is_important,
+                a.class_id,
+                a.subject_id,
+                a.semester_id,
+                t.first_name || ' ' || t.last_name AS teacher_name,
+                s.subject_name,
+                c.class_name,
+                sa.is_read
             FROM student_announcements sa
             JOIN announcements a ON sa.announcement_id = a.announcement_id
             JOIN teachers t ON a.teacher_id = t.teacher_id
+            LEFT JOIN subjects s ON a.subject_id = s.subject_id
+            LEFT JOIN classes c ON a.class_id = c.class_id
             WHERE sa.student_id = $1
             ORDER BY a.created_at DESC;
         `;
@@ -155,9 +170,8 @@ const getUnreadAnnouncementsCount = async (studentId) => {
     try {
         const query = `
             SELECT COUNT(*) 
-            FROM student_announcements sa
-            JOIN announcements a ON sa.announcement_id = a.announcement_id
-            WHERE sa.student_id = $1 AND sa.is_read = FALSE;
+            FROM student_announcements 
+            WHERE student_id = $1 AND is_read = FALSE;
         `;
         const result = await pool.query(query, [studentId]);
         return parseInt(result.rows[0].count);
@@ -166,12 +180,14 @@ const getUnreadAnnouncementsCount = async (studentId) => {
     }
 };
 
+
 // Mark announcement as read
 const markAnnouncementAsRead = async (studentId, announcementId) => {
     try {
         const query = `
             UPDATE student_announcements
-            SET is_read = TRUE
+            SET is_read = TRUE,
+                read_at = NOW()
             WHERE student_id = $1 AND announcement_id = $2
             RETURNING *;
         `;
@@ -191,7 +207,7 @@ module.exports = {
     getAssignments,
     submitAssignment,
     getChatMessages,
-    getStudentAnnouncements,
+     getStudentAnnouncements,
     getUnreadAnnouncementsCount,
     markAnnouncementAsRead
 };
