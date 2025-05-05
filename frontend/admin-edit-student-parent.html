@@ -4,56 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Edit Student & Parent</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/admin-edit-student-parent.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Admin - Edit Student & Parent</h1>
-
-        <!-- Classes Section -->
-        <section id="classes-section">
-            <h2>Select a Class</h2>
-            <div id="classes-list">
-                <p>Loading classes...</p>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
             </div>
-        </section>
-
-        <!-- Students Section -->
-        <section id="students-section" style="display: none;">
-            <h2>Students in <span id="selected-class-name"></span></h2>
-            <div id="students-list">
-                <p>Loading students...</p>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="#dashboard" id="dashboard-btn"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#edit-students-parents" id="edit-students-parents-btn"><i class="fas fa-user-edit"></i> Edit Students/Parents</a></li>
+                    <li><a href="#manage-teachers" id="manage-teachers-btn"><i class="fas fa-chalkboard-teacher"></i> Manage Teachers</a></li>
+                    <li><a href="#delete-students" id="delete-students-btn"><i class="fas fa-user-minus"></i> Delete Students</a></li>
+                    <li><a href="#manage-schedules" id="manage-schedules-btn"><i class="fas fa-calendar-alt"></i> Manage Schedules</a></li>
+                    <li><a href="#add-student"><i class="fas fa-user-plus"></i> Add Student</a></li>
+                    <li><a href="#add-teacher"><i class="fas fa-user-plus"></i> Add Teacher</a></li>
+                    <li><a href="#add-parent"><i class="fas fa-user-plus"></i> Add Parent</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
-        </section>
+        </aside>
 
-        <!-- Student Details Section -->
-        <section id="student-details-section" style="display: none;">
-            <h2>Student and Parent Details</h2>
-            <form id="edit-student-form">
-                <h3>Student Information</h3>
-                <label for="student-first-name">First Name:</label>
-                <input type="text" id="student-first-name" name="firstName" required>
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <h1>Admin - Edit Student & Parent</h1>
 
-                <label for="student-last-name">Last Name:</label>
-                <input type="text" id="student-last-name" name="lastName" required>
+                <!-- Classes Section -->
+                <section id="classes-section">
+                    <h2>Select a Class</h2>
+                    <div id="classes-list">
+                        <p>Loading classes...</p>
+                    </div>
+                </section>
 
-                <label for="student-dob">Date of Birth:</label>
-                <input type="date" id="student-dob" name="dob" required>
+                <!-- Students Section -->
+                <section id="students-section" style="display: none;">
+                    <h2>Students in <span id="selected-class-name"></span></h2>
+                    <div id="students-list">
+                        <p>Loading students...</p>
+                    </div>
+                </section>
 
-                <h3>Parent Information</h3>
-                <label for="parent-first-name">First Name:</label>
-                <input type="text" id="parent-first-name" name="firstName" required>
+                <!-- Student Details Section -->
+                <section id="student-details-section" style="display: none;">
+                    <h2>Student and Parent Details</h2>
+                    <form id="edit-student-form">
+                        <h3>Student Information</h3>
+                        <label for="student-first-name">First Name:</label>
+                        <input type="text" id="student-first-name" name="firstName" required>
 
-                <label for="parent-last-name">Last Name:</label>
-                <input type="text" id="parent-last-name" name="lastName" required>
+                        <label for="student-last-name">Last Name:</label>
+                        <input type="text" id="student-last-name" name="lastName" required>
 
-                <label for="parent-phone">Phone Number:</label>
-                <input type="text" id="parent-phone" name="phoneNumber" required>
+                        <label for="student-dob">Date of Birth:</label>
+                        <input type="date" id="student-dob" name="dob" required>
 
-                <button type="submit">Save Changes</button>
-            </form>
-            <p id="update-message"></p>
-        </section>
+                        <h3>Parent Information</h3>
+                        <label for="parent-first-name">First Name:</label>
+                        <input type="text" id="parent-first-name" name="firstName" required>
+
+                        <label for="parent-last-name">Last Name:</label>
+                        <input type="text" id="parent-last-name" name="lastName" required>
+
+                        <label for="parent-phone">Phone Number:</label>
+                        <input type="text" id="parent-phone" name="phoneNumber" required>
+
+                        <button type="submit">Save Changes</button>
+                    </form>
+                    <p id="update-message"></p>
+                </section>
+            </div>
+        </main>
     </div>
 
     <script src="js/admin-edit-student-parent.js"></script>

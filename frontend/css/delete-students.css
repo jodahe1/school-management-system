@@ -8,267 +8,410 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #f5f6f5;
-    color: #1a1a1a;
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #1A1A1A 0%, #4A4A4A 100%);
+    color: #F7F7F2;
     line-height: 1.6;
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: #1a1a1a;
-        color: #e0e0e0;
-    }
+/* Digital Ghost Effect */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(78, 205, 196, 0.05) 0%, transparent 70%);
+    opacity: 0.3;
+    animation: ghostPulse 8s ease-in-out infinite;
+    z-index: -1;
+}
+
+/* Rain Animation */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="20" y="30" width="1" height="5" fill="%234A4A4A"/><rect x="60" y="50" width="1" height="5" fill="%234A4A4A"/><rect x="80" y="20" width="1" height="5" fill="%234A4A4A"/></svg>') repeat;
+    opacity: 0.15;
+    animation: rain 6s linear infinite;
+    z-index: -1;
+}
+
+@keyframes ghostPulse {
+    0% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.1; transform: scale(1.05); }
+    100% { opacity: 0.3; transform: scale(1); }
+}
+
+@keyframes rain {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+/* Scanline Animation */
+body::after:not(:last-child) {
+    content: '';
+    background: linear-gradient(transparent 50%, rgba(78, 205, 196, 0.05) 51%, transparent 52%);
+    background-size: 100% 4px;
+    animation: scanline 4s linear infinite;
+}
+
+@keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+/* Glitch Animation */
+@keyframes glitch {
+    0% { transform: translate(0); }
+    2% { transform: translate(-1px, 1px); }
+    4% { transform: translate(1px, -1px); }
+    6% { transform: translate(0); }
+    100% { transform: translate(0); }
+}
+
+/* Flicker Animation */
+@keyframes flicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.9; }
+    100% { opacity: 1; }
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background: rgba(26, 26, 26, 0.9);
+    border-right: 1px solid #4A4A4A;
+    display: flex;
+    flex-direction: column;
+    animation: flicker 1.5s ease infinite;
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #4A4A4A;
+}
+
+.sidebar-header h2 {
+    font-family: 'Fira Mono', monospace;
+    font-size: 1.5rem;
+    color: #4ECDC4;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: glitch 2s infinite;
+}
+
+.sidebar-nav {
+    flex-grow: 1;
+    padding: 1rem 0;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+}
+
+.sidebar-nav ul li {
+    margin: 0.5rem 0;
+}
+
+/* Default Sidebar Link Styling (for Add Student, Add Teacher, Add Parent) */
+.sidebar-nav ul li a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: #F7F7F2;
+    text-decoration: none;
+    font-size: 1rem;
+    font-family: 'Roboto', sans-serif;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-nav ul li a i {
+    margin-right: 0.75rem;
+}
+
+.sidebar-nav ul li a:hover,
+.sidebar-nav ul li.active a {
+    background: rgba(74, 74, 74, 0.2);
+    color: #4ECDC4;
+}
+
+/* Quick Actions Styling for Specific Sidebar Links */
+.sidebar-nav ul li a[href="#dashboard"],
+.sidebar-nav ul li a[href="#edit-students-parents"],
+.sidebar-nav ul li a[href="#manage-teachers"],
+.sidebar-nav ul li a[href="#delete-students"],
+.sidebar-nav ul li a[href="#manage-schedules"] {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    margin: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-family: 'Fira Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.sidebar-nav ul li a[href="#dashboard"] {
+    background: rgba(74, 74, 74, 0.2);
+    color: #F7F7F2;
+    border: 1px solid #4ECDC4;
+}
+
+.sidebar-nav ul li a[href="#edit-students-parents"] {
+    background: rgba(64, 64, 64, 0.2);
+    color: #F7F7F2;
+    border: 1px solid #4ECDC4;
+}
+
+.sidebar-nav ul li a[href="#manage-teachers"] {
+    background: rgba(54, 54, 54, 0.2);
+    color: #F7F7F2;
+    border: 1px solid #4ECDC4;
+}
+
+.sidebar-nav ul li a[href="#delete-students"] {
+    background: rgba(84, 74, 74, 0.2);
+    color: #F7F7F2;
+    border: 1px solid #4ECDC4;
+}
+
+.sidebar-nav ul li a[href="#manage-schedules"] {
+    background: rgba(44, 44, 44, 0.2);
+    color: #F7F7F2;
+    border: 1px solid #4ECDC4;
+}
+
+.sidebar-nav ul li a[href="#dashboard"]:hover,
+.sidebar-nav ul li a[href="#edit-students-parents"]:hover,
+.sidebar-nav ul li a[href="#manage-teachers"]:hover,
+.sidebar-nav ul li a[href="#delete-students"]:hover,
+.sidebar-nav ul li a[href="#manage-schedules"]:hover,
+.sidebar-nav ul li.active a[href="#dashboard"],
+.sidebar-nav ul li.active a[href="#edit-students-parents"],
+.sidebar-nav ul li.active a[href="#manage-teachers"],
+.sidebar-nav ul li.active a[href="#delete-students"],
+.sidebar-nav ul li.active a[href="#manage-schedules"] {
+    background: #4ECDC4;
+    color: #1A1A1A;
+    transform: translateY(-1px);
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid #4A4A4A;
+}
+
+.sidebar-footer a {
+    display: flex;
+    align-items: center;
+    color: #F7F7F2;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+.sidebar-footer a i {
+    margin-right: 0.75rem;
+}
+
+.sidebar-footer a:hover {
+    color: #4ECDC4;
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    padding: 2rem;
+    background: rgba(26, 26, 26, 0.9);
 }
 
 /* Container */
 .container {
     max-width: 800px;
-    width: 90%;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, Optimizer, 0.1);
-    transition: transform 0.3s ease;
-}
-
-@media (prefers-color-scheme: dark) {
-    .container {
-        background: #2a2a2a;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    }
-}
-
-.container:hover {
-    transform: translateY(-2px);
+    margin: 0 auto;
+    padding: 1.5rem;
+    background: rgba(74, 74, 74, 0.2);
+    border-radius: 8px;
+    border: 1px solid #4A4A4A;
+    animation: flicker 1.5s ease infinite;
 }
 
 /* Typography */
 h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #007bff;
+    font-family: 'Fira Mono', monospace;
+    font-size: 2rem;
+    color: #4ECDC4;
     text-align: center;
-    margin-bottom: 2rem;
-    letter-spacing: -0.5px;
+    margin-bottom: 1.5rem;
+    animation: glitch 2s infinite;
 }
 
 h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #1a1a1a;
+    font-family: 'Fira Mono', monospace;
+    font-size: 1.25rem;
+    color: #F7F7F2;
     margin-bottom: 1rem;
 }
 
-@media (prefers-color-scheme: dark) {
-    h2 {
-        color: #e0e0e0;
-    }
+/* Classes Section */
+#classes-section {
+    padding: 1rem;
+    background: rgba(64, 64, 64, 0.3);
+    border-radius: 6px;
+    animation: flicker 1.5s ease infinite;
 }
 
-/* Sections */
-section {
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    background: #f9fafb;
-    border-radius: 8px;
-    transition: opacity 0.3s ease;
-}
-
-@media (prefers-color-scheme: dark) {
-    section {
-        background: #333333;
-    }
-}
-
-/* Classes List */
 #classes-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
 }
 
-.class-item {
-    background: #ffffff;
-    padding: 1rem;
-    border-radius: 8px;
+#classes-list p {
+    font-size: 1rem;
+    color: #F7F7F2;
     text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 1px solid #e5e7eb;
 }
 
-.class-item:hover,
-.class-item.selected {
-    background: #007bff;
-    color: #ffffff;
-    transform: scale(1.05);
+/* Students Section */
+#students-section {
+    padding: 1rem;
+    background: rgba(64, 64, 64, 0.3);
+    border-radius: 6px;
+    animation: flicker 1.5s ease infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-    .class-item {
-        background: #444444;
-        border-color: #555555;
-    }
-}
-
-/* Students List */
 #students-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
 }
 
-.student-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #ffffff;
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    transition: all 0.3s ease;
-}
-
-.student-item:hover {
-    background: #f1f5f9;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-@media (prefers-color-scheme: dark) {
-    .student-item {
-        background: #444444;
-        border-color: #555555;
-    }
-    .student-item:hover {
-        background: #555555;
-    }
-}
-
-.student-item span {
-    font-weight: 500;
-}
-
-/* Buttons */
-button {
-    padding: 0.75rem 1.5rem;
+#students-list p {
     font-size: 1rem;
-    font-weight: 500;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    outline: none;
+    color: #F7F7F2;
+    text-align: center;
 }
 
-button:focus {
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+#selected-class-name {
+    color: #4ECDC4;
 }
 
-.delete-btn {
-    background: #dc3545;
-    color: #ffffff;
+/* Delete Confirmation Section */
+#delete-confirmation-section {
+    padding: 1rem;
+    background: rgba(84, 84, 84, 0.9);
+    border-radius: 6px;
+    animation: flicker 1.5s ease infinite;
 }
 
-.delete-btn:hover {
-    background: #c82333;
+#delete-confirmation-section p {
+    font-size: 1rem;
+    color: #F7F7F2;
+    margin-bottom: 1rem;
 }
 
-#confirm-delete-btn {
-    background: #dc3545;
-    color: #ffffff;
-    margin-right: 1rem;
+#student-to-delete {
+    color: #4ECDC4;
 }
 
-#confirm-delete-btn:hover {
-    background: #c82333;
-}
-
+#confirm-delete-btn,
 #cancel-delete-btn {
-    background: #6c757d;
-    color: #ffffff;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-family: 'Fira Mono', monospace;
+    font-weight: 500;
+    border: 1px solid #4ECDC4;
+    border-radius: 4px;
+    background: rgba(78, 205, 196, 0.2);
+    color: #F7F7F2;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    margin: 0.5rem;
 }
 
+#confirm-delete-btn:hover,
 #cancel-delete-btn:hover {
-    background: #5a6268;
+    background: #4ECDC4;
+    color: #1A1A1A;
+    transform: translateY(-1px);
 }
 
-/* Messages */
+#confirm-delete-btn:focus,
+#cancel-delete-btn:focus {
+    box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.3);
+}
+
 #delete-message {
     text-align: center;
-    font-weight: 500;
-    color: #28a745;
+    font-size: 1rem;
+    color: #4ECDC4;
     margin-top: 1rem;
 }
 
-#delete-message.error {
-    color: #dc3545;
-}
-
-/* Confirmation Section */
-#delete-confirmation-section p {
-    font-size: 1.1rem;
-    margin-bottom: 1.5rem;
-}
-
-#delete-confirmation-section strong {
-    color: #dc3545;
-}
-
 /* Responsive Design */
+@media (max-width: 900px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #4A4A4A;
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+}
+
 @media (max-width: 600px) {
     h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
+    }
+
+    h2 {
+        font-size: 1.1rem;
     }
 
     .container {
-        padding: 1.5rem;
+        padding: 1rem;
     }
 
-    #classes-list,
-    #students-list {
-        grid-template-columns: 1fr;
-    }
-
-    button {
+    #confirm-delete-btn,
+    #cancel-delete-btn {
         width: 100%;
-        margin-bottom: 0.5rem;
     }
-
-    #confirm-delete-btn {
-        margin-right: 0;
-    }
-}
-
-/* Animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-section:not([style*="display: none"]) {
-    animation: fadeIn 0.5s ease forwards;
 }
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
-    .container:hover,
-    .class-item,
-    .student-item,
-    button,
-    section:not([style*="display: none"]) {
+    .sidebar,
+    .container,
+    #classes-section,
+    #students-section,
+    #delete-confirmation-section,
+    h1,
+    body::before,
+    body::after {
         transition: none;
         animation: none;
         transform: none;

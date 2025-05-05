@@ -4,19 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Teachers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/manage-teachers.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Manage Teachers</h1>
-
-        <!-- Teachers List -->
-        <section class="teachers-list">
-            <h2>Teachers</h2>
-            <div id="teachers-list">
-                <p>Loading teachers...</p>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
             </div>
-        </section>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="#dashboard" id="dashboard-btn"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#edit-students-parents" id="edit-students-parents-btn"><i class="fas fa-user-edit"></i> Edit Students/Parents</a></li>
+                    <li><a href="#manage-teachers" id="manage-teachers-btn"><i class="fas fa-chalkboard-teacher"></i> Manage Teachers</a></li>
+                    <li><a href="#delete-students" id="delete-students-btn"><i class="fas fa-user-minus"></i> Delete Students</a></li>
+                    <li><a href="#manage-schedules" id="manage-schedules-btn"><i class="fas fa-calendar-alt"></i> Manage Schedules</a></li>
+                    <li><a href="#add-student"><i class="fas fa-user-plus"></i> Add Student</a></li>
+                    <li><a href="#add-teacher"><i class="fas fa-user-plus"></i> Add Teacher</a></li>
+                    <li><a href="#add-parent"><i class="fas fa-user-plus"></i> Add Parent</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <h1>Manage Teachers</h1>
+
+                <!-- Teachers List -->
+                <section class="teachers-list">
+                    <h2>Teachers</h2>
+                    <div id="teachers-list">
+                        <p>Loading teachers...</p>
+                    </div>
+                </section>
+            </div>
+        </main>
     </div>
 
     <script src="js/manage-teachers.js"></script>

@@ -1,85 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Schedules</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/manage-schedules.css">
 </head>
-
 <body>
-    <div class="container">
-        <h1>Manage Class Schedules</h1>
-
-        <!-- Classes Section -->
-        <section id="classes-section">
-            <h2>Select a Class</h2>
-            <div id="classes-list">
-                <p>Loading classes...</p>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
             </div>
-        </section>
-
-        <!-- Schedules Section -->
-        <section id="schedules-section" style="display: none;">
-            <h2>Schedules for Class: <span id="selected-class-name"></span></h2>
-            <div id="schedules-list">
-                <p>Loading schedules...</p>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="#dashboard" id="dashboard-btn"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#edit-students-parents" id="edit-students-parents-btn"><i class="fas fa-user-edit"></i> Edit Students/Parents</a></li>
+                    <li><a href="#manage-teachers" id="manage-teachers-btn"><i class="fas fa-chalkboard-teacher"></i> Manage Teachers</a></li>
+                    <li><a href="#delete-students" id="delete-students-btn"><i class="fas fa-user-minus"></i> Delete Students</a></li>
+                    <li><a href="#manage-schedules" id="manage-schedules-btn"><i class="fas fa-calendar-alt"></i> Manage Schedules</a></li>
+                    <li><a href="#add-student"><i class="fas fa-user-plus"></i> Add Student</a></li>
+                    <li><a href="#add-teacher"><i class="fas fa-user-plus"></i> Add Teacher</a></li>
+                    <li><a href="#add-parent"><i class="fas fa-user-plus"></i> Add Parent</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
-            <button id="add-new-schedule-btn">Add New Schedule</button>
-        </section>
+        </aside>
 
-        <!-- Add/Edit Schedule Form -->
-        <section id="schedule-form-section" style="display: none;">
-            <h2><span id="form-title">Add New Schedule</span></h2>
-            <form id="schedule-form">
-                <input type="hidden" id="schedule-id" name="scheduleId">
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <h1>Manage Class Schedules</h1>
 
-                <label for="teacher-id">Teacher:</label>
-                <select id="teacher-id" name="teacherId" required>
-                    <!-- Options will be populated dynamically -->
-                </select>
+                <!-- Classes Section -->
+                <section id="classes-section">
+                    <h2>Select a Class</h2>
+                    <div id="classes-list">
+                        <p>Loading classes...</p>
+                    </div>
+                </section>
 
-                <label for="subject-id">Subject:</label>
-                <select id="subject-id" name="subjectId" required>
-                    <!-- Options will be populated dynamically -->
-                </select>
+                <!-- Schedules Section -->
+                <section id="schedules-section" style="display: none;">
+                    <h2>Schedules for Class: <span id="selected-class-name"></span></h2>
+                    <div id="schedules-list">
+                        <p>Loading schedules...</p>
+                    </div>
+                    <button id="add-new-schedule-btn">Add New Schedule</button>
+                </section>
 
-                <label for="semester-id">Semester:</label>
-                <select id="semester-id" name="semesterId" required>
-                    <!-- Options will be populated dynamically -->
-                </select>
+                <!-- Add/Edit Schedule Form -->
+                <section id="schedule-form-section" style="display: none;">
+                    <h2><span id="form-title">Add New Schedule</span></h2>
+                    <form id="schedule-form">
+                        <input type="hidden" id="schedule-id" name="scheduleId">
 
-                <label for="day-of-week">Day of Week:</label>
-                <select id="day-of-week" name="dayOfWeek" required>
-                    <option value="Monday">Monday</option>
-                    <option value="Tuesday">Tuesday</option>
-                    <option value="Wednesday">Wednesday</option>
-                    <option value="Thursday">Thursday</option>
-                    <option value="Friday">Friday</option>
-                    <option value="Saturday">Saturday</option>
-                    <option value="Sunday">Sunday</option>
-                </select>
+                        <label for="teacher-id">Teacher:</label>
+                        <select id="teacher-id" name="teacherId" required>
+                            <!-- Options will be populated dynamically -->
+                        </select>
 
-                <label for="period-number">Period Number:</label>
-                <input type="number" id="period-number" name="periodNumber" min="1" max="8" required>
+                        <label for="subject-id">Subject:</label>
+                        <select id="subject-id" name="subjectId" required>
+                            <!-- Options will be populated dynamically -->
+                        </select>
 
-                <label for="start-time">Start Time:</label>
-                <input type="time" id="start-time" name="startTime" required>
+                        <label for="semester-id">Semester:</label>
+                        <select id="semester-id" name="semesterId" required>
+                            <!-- Options will be populated dynamically -->
+                        </select>
 
-                <label for="end-time">End Time:</label>
-                <input type="time" id="end-time" name="endTime" required>
+                        <label for="day-of-week">Day of Week:</label>
+                        <select id="day-of-week" name="dayOfWeek" required>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday</option>
+                        </select>
 
-                <button type="submit">Save Schedule</button>
-                <button type="button" id="cancel-schedule-btn">Cancel</button>
-            </form>
-        </section>
+                        <label for="period-number">Period Number:</label>
+                        <input type="number" id="period-number" name="periodNumber" min="1" max="8" required>
 
-        <!-- Update Message -->
-        <p id="update-message"></p>
+                        <label for="start-time">Start Time:</label>
+                        <input type="time" id="start-time" name="startTime" required>
+
+                        <label for="end-time">End Time:</label>
+                        <input type="time" id="end-time" name="endTime" required>
+
+                        <button type="submit">Save Schedule</button>
+                        <button type="button" id="cancel-schedule-btn">Cancel</button>
+                    </form>
+                </section>
+
+                <!-- Update Message -->
+                <p id="update-message"></p>
+            </div>
+        </main>
     </div>
 
     <script src="js/manage-schedules.js"></script>
 </body>
-
 </html>

@@ -273,3 +273,88 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchClasses();
     populateDropdowns();
 });
+
+// js/delete-students.js
+
+document.addEventListener('DOMContentLoaded', () => {
+    const dashboardBtn = document.getElementById('dashboard-btn');
+    const editStudentsParentsBtn = document.getElementById('edit-students-parents-btn');
+    const manageTeachersBtn = document.getElementById('manage-teachers-btn');
+    const deleteStudentsBtn = document.getElementById('delete-students-btn');
+    const manageSchedulesBtn = document.getElementById('manage-schedules-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    if (dashboardBtn) {
+        dashboardBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'admin-dashboard.html';
+        });
+    }
+
+    if (editStudentsParentsBtn) {
+        editStudentsParentsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'admin-edit-student-parent.html';
+        });
+    }
+
+    if (manageTeachersBtn) {
+        manageTeachersBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'manage-teachers.html';
+        });
+    }
+
+    if (deleteStudentsBtn) {
+        deleteStudentsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'delete-students.html';
+        });
+    }
+
+    if (manageSchedulesBtn) {
+        manageSchedulesBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'manage-schedules.html';
+        });
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'login.html';
+        });
+    }
+
+    const addStudentLink = document.querySelector('a[href="#add-student"]');
+    const addTeacherLink = document.querySelector('a[href="#add-teacher"]');
+    const addParentLink = document.querySelector('a[href="#add-parent"]');
+
+    if (addStudentLink) {
+        addStudentLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Add Student clicked');
+        });
+    }
+
+    if (addTeacherLink) {
+        addTeacherLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Add Teacher clicked');
+        });
+    }
+
+    if (addParentLink) {
+        addParentLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Add Parent clicked');
+        });
+    }
+
+    // Add your existing logic for loading classes, students, deletion, etc.
+    // Example:
+    const classesList = document.getElementById('classes-list');
+    if (classesList) {
+        classesList.innerHTML = '<p>Classes loaded (placeholder).</p>';
+    }
+});
