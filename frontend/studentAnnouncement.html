@@ -1,32 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Student Announcements</title>
-    <link rel="stylesheet" href="./css/studentAnnouncement.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="./css/studentAnnouncement.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 </head>
 <body>
     <div class="container">
         <aside class="sidebar">
             <div class="profile">
-                <img src="https://via.placeholder.com/50" alt="Profile" class="profile-img">
+                <img src="https://via.placeholder.com/50" alt="Profile" class="profile-img" id="profileImg"/>
                 <h3 id="studentName">Loading...</h3>
                 <p id="studentClass">Class: Loading...</p>
             </div>
             <nav>
                 <ul>
                     <li><a href="studentDashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li class="active"><a href="studentAnnouncement.html"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+                    <li class="active"><a href="#"><i class="fas fa-bullhorn"></i> Announcements</a></li>
                     <li><a href="studentAssignments.html"><i class="fas fa-tasks"></i> Assignments</a></li>
                     <li><a href="studentGrades.html"><i class="fas fa-chart-line"></i> Grades</a></li>
                     <li><a href="studentAttendance.html"><i class="fas fa-calendar-check"></i> Attendance</a></li>
                 </ul>
             </nav>
         </aside>
-
         <main class="main-content">
             <header>
                 <h1><i class="fas fa-bullhorn"></i> Announcements</h1>
@@ -52,7 +51,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="announcement-list" id="announcementList">
                     <!-- Announcements will be loaded here -->
                     <div class="loading-spinner">
@@ -64,18 +62,17 @@
         </main>
     </div>
 
-    <!-- Announcement Detail Modal -->
+    <!-- Modal to View Announcement Details -->
     <div class="modal" id="announcementModal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2 id="modalTitle"></h2>
             <div class="meta-info">
-                <span id="modalTeacher"></span>
+                <span id="modalTeacher"></span> |
+                <span id="modalSubject"></span> |
                 <span id="modalDate"></span>
-                <span id="modalSubject"></span>
             </div>
             <div class="announcement-body" id="modalContent"></div>
-            <div class="attachment" id="modalAttachment"></div>
         </div>
     </div>
 
