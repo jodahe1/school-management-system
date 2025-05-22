@@ -6,6 +6,8 @@ const studentRoutes = require('./routes/studentRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
 const parentRoutes = require('./routes/parentRoutes');
 const messageBoardRoutes = require('./routes/messageBoardRoutes');
+const classRoutes = require('./routes/classRoutes');
+const semesterRoutes = require('./routes/semesterRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -33,6 +35,8 @@ app.use('/api/student', studentRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/parent', parentRoutes);
 app.use('/api/message-board', messageBoardRoutes);
+app.use('/api/classes', classRoutes);
+app.use('/api/semesters', semesterRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
