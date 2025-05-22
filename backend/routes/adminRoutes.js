@@ -27,7 +27,15 @@ const {
     fetchAllTeachers,
     fetchAllSubjects,
     fetchAllSemesters,
-    fetchScheduleById
+    fetchScheduleById,
+    manageSemesters,
+    createSemester,
+    editSemester,
+    removeSemester,
+    manageClasses,
+    createClass,
+    editClass,
+    removeClass
 } = require('../controllers/adminController');
 
 // Add Admin
@@ -104,5 +112,17 @@ router.get('/dropdown/subjects', fetchAllSubjects);
 
 // Fetch All Semesters (Dropdown Data)
 router.get('/dropdown/semesters', fetchAllSemesters);
+
+// Semester Management Routes
+router.get('/semesters', manageSemesters);
+router.post('/semesters', createSemester);
+router.put('/semesters/:semesterId', editSemester);
+router.delete('/semesters/:semesterId', removeSemester);
+
+// Class Management Routes
+router.get('/classes/manage', manageClasses);
+router.post('/classes', createClass);
+router.put('/classes/:classId', editClass);
+router.delete('/classes/:classId', removeClass);
 
 module.exports = router;

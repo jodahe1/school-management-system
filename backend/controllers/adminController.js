@@ -340,6 +340,157 @@ const fetchScheduleById = async (req, res) => {
     }
 };
 
+// Semester Management Controllers
+const manageSemesters = async (req, res) => {
+    try {
+        const semesters = await adminModel.getAllSemesters();
+        res.status(200).json(semesters);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+const createSemester = async (req, res) => {
+    try {
+        const { semesterName, startDate, endDate, isActive } = req.body;
+        
+        // Validate required fields
+        if (!semesterName || !startDate || !endDate) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        // Validate dates
+        if (new Date(startDate) >= new Date(endDate)) {
+            return res.status(400).json({ message: 'Start date must be before end date' });
+        }
+
+        const newSemester = await adminModel.addSemester(
+            semesterName,
+            startDate,
+            endDate,
+            isActive || false
+        );
+        res.status(201).json(newSemester);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+const editSemester = async (req, res) => {
+    try {
+        const { semesterId } = req.params;
+        const { semesterName, startDate, endDate, isActive } = req.body;
+
+        // Validate required fields
+        if (!semesterName || !startDate || !endDate) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        // Validate dates
+        if (new Date(startDate) >= new Date(endDate)) {
+            return res.status(400).json({ message: 'Start date must be before end date' });
+        }
+
+        const updatedSemester = await adminModel.updateSemester(
+            semesterId,
+            semesterName,
+            startDate,
+            endDate,
+            isActive
+        );
+
+        if (!updatedSemester) {
+            return res.status(404).json({ message: 'Semester not found' });
+        }
+
+        res.status(200).json(updatedSemester);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+const removeSemester = async (req, res) => {
+    try {
+        const { semesterId } = req.params;
+        const deletedSemester = await adminModel.deleteSemester(semesterId);
+
+        if (!deletedSemester) {
+            return res.status(404).json({ message: 'Semester not found' });
+        }
+
+        res.status(200).json({ message: 'Semester deleted successfully' });
+    } catch (error) {
+        if (error.message.includes('Cannot delete semester')) {
+            return res.status(400).json({ message: error.message });
+        }
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Class Management Controllers
+const manageClasses = async (req, res) => {
+    try {
+        const classes = await adminModel.getAllClasses();
+        res.status(200).json(classes);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+const createClass = async (req, res) => {
+    try {
+        const { className } = req.body;
+
+        if (!className) {
+            return res.status(400).json({ message: 'Class name is required' });
+        }
+
+        const newClass = await adminModel.addClass(className);
+        res.status(201).json(newClass);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+const editClass = async (req, res) => {
+    try {
+        const { classId } = req.params;
+        const { className } = req.body;
+
+        if (!className) {
+            return res.status(400).json({ message: 'Class name is required' });
+        }
+
+        const updatedClass = await adminModel.updateClass(classId, className);
+
+        if (!updatedClass) {
+            return res.status(404).json({ message: 'Class not found' });
+        }
+
+        res.status(200).json(updatedClass);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+const removeClass = async (req, res) => {
+    try {
+        const { classId } = req.params;
+        const deletedClass = await adminModel.deleteClass(classId);
+
+        if (!deletedClass) {
+            return res.status(404).json({ message: 'Class not found' });
+        }
+
+        res.status(200).json({ message: 'Class deleted successfully' });
+    } catch (error) {
+        if (error.message.includes('Cannot delete class')) {
+            return res.status(400).json({ message: error.message });
+        }
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     addAdmin,
     loginAdmin,
@@ -365,5 +516,13 @@ module.exports = {
     fetchAllTeachers,
     fetchAllSubjects,
     fetchAllSemesters,
-    fetchScheduleById
+    fetchScheduleById,
+    manageSemesters,
+    createSemester,
+    editSemester,
+    removeSemester,
+    manageClasses,
+    createClass,
+    editClass,
+    removeClass
 };

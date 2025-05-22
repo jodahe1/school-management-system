@@ -370,6 +370,7 @@ const getScheduleById = async (scheduleId) => {
         throw error;
     }
 };
+
 // Create Student
 const createStudent = async (username, password, email, firstName, lastName, dob, classId, parentId) => {
     try {
@@ -460,6 +461,7 @@ const getAllParents = async () => {
         throw error;
     }
 };
+
 // Fetch All Admins
 const getAllUsers = async () => {
     try {
@@ -474,6 +476,7 @@ const getAllUsers = async () => {
         throw error;
     }
 };
+
 // join teacher with class Subject
 const ensureClassTeacherSubject = async (classId, teacherId, subjectId) => {
     const existsQuery = `
@@ -487,6 +490,130 @@ const ensureClassTeacherSubject = async (classId, teacherId, subjectId) => {
     const res = await pool.query(existsQuery, [classId, teacherId, subjectId]);
     if (res.rowCount === 0) {
         await pool.query(insertQuery, [classId, teacherId, subjectId]);
+    }
+};
+
+// Semester Management Functions
+const getAllSemesters = async () => {
+    try {
+        const query = `
+            SELECT semester_id, semester_name, start_date, end_date, is_active
+            FROM semesters
+            ORDER BY start_date DESC;
+        `;
+        const result = await pool.query(query);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
+const addSemester = async (semesterName, startDate, endDate, isActive) => {
+    try {
+        const query = `
+            INSERT INTO semesters (semester_name, start_date, end_date, is_active)
+            VALUES ($1, $2, $3, $4)
+            RETURNING semester_id, semester_name, start_date, end_date, is_active;
+        `;
+        const result = await pool.query(query, [semesterName, startDate, endDate, isActive]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+const updateSemester = async (semesterId, semesterName, startDate, endDate, isActive) => {
+    try {
+        const query = `
+            UPDATE semesters
+            SET semester_name = $1, start_date = $2, end_date = $3, is_active = $4
+            WHERE semester_id = $5
+            RETURNING semester_id, semester_name, start_date, end_date, is_active;
+        `;
+        const result = await pool.query(query, [semesterName, startDate, endDate, isActive, semesterId]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+const deleteSemester = async (semesterId) => {
+    try {
+        // First check if semester is being used in any schedules
+        const checkQuery = `
+            SELECT COUNT(*) FROM schedules WHERE semester_id = $1;
+        `;
+        const checkResult = await pool.query(checkQuery, [semesterId]);
+        
+        if (checkResult.rows[0].count > 0) {
+            throw new Error('Cannot delete semester as it is being used in schedules');
+        }
+
+        const query = `
+            DELETE FROM semesters
+            WHERE semester_id = $1
+            RETURNING semester_id;
+        `;
+        const result = await pool.query(query, [semesterId]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Class Management Functions
+const addClass = async (className) => {
+    try {
+        const query = `
+            INSERT INTO classes (class_name)
+            VALUES ($1)
+            RETURNING class_id, class_name;
+        `;
+        const result = await pool.query(query, [className]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+const updateClass = async (classId, className) => {
+    try {
+        const query = `
+            UPDATE classes
+            SET class_name = $1
+            WHERE class_id = $2
+            RETURNING class_id, class_name;
+        `;
+        const result = await pool.query(query, [className, classId]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+const deleteClass = async (classId) => {
+    try {
+        // First check if class is being used in any schedules or has students
+        const checkQuery = `
+            SELECT 
+                (SELECT COUNT(*) FROM schedules WHERE class_id = $1) as schedule_count,
+                (SELECT COUNT(*) FROM students WHERE class_id = $1) as student_count;
+        `;
+        const checkResult = await pool.query(checkQuery, [classId]);
+        
+        if (checkResult.rows[0].schedule_count > 0 || checkResult.rows[0].student_count > 0) {
+            throw new Error('Cannot delete class as it has associated schedules or students');
+        }
+
+        const query = `
+            DELETE FROM classes
+            WHERE class_id = $1
+            RETURNING class_id;
+        `;
+        const result = await pool.query(query, [classId]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
     }
 };
 
@@ -517,5 +644,12 @@ module.exports = {
     getAllSubjectsForDropdown,
     getAllSemestersForDropdown,
     getScheduleById,
-    ensureClassTeacherSubject
+    ensureClassTeacherSubject,
+    getAllSemesters,
+    addSemester,
+    updateSemester,
+    deleteSemester,
+    addClass,
+    updateClass,
+    deleteClass
 };
