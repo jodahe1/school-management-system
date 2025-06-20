@@ -138,8 +138,16 @@
                     <input type="hidden" id="grade-student-id">
                     <input type="hidden" id="grade-teacher-id">
                     
-                    <label for="grade-subject-id">Subject:</label>
-                    <select id="grade-subject-id" required></select>
+                <label for="grade-subject-name">Subject:</label>
+<input list="subject-list" id="grade-subject-name" required>
+<datalist id="subject-list">
+  <option value="Maths">
+  <option value="Biology">
+  <option value="Chemistry">
+  <option value="Physics">
+  <option value="English">
+</datalist>
+<input type="hidden" id="grade-subject-id" name="subject_id">
                     
                     <label for="grade-semester-id">Semester:</label>
                     <select id="grade-semester-id" required></select>

@@ -553,3 +553,170 @@
     50% { transform: translateY(-10px); }
     100% { transform: translateY(0px); }
   }
+
+  /* Style for the edit form card */
+.edit-teacher-card {
+    background: white;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for form elements */
+.edit-teacher-card form {
+    display: grid;
+    gap: 1.5rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.edit-teacher-card label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--gray);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.edit-teacher-card input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background: var(--light);
+    color: var(--dark);
+    transition: all 0.3s ease;
+}
+
+.edit-teacher-card input:focus {
+    border-color: var(--success);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+/* Style for form buttons */
+.edit-teacher-card .form-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.edit-teacher-card button[type="submit"],
+.edit-teacher-card button[type="button"] {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.edit-teacher-card button[type="submit"] {
+    background: linear-gradient(135deg, var(--success), #16a34a);
+    color: white;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.edit-teacher-card button[type="submit"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(135deg, #16a34a, var(--success));
+    transition: all 0.5s ease;
+    z-index: -1;
+}
+
+.edit-teacher-card button[type="submit"]:hover::before {
+    width: 100%;
+}
+
+.edit-teacher-card button[type="button"] {
+    background: var(--light);
+    color: var(--dark);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.edit-teacher-card button[type="submit"]:hover,
+.edit-teacher-card button[type="button"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for confirmation and error messages */
+.update-message {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--success);
+    margin-top: 1.5rem;
+    padding: 0.75rem;
+    border-radius: 10px;
+    background: rgba(34, 197, 94, 0.1);
+}
+
+.error-message {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--danger);
+    margin-top: 1.5rem;
+    padding: 0.75rem;
+    border-radius: 10px;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 767.98px) {
+    .teachers-list .teacher-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.25rem;
+    }
+
+    .teachers-list .edit-btn,
+    .teachers-list .delete-btn {
+        margin-top: 0.75rem;
+        width: 100%;
+    }
+
+    .edit-teacher-card {
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .edit-teacher-card .form-buttons {
+        flex-direction: column;
+    }
+
+    .edit-teacher-card button[type="submit"],
+    .edit-teacher-card button[type="button"] {
+        width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .teachers-list .teacher-item p {
+        font-size: 1rem;
+    }
+
+    .edit-teacher-card h3 {
+        font-size: 1.2rem;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .teachers-list .teacher-item,
+    .edit-teacher-card button[type="submit"],
+    .edit-teacher-card button[type="button"],
+    .teachers-list .edit-btn,
+    .teachers-list .delete-btn {
+        transition: none !important;
+    }
+}

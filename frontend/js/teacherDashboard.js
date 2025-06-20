@@ -555,4 +555,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         localStorage.removeItem('teacher');
         window.location.href = 'teacherLogin.html';
     });
+
+
+    const subjectMap = {
+    "Maths": 1,
+    "Biology": 2,
+    "Chemistry": 3,
+    "Physics": 4,
+    "English": 5,
+};
+
+document.getElementById('gradeForm').addEventListener('submit', (e) => {
+    const subjectName = document.getElementById('grade-subject-name').value;
+    const subjectId = subjectMap[subjectName];
+
+    if (!subjectId) {
+        alert('Invalid subject selected. Please choose from the list.');
+        e.preventDefault();
+        return;
+    }
+
+    document.getElementById('grade-subject-id').value = subjectId;
+
+    // Now the form includes subject_id when submitted
+});
 });
