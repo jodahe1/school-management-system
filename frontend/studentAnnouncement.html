@@ -18,11 +18,11 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="studentDashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="studentDashboard.html#dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
                     <li class="active"><a href="#"><i class="fas fa-bullhorn"></i> Announcements</a></li>
-                    <li><a href="studentAssignments.html"><i class="fas fa-tasks"></i> Assignments</a></li>
-                    <li><a href="studentGrades.html"><i class="fas fa-chart-line"></i> Grades</a></li>
-                    <li><a href="studentAttendance.html"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+                    <li><a href="studentDashboard.html#grades"><i class="fas fa-chart-line"></i> Grades</a></li>
+                    <li><a href="studentDashboard.html#attendance"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+                    <li><a href="studentDashboard.html#materials"><i class="fas fa-book"></i> Materials</a></li>
                 </ul>
             </nav>
         </aside>
@@ -77,5 +77,23 @@
     </div>
 
     <script src="./js/studentAnnouncement.js"></script>
+    <script>
+        // Load student data and update sidebar
+        document.addEventListener('DOMContentLoaded', () => {
+            const student = JSON.parse(localStorage.getItem('student'));
+            if (student) {
+                document.getElementById('studentName').textContent = student.username || 'Student';
+                document.getElementById('studentClass').textContent = `Class: ${student.class_name || 'N/A'}`;
+            } else {
+                window.location.href = 'studentLogin.html';
+            }
+
+            // Logout functionality
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('student');
+                window.location.href = 'studentLogin.html';
+            });
+        });
+    </script>
 </body>
 </html>
