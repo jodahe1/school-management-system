@@ -141,44 +141,21 @@
       </section>
 
       <!-- Materials Section -->
-      <section id="materials" class="full-width-section">
-        <div class="section-header">
-          <h2><i class="fas fa-book"></i> Materials</h2>
-          <div class="search-filter">
-            <input type="text" id="materialSearch" placeholder="Search materials...">
-            <button id="searchMaterials"><i class="fas fa-search"></i></button>
-          </div>
-        </div>
-        <div class="materials-grid">
-          <div class="material-card">
-            <h3>Mathematics Chapter 3</h3>
-            <p>Algebra Fundamentals</p>
-            <div class="material-meta">
-              <span><i class="fas fa-file-pdf"></i> PDF</span>
-              <span>2.4 MB</span>
-            </div>
-            <button class="download-btn"><i class="fas fa-download"></i> Download</button>
-          </div>
-          <div class="material-card">
-            <h3>History Lecture Notes</h3>
-            <p>World War II Analysis</p>
-            <div class="material-meta">
-              <span><i class="fas fa-file-word"></i> DOCX</span>
-              <span>1.8 MB</span>
-            </div>
-            <button class="download-btn"><i class="fas fa-download"></i> Download</button>
-          </div>
-          <div class="material-card">
-            <h3>Science Lab Report</h3>
-            <p>Chemistry Experiments</p>
-            <div class="material-meta">
-              <span><i class="fas fa-file-excel"></i> XLSX</span>
-              <span>3.1 MB</span>
-            </div>
-            <button class="download-btn"><i class="fas fa-download"></i> Download</button>
-          </div>
-        </div>
-      </section>
+<section id="materials" class="full-width-section">
+  <div class="section-header">
+    <h2><i class="fas fa-book"></i> Materials</h2>
+    <div class="search-filter">
+      <input type="text" id="materialSearch" placeholder="Search materials..." oninput="filterMaterials()">
+      <button id="searchMaterials"><i class="fas fa-search"></i></button>
+    </div>
+  </div>
+  <div class="materials-grid" id="materialGrid">
+    <div class="loading-message">
+      <div class="spinner"></div>
+      <p>Loading materials...</p>
+    </div>
+  </div>
+</section>
     </main>
   </div>
 
