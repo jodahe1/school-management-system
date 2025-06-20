@@ -6,7 +6,15 @@ let teachersCache = [];
 // Fetch Teachers
 const fetchTeachers = async () => {
     try {
-        const response = await fetch('http://localhost:5000/api/admin/teachers');
+        const response = await fetch('http://localhost:5000/api/admin/teachers', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('adminToken') || ''}` // Include token if available
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
         const teachers = await response.json();
 
         // Cache the teachers data
@@ -36,12 +44,9 @@ const fetchTeachers = async () => {
 
         // Add event listeners for delete buttons
         document.querySelectorAll('.delete-btn').forEach((btn) => {
-            btn.addEventListener('click', async () => {
+            btn.addEventListener('click', () => {
                 const teacherId = btn.dataset.id;
-                await fetch(`http://localhost:5000/api/admin/teachers/${teacherId}/delete`, {
-                    method: 'DELETE',
-                });
-                fetchTeachers(); // Refresh the list
+                openDeleteTeacherConfirmation(teacherId);
             });
         });
     } catch (error) {
@@ -60,10 +65,14 @@ const openEditTeacherForm = (teacherId) => {
         return;
     }
 
-    // Remove any existing edit form
+    // Remove any existing edit form or delete confirmation
     const existingForm = document.getElementById('edit-teacher-form');
+    const existingConfirmation = document.getElementById('delete-teacher-confirmation');
     if (existingForm) {
         existingForm.parentElement.remove();
+    }
+    if (existingConfirmation) {
+        existingConfirmation.parentElement.remove();
     }
 
     // Create a new form container
@@ -108,12 +117,16 @@ const openEditTeacherForm = (teacherId) => {
         try {
             const response = await fetch(`http://localhost:5000/api/admin/teachers/${teacherId}/update`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken') || ''}` // Include token if available
+                },
                 body: JSON.stringify(formData),
             });
 
             if (!response.ok) {
-                throw new Error('Failed to update teacher');
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorData.message || 'Unknown error'}`);
             }
 
             // Display confirmation message
@@ -131,7 +144,7 @@ const openEditTeacherForm = (teacherId) => {
             console.error('Error updating teacher:', error);
             const messageDiv = document.createElement('div');
             messageDiv.className = 'error-message';
-            messageDiv.textContent = 'Error updating teacher. Please try again.';
+            messageDiv.textContent = `Error updating teacher: ${error.message}. Please try again.`;
             formContainer.appendChild(messageDiv);
 
             // Remove the error message after 3 seconds
@@ -144,6 +157,96 @@ const openEditTeacherForm = (teacherId) => {
     // Handle cancel button
     document.getElementById('cancel-edit-btn').addEventListener('click', () => {
         formContainer.remove(); // Remove the form
+    });
+};
+
+// Open Delete Teacher Confirmation Card
+const openDeleteTeacherConfirmation = (teacherId) => {
+    // Find the teacher in the cache
+    const teacher = teachersCache.find(t => t.teacher_id === parseInt(teacherId));
+    if (!teacher) {
+        alert('Teacher not found.');
+        return;
+    }
+
+    // Remove any existing edit form or delete confirmation
+    const existingForm = document.getElementById('edit-teacher-form');
+    const existingConfirmation = document.getElementById('delete-teacher-confirmation');
+    if (existingForm) {
+        existingForm.parentElement.remove();
+    }
+    if (existingConfirmation) {
+        existingConfirmation.parentElement.remove();
+    }
+
+    // Create a new confirmation card
+    const confirmationContainer = document.createElement('div');
+    confirmationContainer.className = 'delete-teacher-card';
+    confirmationContainer.id = 'delete-teacher-confirmation';
+    confirmationContainer.innerHTML = `
+        <h3>Confirm Delete Teacher</h3>
+        <p><strong>ID:</strong> ${teacher.teacher_id}</p>
+        <p><strong>Name:</strong> ${teacher.first_name} ${teacher.last_name}</p>
+        <p><strong>Subject:</strong> ${teacher.subject_teaches}</p>
+        <p class="delete-warning">You are about to delete this teacher. This action cannot be undone.</p>
+        <div class="form-buttons">
+            <button type="button" id="confirm-delete-btn">Delete</button>
+            <button type="button" id="cancel-delete-btn">Cancel</button>
+        </div>
+    `;
+
+    // Append the confirmation card at the end of the teachers list
+    const teachersList = document.getElementById('teachers-list');
+    teachersList.appendChild(confirmationContainer);
+
+    // Scroll to the confirmation card for better visibility
+    confirmationContainer.scrollIntoView({ behavior: 'smooth' });
+
+    // Handle confirm delete button
+    document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/admin/teachers/${teacherId}/delete`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken') || ''}` // Include token if available
+                },
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorData.message || 'Unknown error'}`);
+            }
+
+            // Display confirmation message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'update-message';
+            messageDiv.textContent = 'Teacher deleted successfully!';
+            confirmationContainer.innerHTML = ''; // Clear the card content
+            confirmationContainer.appendChild(messageDiv);
+
+            // Remove the message and card after 3 seconds
+            setTimeout(() => {
+                confirmationContainer.remove();
+                fetchTeachers(); // Refresh the list
+            }, 3000);
+        } catch (error) {
+            console.error('Error deleting teacher:', error);
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'error-message';
+            messageDiv.textContent = `Error deleting teacher: ${error.message}. Please try again.`;
+            confirmationContainer.appendChild(messageDiv);
+
+            // Remove the error message after 3 seconds
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+    });
+
+    // Handle cancel button
+    document.getElementById('cancel-delete-btn').addEventListener('click', () => {
+        confirmationContainer.remove(); // Remove the confirmation card
     });
 };
 
