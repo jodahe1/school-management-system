@@ -110,11 +110,15 @@ editStudentForm.addEventListener('submit', async (event) => {
 
     try {
         // Update Student
-        await fetch(`http://localhost:5000/api/admin/students/${selectedStudentId}/update`, {
+        const studentResponse = await fetch(`http://localhost:5000/api/admin/students/${selectedStudentId}/update`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(studentData),
         });
+
+        if (!studentResponse.ok) {
+            throw new Error('Failed to update student information');
+        }
 
         // Update Parent
         const response = await fetch(`http://localhost:5000/api/admin/students/${selectedStudentId}/details`);
@@ -122,23 +126,42 @@ editStudentForm.addEventListener('submit', async (event) => {
         const parentId = studentDetails.parent_id;
 
         if (parentId) {
-            await fetch(`http://localhost:5000/api/admin/parents/${parentId}/update`, {
+            const parentResponse = await fetch(`http://localhost:5000/api/admin/parents/${parentId}/update`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(parentData),
             });
+
+            if (!parentResponse.ok) {
+                throw new Error('Failed to update parent information');
+            }
         }
 
-        updateMessage.textContent = 'Changes saved successfully!';
+        // Display confirmation message
+        updateMessage.textContent = 'Student and parent information updated successfully!';
         updateMessage.style.color = 'green';
+        updateMessage.style.display = 'block'; // Ensure the message is visible
+
+        // Clear the message after 3 seconds
+        setTimeout(() => {
+            updateMessage.textContent = '';
+            updateMessage.style.display = 'none';
+        }, 3000);
     } catch (error) {
         console.error('Error saving changes:', error);
         updateMessage.textContent = 'Error saving changes. Please try again.';
         updateMessage.style.color = 'red';
+        updateMessage.style.display = 'block';
+
+        // Clear the error message after 3 seconds
+        setTimeout(() => {
+            updateMessage.textContent = '';
+            updateMessage.style.display = 'none';
+        }, 3000);
     }
 });
-// js/admin-edit-student-parent.js
 
+// Navigation and Other Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     const dashboardBtn = document.getElementById('dashboard-btn');
     const editStudentsParentsBtn = document.getElementById('edit-students-parents-btn');
@@ -221,5 +244,6 @@ document.addEventListener('DOMContentLoaded', () => {
         classesList.innerHTML = '<p>Classes loaded (placeholder).</p>';
     }
 });
+
 // Initialize the Page
 fetchClasses();

@@ -1,16 +1,23 @@
 // frontend/js/manage-teachers.js
 
+// Global variable to cache teachers data
+let teachersCache = [];
+
 // Fetch Teachers
 const fetchTeachers = async () => {
     try {
         const response = await fetch('http://localhost:5000/api/admin/teachers');
         const teachers = await response.json();
 
+        // Cache the teachers data
+        teachersCache = teachers;
+
         const teachersList = document.getElementById('teachers-list');
         teachersList.innerHTML = '';
 
         teachers.forEach((teacher) => {
             const div = document.createElement('div');
+            div.className = 'teacher-item'; // Add class for styling
             div.innerHTML = `
                 <p>${teacher.first_name} ${teacher.last_name} (${teacher.subject_teaches})</p>
                 <button class="edit-btn" data-id="${teacher.teacher_id}">Edit</button>
@@ -23,7 +30,7 @@ const fetchTeachers = async () => {
         document.querySelectorAll('.edit-btn').forEach((btn) => {
             btn.addEventListener('click', () => {
                 const teacherId = btn.dataset.id;
-                openEditTeacherModal(teacherId);
+                openEditTeacherForm(teacherId);
             });
         });
 
@@ -39,38 +46,54 @@ const fetchTeachers = async () => {
         });
     } catch (error) {
         console.error('Error fetching teachers:', error);
+        const teachersList = document.getElementById('teachers-list');
+        teachersList.innerHTML = '<p>Error loading teachers. Please try again.</p>';
     }
 };
 
-// Open Edit Teacher Modal
-const openEditTeacherModal = (teacherId) => {
-    const modal = document.createElement('div');
-    modal.style.position = 'fixed';
-    modal.style.top = '50%';
-    modal.style.left = '50%';
-    modal.style.transform = 'translate(-50%, -50%)';
-    modal.style.backgroundColor = '#fff';
-    modal.style.padding = '20px';
-    modal.style.border = '1px solid #ccc';
-    modal.style.zIndex = '1000';
+// Open Edit Teacher Form
+const openEditTeacherForm = (teacherId) => {
+    // Find the teacher in the cache
+    const teacher = teachersCache.find(t => t.teacher_id === parseInt(teacherId));
+    if (!teacher) {
+        alert('Teacher not found.');
+        return;
+    }
 
-    modal.innerHTML = `
+    // Remove any existing edit form
+    const existingForm = document.getElementById('edit-teacher-form');
+    if (existingForm) {
+        existingForm.parentElement.remove();
+    }
+
+    // Create a new form container
+    const formContainer = document.createElement('div');
+    formContainer.className = 'edit-teacher-card';
+    formContainer.innerHTML = `
         <h3>Edit Teacher</h3>
         <form id="edit-teacher-form">
             <label for="teacher-first-name">First Name:</label>
-            <input type="text" id="teacher-first-name" name="firstName" required>
+            <input type="text" id="teacher-first-name" name="firstName" value="${teacher.first_name}" required>
 
             <label for="teacher-last-name">Last Name:</label>
-            <input type="text" id="teacher-last-name" name="lastName" required>
+            <input type="text" id="teacher-last-name" name="lastName" value="${teacher.last_name}" required>
 
             <label for="teacher-subject">Subject Teaches:</label>
-            <input type="text" id="teacher-subject" name="subjectTeaches" required>
+            <input type="text" id="teacher-subject" name="subjectTeaches" value="${teacher.subject_teaches}" required>
 
-            <button type="submit">Save Changes</button>
+            <div class="form-buttons">
+                <button type="submit">Save Changes</button>
+                <button type="button" id="cancel-edit-btn">Cancel</button>
+            </div>
         </form>
     `;
 
-    document.body.appendChild(modal);
+    // Append the form at the end of the teachers list
+    const teachersList = document.getElementById('teachers-list');
+    teachersList.appendChild(formContainer);
+
+    // Scroll to the form for better visibility
+    formContainer.scrollIntoView({ behavior: 'smooth' });
 
     // Handle form submission
     document.getElementById('edit-teacher-form').addEventListener('submit', async (event) => {
@@ -83,22 +106,48 @@ const openEditTeacherModal = (teacherId) => {
         };
 
         try {
-            await fetch(`http://localhost:5000/api/admin/teachers/${teacherId}/update`, {
+            const response = await fetch(`http://localhost:5000/api/admin/teachers/${teacherId}/update`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
 
-            alert('Teacher updated successfully!');
-            modal.remove(); // Close the modal
-            fetchTeachers(); // Refresh the list
+            if (!response.ok) {
+                throw new Error('Failed to update teacher');
+            }
+
+            // Display confirmation message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'update-message';
+            messageDiv.textContent = 'Teacher updated successfully!';
+            formContainer.appendChild(messageDiv);
+
+            // Remove the message and form after 3 seconds
+            setTimeout(() => {
+                formContainer.remove();
+                fetchTeachers(); // Refresh the list
+            }, 3000);
         } catch (error) {
-            alert('An error occurred while updating the teacher.');
+            console.error('Error updating teacher:', error);
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'error-message';
+            messageDiv.textContent = 'Error updating teacher. Please try again.';
+            formContainer.appendChild(messageDiv);
+
+            // Remove the error message after 3 seconds
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
         }
     });
-};
-// js/manage-teachers.js
 
+    // Handle cancel button
+    document.getElementById('cancel-edit-btn').addEventListener('click', () => {
+        formContainer.remove(); // Remove the form
+    });
+};
+
+// Navigation and Other Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     // Sidebar navigation
     const dashboardBtn = document.getElementById('dashboard-btn');
@@ -107,13 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const deleteStudentsBtn = document.getElementById('delete-students-btn');
     const manageSchedulesBtn = document.getElementById('manage-schedules-btn');
     const logoutBtn = document.getElementById('logout-btn');
-
-    // Quick Actions buttons (optional, if you want to sync with dashboard Quick Actions)
-    const quickDashboardBtn = document.getElementById('quick-dashboard-btn');
-    const quickEditStudentsBtn = document.getElementById('quick-edit-students-btn');
-    const quickManageTeachersBtn = document.getElementById('quick-manage-teachers-btn');
-    const quickDeleteStudentsBtn = document.getElementById('quick-delete-students-btn');
-    const quickManageSchedulesBtn = document.getElementById('quick-manage-schedules-btn');
 
     // Navigation event listeners
     if (dashboardBtn) {
@@ -133,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (manageTeachersBtn) {
         manageTeachersBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            window.location.href = 'manage-teachers.html'; // Already on this page, but included for consistency
+            window.location.href = 'manage-teachers.html';
         });
     }
 
@@ -154,44 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            // Placeholder for logout logic (e.g., clear session, redirect to login)
-            window.location.href = 'login.html'; // Adjust to your login page
-        });
-    }
-
-    // Optional: Handle Quick Actions buttons (if present in manage-teachers.html)
-    if (quickDashboardBtn) {
-        quickDashboardBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = 'admin-dashboard.html';
-        });
-    }
-
-    if (quickEditStudentsBtn) {
-        quickEditStudentsBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = 'admin-edit-student-parent.html';
-        });
-    }
-
-    if (quickManageTeachersBtn) {
-        quickManageTeachersBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = 'manage-teachers.html';
-        });
-    }
-
-    if (quickDeleteStudentsBtn) {
-        quickDeleteStudentsBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = 'delete-students.html';
-        });
-    }
-
-    if (quickManageSchedulesBtn) {
-        quickManageSchedulesBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = 'manage-schedules.html';
+            window.location.href = 'login.html';
         });
     }
 
@@ -203,37 +208,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addStudentLink) {
         addStudentLink.addEventListener('click', (e) => {
             e.preventDefault();
-            // Replace with your logic (e.g., show modal, navigate to add-student.html)
             console.log('Add Student clicked');
-            // Example: window.location.href = 'add-student.html';
         });
     }
 
     if (addTeacherLink) {
         addTeacherLink.addEventListener('click', (e) => {
             e.preventDefault();
-            // Replace with your logic (e.g., show modal, navigate to add-teacher.html)
             console.log('Add Teacher clicked');
-            // Example: window.location.href = 'add-teacher.html';
         });
     }
 
     if (addParentLink) {
         addParentLink.addEventListener('click', (e) => {
             e.preventDefault();
-            // Replace with your logic (e.g., show modal, navigate to add-parent.html)
             console.log('Add Parent clicked');
-            // Example: window.location.href = 'add-parent.html';
         });
     }
 
-    // Existing functionality (placeholder for your original manage-teachers.js code)
-    // Example: Load teachers dynamically
-    const teachersList = document.getElementById('teachers-list');
-    if (teachersList) {
-        // Replace with your actual teacher-loading logic
-        teachersList.innerHTML = '<p>Teachers loaded (placeholder).</p>';
-    }
+    // Initialize the Page
+    fetchTeachers();
 });
-// Initialize the Page
-fetchTeachers();

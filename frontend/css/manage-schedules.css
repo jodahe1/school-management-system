@@ -1,6 +1,6 @@
-/* manage-schedules.css */
+/* css/manage-teachers.css */
 
-/* Variables */
+/* Import variables and base styles from manage-schedules.css */
 :root {
     --primary: #0ea5e9;
     --primary-dark: #0284c7;
@@ -14,442 +14,44 @@
     --success: #22c55e;
     --warning: #eab308;
     --danger: #ef4444;
-  }
-  
-  /* Reset and Base Styles */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
+}
+
+/* Ensure font consistency */
+body {
     font-family: 'Poppins', sans-serif;
-    color: var(--dark);
-    background: var(--light);
-    line-height: 1.6;
-    min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-  }
-  
-  /* Custom Scrollbar */
-  ::-webkit-scrollbar {
-    width: 10px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: var(--primary);
-    border-radius: 10px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-dark);
-  }
-  
-  /* Utility Classes */
-  .bg-gradient-primary {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-  }
-  
-  .bg-gradient-secondary {
-    background: linear-gradient(135deg, var(--secondary), var(--primary));
-  }
-  
-  .bg-gradient-accent {
-    background: linear-gradient(135deg, var(--accent), var(--secondary));
-  }
-  
-  .bg-gradient-success {
-    background: linear-gradient(135deg, var(--success), #16a34a);
-  }
-  
-  .text-gradient {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  
-  .text-gradient-success {
-    background: linear-gradient(135deg, var(--success), #16a34a);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  
-  .shadow-custom {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  }
-  
-  .rounded-xl {
-    border-radius: 20px;
-  }
-  
-  /* Dashboard Container */
-  .dashboard-container {
-    display: flex;
-    min-height: 100vh;
-  }
-  
-  /* Sidebar */
-  .sidebar {
-    width: 250px;
+}
+
+/* Style for teacher items */
+.teachers-list .teacher-item {
     background: white;
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    z-index: 10;
-  }
-  
-  .sidebar-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  }
-  
-  .sidebar-header h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .sidebar-header h2 i {
-    color: var(--primary);
-  }
-  
-  .sidebar-nav {
-    flex-grow: 1;
-    padding: 1rem 0;
-  }
-  
-  .sidebar-nav ul {
-    list-style: none;
-  }
-  
-  .sidebar-nav ul li {
-    margin: 0.5rem 0;
-  }
-  
-  .sidebar-nav ul li a {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1.5rem;
-    color: var(--dark);
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    border-radius: 8px;
-    margin: 0 0.75rem;
-  }
-  
-  .sidebar-nav ul li a i {
-    margin-right: 0.75rem;
-    font-size: 1.1rem;
-    color: var(--gray);
-    transition: all 0.3s ease;
-  }
-  
-  .sidebar-nav ul li a:hover {
-    background: rgba(14, 165, 233, 0.1);
-    color: var(--primary);
-  }
-  
-  .sidebar-nav ul li a:hover i {
-    color: var(--primary);
-  }
-  
-  .sidebar-nav ul li.active a {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
-  }
-  
-  .sidebar-nav ul li.active a i {
-    color: white;
-  }
-  
-  /* Quick Actions Styling for Specific Sidebar Links */
-  .sidebar-nav ul li a[href="#dashboard"],
-  .sidebar-nav ul li a[href="#edit-students-parents"],
-  .sidebar-nav ul li a[href="#manage-teachers"],
-  .sidebar-nav ul li a[href="#delete-students"],
-  .sidebar-nav ul li a[href="#manage-schedules"] {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1.5rem;
-    margin: 0.5rem 1rem;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-  
-  .sidebar-nav ul li a[href="#dashboard"] {
-    background: rgba(14, 165, 233, 0.1);
-    color: var(--primary);
-    border-left: 3px solid var(--primary);
-  }
-  
-  .sidebar-nav ul li a[href="#edit-students-parents"] {
-    background: rgba(20, 184, 166, 0.1);
-    color: var(--secondary);
-    border-left: 3px solid var(--secondary);
-  }
-  
-  .sidebar-nav ul li a[href="#manage-teachers"] {
-    background: rgba(249, 115, 22, 0.1);
-    color: var(--accent);
-    border-left: 3px solid var(--accent);
-  }
-  
-  .sidebar-nav ul li a[href="#delete-students"] {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--danger);
-    border-left: 3px solid var(--danger);
-  }
-  
-  .sidebar-nav ul li a[href="#manage-schedules"] {
-    background: rgba(34, 197, 94, 0.1);
-    color: var(--success);
-    border-left: 3px solid var(--success);
-  }
-  
-  .sidebar-nav ul li a[href="#dashboard"]:hover,
-  .sidebar-nav ul li a[href="#edit-students-parents"]:hover,
-  .sidebar-nav ul li a[href="#manage-teachers"]:hover,
-  .sidebar-nav ul li a[href="#delete-students"]:hover,
-  .sidebar-nav ul li a[href="#manage-schedules"]:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  }
-  
-  .sidebar-nav ul li.active a[href="#dashboard"] {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    border-left: none;
-  }
-  
-  .sidebar-nav ul li.active a[href="#edit-students-parents"] {
-    background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
-    color: white;
-    border-left: none;
-  }
-  
-  .sidebar-nav ul li.active a[href="#manage-teachers"] {
-    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-    color: white;
-    border-left: none;
-  }
-  
-  .sidebar-nav ul li.active a[href="#delete-students"] {
-    background: linear-gradient(135deg, var(--danger), #dc2626);
-    color: white;
-    border-left: none;
-  }
-  
-  .sidebar-nav ul li.active a[href="#manage-schedules"] {
-    background: linear-gradient(135deg, var(--success), #16a34a);
-    color: white;
-    border-left: none;
-  }
-  
-  /* Sidebar Footer */
-  .sidebar-footer {
-    padding: 1.5rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-  }
-  
-  .sidebar-footer a {
-    display: flex;
-    align-items: center;
-    color: var(--danger);
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-  
-  .sidebar-footer a i {
-    margin-right: 0.75rem;
-  }
-  
-  .sidebar-footer a:hover {
-    color: var(--danger);
-    opacity: 0.8;
-  }
-  
-  /* Main Content */
-  .main-content {
-    flex-grow: 1;
-    padding: 2rem;
-    background: var(--light);
-  }
-  
-  /* Container */
-  .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  }
-  
-  /* Typography */
-  h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--dark);
-    text-align: center;
-    margin-bottom: 2rem;
-    background: linear-gradient(135deg, var(--success), #16a34a);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  
-  h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--dark);
-    margin-bottom: 1.5rem;
-  }
-  
-  /* Classes Section */
-  #classes-section {
-    margin-bottom: 2rem;
-  }
-  
-  #classes-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-  
-  #classes-list p {
-    font-size: 1rem;
-    color: var(--gray);
-    text-align: center;
-  }
-  
-  /* Classes Cards (to be added dynamically) */
-  .class-card {
-    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.05);
     border-radius: 15px;
     padding: 1.5rem;
-    text-align: center;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
-    cursor: pointer;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-  }
-  
-  .class-card:hover {
+}
+
+.teachers-list .teacher-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     border-color: var(--success);
-  }
-  
-  .class-card h3 {
+}
+
+/* Style for teacher info */
+.teachers-list .teacher-item p {
+    margin: 0;
     font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-  
-  .class-card p {
-    color: var(--gray);
-    font-size: 0.9rem;
-  }
-  
-  /* Schedules Section */
-  #schedules-section {
-    margin-bottom: 2rem;
-  }
-  
-  #schedules-list {
-    display: grid;
-    gap: 1rem;
-  }
-  
-  #schedules-list p {
-    font-size: 1rem;
-    color: var(--gray);
-    text-align: center;
-  }
-  
-  #selected-class-name {
-    color: var(--success);
-    font-weight: 600;
-  }
-  
-  /* Schedule Cards (to be added dynamically) */
-  .schedule-card {
-    background: white;
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-  }
-  
-  .schedule-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    border-color: var(--success);
-  }
-  
-  .schedule-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 15px;
-    background: linear-gradient(135deg, var(--success), #16a34a);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.5rem;
-  }
-  
-  .schedule-info {
-    flex: 1;
-  }
-  
-  .schedule-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: var(--dark);
-  }
-  
-  .schedule-details {
-    font-size: 0.95rem;
-    color: var(--gray);
-    margin-bottom: 0.75rem;
-  }
-  
-  .schedule-time {
-    font-size: 0.9rem;
-    color: var(--success);
     font-weight: 500;
-  }
-  
-  .schedule-actions {
-    display: flex;
-    gap: 0.75rem;
-  }
-  
-  .schedule-action-btn {
+    color: var(--dark);
+}
+
+/* Style for buttons */
+.teachers-list .edit-btn,
+.teachers-list .delete-btn {
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 8px;
@@ -457,95 +59,55 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-  }
-  
-  .edit-btn {
+}
+
+.teachers-list .edit-btn {
     background: rgba(34, 197, 94, 0.1);
     color: var(--success);
-  }
-  
-  .edit-btn:hover {
+}
+
+.teachers-list .edit-btn:hover {
     background: var(--success);
     color: white;
-  }
-  
-  .delete-btn {
+}
+
+.teachers-list .delete-btn {
     background: rgba(239, 68, 68, 0.1);
     color: var(--danger);
-  }
-  
-  .delete-btn:hover {
+}
+
+.teachers-list .delete-btn:hover {
     background: var(--danger);
     color: white;
-  }
-  
-  /* Add Schedule Button */
-  #add-new-schedule-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, var(--success), #16a34a);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 1.5rem;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-  }
-  
-  #add-new-schedule-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(135deg, #16a34a, var(--success));
-    transition: all 0.5s ease;
-    z-index: -1;
-  }
-  
-  #add-new-schedule-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  #add-new-schedule-btn:hover::before {
-    width: 100%;
-  }
-  
-  /* Schedule Form Section */
-  #schedule-form-section {
+}
+
+/* Style for the edit form card */
+.edit-teacher-card {
     background: white;
+    border: 1px solid rgba(34, 197, 94, 0.2);
     border-radius: 20px;
     padding: 2rem;
+    margin: 2rem 0;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(34, 197, 94, 0.2);
-  }
-  
-  #schedule-form {
+}
+
+/* Style for form elements */
+.edit-teacher-card form {
     display: grid;
     gap: 1.5rem;
     max-width: 500px;
     margin: 0 auto;
-  }
-  
-  #schedule-form label {
+}
+
+.edit-teacher-card label {
     font-size: 0.95rem;
     font-weight: 500;
     color: var(--gray);
     margin-bottom: 0.5rem;
     display: block;
-  }
-  
-  #schedule-form input,
-  #schedule-form select {
+}
+
+.edit-teacher-card input {
     width: 100%;
     padding: 0.75rem 1rem;
     font-size: 0.95rem;
@@ -554,16 +116,22 @@
     background: var(--light);
     color: var(--dark);
     transition: all 0.3s ease;
-  }
-  
-  #schedule-form input:focus,
-  #schedule-form select:focus {
+}
+
+.edit-teacher-card input:focus {
     border-color: var(--success);
     outline: none;
     box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
-  }
-  
-  #schedule-form button {
+}
+
+/* Style for form buttons */
+.edit-teacher-card .form-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.edit-teacher-card button[type="submit"],
+.edit-teacher-card button[type="button"] {
     padding: 0.75rem 1.5rem;
     font-size: 0.95rem;
     font-weight: 600;
@@ -571,17 +139,17 @@
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
-  }
-  
-  #save-schedule-btn {
+}
+
+.edit-teacher-card button[type="submit"] {
     background: linear-gradient(135deg, var(--success), #16a34a);
     color: white;
     position: relative;
     overflow: hidden;
     z-index: 1;
-  }
-  
-  #save-schedule-btn::before {
+}
+
+.edit-teacher-card button[type="submit"]::before {
     content: '';
     position: absolute;
     top: 0;
@@ -591,26 +159,26 @@
     background: linear-gradient(135deg, #16a34a, var(--success));
     transition: all 0.5s ease;
     z-index: -1;
-  }
-  
-  #save-schedule-btn:hover::before {
+}
+
+.edit-teacher-card button[type="submit"]:hover::before {
     width: 100%;
-  }
-  
-  #cancel-schedule-btn {
+}
+
+.edit-teacher-card button[type="button"] {
     background: var(--light);
     color: var(--dark);
     border: 1px solid rgba(0, 0, 0, 0.1);
-  }
-  
-  #save-schedule-btn:hover,
-  #cancel-schedule-btn:hover {
+}
+
+.edit-teacher-card button[type="submit"]:hover,
+.edit-teacher-card button[type="button"]:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Update Message */
-  #update-message {
+}
+
+/* Style for confirmation and error messages */
+.update-message {
     text-align: center;
     font-size: 1rem;
     color: var(--success);
@@ -618,111 +186,64 @@
     padding: 0.75rem;
     border-radius: 10px;
     background: rgba(34, 197, 94, 0.1);
-    display: none;
-  }
-  
-  #update-message.error {
+}
+
+.error-message {
+    text-align: center;
+    font-size: 1rem;
     color: var(--danger);
+    margin-top: 1.5rem;
+    padding: 0.75rem;
+    border-radius: 10px;
     background: rgba(239, 68, 68, 0.1);
-  }
-  
-  #update-message.visible {
-    display: block;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 991.98px) {
-    .dashboard-container {
-      flex-direction: column;
+}
+
+/* Responsive Design */
+@media (max-width: 767.98px) {
+    .teachers-list .teacher-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.25rem;
     }
-  
-    .sidebar {
-      width: 100%;
-      border-right: none;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+    .teachers-list .edit-btn,
+    .teachers-list .delete-btn {
+        margin-top: 0.75rem;
+        width: 100%;
     }
-  
-    .main-content {
-      padding: 1.5rem;
+
+    .edit-teacher-card {
+        padding: 1.5rem;
+        margin: 1.5rem 0;
     }
-  
-    .container {
-      padding: 1.5rem;
+
+    .edit-teacher-card .form-buttons {
+        flex-direction: column;
     }
-  }
-  
-  @media (max-width: 767.98px) {
-    h1 {
-      font-size: 1.75rem;
+
+    .edit-teacher-card button[type="submit"],
+    .edit-teacher-card button[type="button"] {
+        width: 100%;
     }
-  
-    h2 {
-      font-size: 1.2rem;
+}
+
+@media (max-width: 575.98px) {
+    .teachers-list .teacher-item p {
+        font-size: 1rem;
     }
-  
-    #classes-list {
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+
+    .edit-teacher-card h3 {
+        font-size: 1.2rem;
     }
-  
-    .schedule-card {
-      flex-direction: column;
-      text-align: center;
-      padding: 1.25rem;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .teachers-list .teacher-item,
+    .edit-teacher-card button[type="submit"],
+    .edit-teacher-card button[type="button"],
+    .teachers-list .edit-btn,
+    .teachers-list .delete-btn {
+        transition: none !important;
     }
-  
-    .schedule-icon {
-      margin: 0 auto;
-    }
-  
-    .schedule-actions {
-      justify-content: center;
-      margin-top: 1rem;
-    }
-  }
-  
-  @media (max-width: 575.98px) {
-    .main-content {
-      padding: 1rem;
-    }
-  
-    .container {
-      padding: 1.25rem;
-    }
-  
-    h1 {
-      font-size: 1.5rem;
-    }
-  
-    #add-new-schedule-btn {
-      width: 100%;
-      justify-content: center;
-    }
-  
-    #schedule-form {
-      gap: 1rem;
-    }
-  
-    #schedule-form button {
-      width: 100%;
-      margin-top: 0.5rem;
-    }
-  }
-  
-  /* Accessibility */
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      transition: none !important;
-      animation: none !important;
-    }
-  }
-  
-  /* Floating Animation */
-  .floating {
-    animation: floating 3s infinite ease-in-out;
-  }
-  
-  @keyframes floating {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
-  }
+}
