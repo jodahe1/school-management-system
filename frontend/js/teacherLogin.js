@@ -14,8 +14,22 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
         if (response.ok) {
             const data = await response.json();
-            localStorage.setItem('teacher', JSON.stringify(data.teacher)); // Store teacher info
-            window.location.href = 'teacherDashboard.html'; // Redirect to dashboard
+            
+            // Check if this is a first-time login
+            if (data.teacher.password_reset_required) {
+                // Store temporary data for first-time login
+                localStorage.setItem('tempUserData', JSON.stringify({
+                    user_id: data.teacher.user_id,
+                    username: data.teacher.username,
+                    password: password, // Store password temporarily for verification
+                    role: 'teacher'
+                }));
+                window.location.href = 'firstTimeLogin.html';
+            } else {
+                // Normal login - store teacher data and redirect to dashboard
+                localStorage.setItem('teacher', JSON.stringify(data.teacher));
+                window.location.href = 'teacherDashboard.html';
+            }
         } else {
             const errorData = await response.json();
             document.getElementById('error-message').textContent = errorData.message || 'Login failed';

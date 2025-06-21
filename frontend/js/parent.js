@@ -545,8 +545,22 @@ if (loginForm) {
       }
 
       const data = await response.json();
-      localStorage.setItem('parent', JSON.stringify(data.parent));
-      window.location.href = 'parentDashboard.html';
+      
+      // Check if this is a first-time login
+      if (data.parent.password_reset_required) {
+        // Store temporary data for first-time login
+        localStorage.setItem('tempUserData', JSON.stringify({
+          user_id: data.parent.user_id,
+          username: data.parent.username,
+          password: password, // Store password temporarily for verification
+          role: 'parent'
+        }));
+        window.location.href = 'firstTimeLogin.html';
+      } else {
+        // Normal login - store parent data and redirect to dashboard
+        localStorage.setItem('parent', JSON.stringify(data.parent));
+        window.location.href = 'parentDashboard.html';
+      }
     } catch (error) {
       if (errorMessage) {
         errorMessage.textContent = error.message;

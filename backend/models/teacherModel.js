@@ -3,7 +3,7 @@ const pool = require('../config/db');
 // Verify Teacher Credentials
 const verifyTeacher = async (username, password) => {
     const query = `
-        SELECT u.user_id, u.username, u.email, t.first_name, t.last_name, t.subject_teaches
+        SELECT u.user_id, u.username, u.email, u.role, u.password_reset_required, t.teacher_id, t.first_name, t.last_name, t.subject_teaches
         FROM users u
         JOIN teachers t ON u.user_id = t.teacher_id
         WHERE u.username = $1 AND u.password_hash = $2 AND u.role = 'teacher';
@@ -309,6 +309,78 @@ const getClassAnnouncements = async (class_id, semester_id) => {
     return result.rows;
 };
 
+// Get first-time login information
+const getFirstTimeInfo = async (userId) => {
+    try {
+        const query = `
+            SELECT 
+                u.user_id, u.username, u.email, u.role, u.created_at, u.password_reset_required,
+                t.teacher_id, t.first_name, t.last_name, t.subject_teaches
+            FROM users u
+            JOIN teachers t ON u.user_id = t.teacher_id
+            WHERE u.user_id = $1 AND u.role = 'teacher';
+        `;
+        const result = await pool.query(query, [userId]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Complete profile setup
+const completeSetup = async (userId, updateData) => {
+    try {
+        // Start a transaction
+        const client = await pool.connect();
+        
+        try {
+            await client.query('BEGIN');
+            
+            // Update users table
+            const updateUserQuery = `
+                UPDATE users 
+                SET password_hash = $1, email = $2, password_reset_required = FALSE
+                WHERE user_id = $3
+                RETURNING user_id, username, email, role;
+            `;
+            const userResult = await client.query(updateUserQuery, [
+                updateData.newPassword, 
+                updateData.email, 
+                userId
+            ]);
+            
+            // Update teachers table
+            const updateTeacherQuery = `
+                UPDATE teachers 
+                SET first_name = $1, last_name = $2
+                WHERE teacher_id = $3
+                RETURNING teacher_id, first_name, last_name, subject_teaches;
+            `;
+            const teacherResult = await client.query(updateTeacherQuery, [
+                updateData.firstName,
+                updateData.lastName,
+                userId
+            ]);
+            
+            await client.query('COMMIT');
+            
+            // Return combined user data
+            return {
+                ...userResult.rows[0],
+                ...teacherResult.rows[0]
+            };
+            
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     verifyTeacher,
     getTeacherProfile,
@@ -326,5 +398,7 @@ module.exports = {
     getStudentDetails,
     getStudentsForContext,
     createAnnouncement,
-    getClassAnnouncements
+    getClassAnnouncements,
+    getFirstTimeInfo,
+    completeSetup
 };

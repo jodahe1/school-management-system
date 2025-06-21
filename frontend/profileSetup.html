@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Setup - School Management System</title>
+  <link rel="stylesheet" href="css/profileSetup.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="setup-card">
+      <div class="setup-header">
+        <i class="fas fa-user-edit"></i>
+        <h1>Complete Your Profile Setup</h1>
+        <p>Please update your information and change your password to continue. Use your temporary password as the current password.</p>
+      </div>
+
+      <form id="profileSetupForm">
+        <!-- Password Change Section -->
+        <div class="form-section">
+          <h2><i class="fas fa-lock"></i> Change Password</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="currentPassword">Current Password (Temporary Password)</label>
+              <div class="input-group">
+                <input type="password" id="currentPassword" name="currentPassword" required>
+                <button type="button" class="password-toggle" onclick="togglePassword('currentPassword')">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="newPassword">New Password</label>
+              <div class="input-group">
+                <input type="password" id="newPassword" name="newPassword" required>
+                <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+              <div class="password-strength" id="passwordStrength"></div>
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Confirm New Password</label>
+              <div class="input-group">
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Information Section -->
+        <div class="form-section">
+          <h2><i class="fas fa-user"></i> Personal Information</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" name="lastName" required>
+            </div>
+            <div class="form-group" id="dateOfBirthGroup" style="display: none;">
+              <label for="dateOfBirth">Date of Birth</label>
+              <input type="date" id="dateOfBirth" name="dateOfBirth">
+            </div>
+            <div class="form-group" id="phoneNumberGroup" style="display: none;">
+              <label for="phoneNumber">Phone Number</label>
+              <input type="tel" id="phoneNumber" name="phoneNumber">
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms and Conditions -->
+        <div class="form-section">
+          <div class="checkbox-group">
+            <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+            <label for="agreeTerms">
+              I agree to the <a href="#" onclick="showTerms()">Terms and Conditions</a> and confirm that all information provided is accurate.
+            </label>
+          </div>
+        </div>
+
+        <!-- Submit Section -->
+        <div class="form-section">
+          <div class="button-group">
+            <button type="submit" class="btn-primary" id="submitBtn">
+              <i class="fas fa-check"></i>
+              Complete Setup
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div class="error-message" id="errorMessage"></div>
+    </div>
+  </div>
+
+  <!-- Terms Modal -->
+  <div id="termsModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Terms and Conditions</h2>
+      <div class="terms-content">
+        <p>By using the School Management System, you agree to:</p>
+        <ul>
+          <li>Provide accurate and truthful information</li>
+          <li>Keep your login credentials secure</li>
+          <li>Not share your account with others</li>
+          <li>Use the system responsibly and ethically</li>
+          <li>Respect the privacy of other users</li>
+        </ul>
+        <p>The school reserves the right to modify these terms at any time.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/profileSetup.js"></script>
+</body>
+</html> 

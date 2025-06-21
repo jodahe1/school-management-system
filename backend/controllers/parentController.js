@@ -13,7 +13,7 @@ exports.login = async (req, res) => {
 
         // Fetch user data from users table
         const userQuery = `
-            SELECT user_id, username, email
+            SELECT user_id, username, email, role, password_reset_required
             FROM users
             WHERE user_id = $1
         `;
@@ -25,7 +25,9 @@ exports.login = async (req, res) => {
             parent: {
                 user_id: user.user_id,
                 username: user.username,
-                email: user.email
+                email: user.email,
+                role: user.role,
+                password_reset_required: user.password_reset_required
             }
         });
     } catch (error) {
@@ -95,6 +97,58 @@ exports.getChildrenSubmissions = async (req, res) => {
         const submissions = await ParentModel.getChildrenSubmissions(parent_id);
         res.status(200).json(submissions);
     } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Get first-time login info
+exports.getFirstTimeInfo = async (req, res) => {
+    try {
+        const { user_id } = req.query;
+        const info = await ParentModel.getFirstTimeInfo(user_id);
+        if (!info) {
+            return res.status(404).json({ message: 'Parent not found' });
+        }
+        res.status(200).json(info);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Complete profile setup
+exports.completeSetup = async (req, res) => {
+    try {
+        const { user_id, currentPassword, newPassword, firstName, lastName, email, phoneNumber } = req.body;
+        
+        // Validate current password by checking against the user's current password
+        const validatePasswordQuery = `
+            SELECT password_hash FROM users WHERE user_id = $1 AND role = 'parent';
+        `;
+        const passwordResult = await db.query(validatePasswordQuery, [user_id]);
+        
+        if (passwordResult.rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        if (passwordResult.rows[0].password_hash !== currentPassword) {
+            return res.status(401).json({ message: 'Current password is incorrect' });
+        }
+        
+        // Update user information
+        const updatedUser = await ParentModel.completeSetup(user_id, {
+            newPassword,
+            firstName,
+            lastName,
+            email,
+            phoneNumber
+        });
+        
+        res.status(200).json({ 
+            message: 'Profile setup completed successfully',
+            user: updatedUser
+        });
+    } catch (error) {
+        console.error('Complete setup error:', error);
         res.status(500).json({ error: error.message });
     }
 };

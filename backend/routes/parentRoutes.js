@@ -7,6 +7,10 @@ const ParentController = require('../controllers/parentController');
 // Parent Login
 router.post('/login', ParentController.login);
 
+// First-time login routes
+router.get('/first-time-info', ParentController.getFirstTimeInfo);
+router.post('/complete-setup', ParentController.completeSetup);
+
 // View Children's Profiles
 router.get('/children', ParentController.getChildrenProfiles);
 

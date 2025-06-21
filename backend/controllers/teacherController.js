@@ -1,4 +1,5 @@
 const teacherModel = require('../models/teacherModel');
+const pool = require('../config/db');
 
 // Teacher Login
 const loginTeacher = async (req, res) => {
@@ -234,6 +235,57 @@ const getClassAnnouncements = async (req, res) => {
     }
 };
 
+// Get first-time login info
+const getFirstTimeInfo = async (req, res) => {
+    try {
+        const { user_id } = req.query;
+        const info = await teacherModel.getFirstTimeInfo(user_id);
+        if (!info) {
+            return res.status(404).json({ message: 'Teacher not found' });
+        }
+        res.status(200).json(info);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Complete profile setup
+const completeSetup = async (req, res) => {
+    try {
+        const { user_id, currentPassword, newPassword, firstName, lastName, email } = req.body;
+        
+        // Validate current password by checking against the user's current password
+        const validatePasswordQuery = `
+            SELECT password_hash FROM users WHERE user_id = $1 AND role = 'teacher';
+        `;
+        const passwordResult = await pool.query(validatePasswordQuery, [user_id]);
+        
+        if (passwordResult.rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        if (passwordResult.rows[0].password_hash !== currentPassword) {
+            return res.status(401).json({ message: 'Current password is incorrect' });
+        }
+        
+        // Update user information
+        const updatedUser = await teacherModel.completeSetup(user_id, {
+            newPassword,
+            firstName,
+            lastName,
+            email
+        });
+        
+        res.status(200).json({ 
+            message: 'Profile setup completed successfully',
+            user: updatedUser
+        });
+    } catch (error) {
+        console.error('Complete setup error:', error);
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     loginTeacher,
     getProfile,
@@ -248,5 +300,7 @@ module.exports = {
     getStudentDetails,
     getStudentsForContext,
     createAnnouncement,
-    getClassAnnouncements
+    getClassAnnouncements,
+    getFirstTimeInfo,
+    completeSetup
 };

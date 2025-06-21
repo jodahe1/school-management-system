@@ -7,6 +7,10 @@ const router = express.Router();
 // Login Student
 router.post('/login', studentController.loginStudent);
 
+// First-time login routes
+router.get('/first-time-info', studentController.getFirstTimeInfo);
+router.post('/complete-setup', studentController.completeSetup);
+
 // Fetch Student Personal Info
 router.get('/:studentId/info', studentController.getStudentInfo);
 

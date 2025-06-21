@@ -5,6 +5,10 @@ const router = express.Router();
 // Authentication
 router.post('/login', teacherController.loginTeacher);
 
+// First-time login routes
+router.get('/first-time-info', teacherController.getFirstTimeInfo);
+router.post('/complete-setup', teacherController.completeSetup);
+
 // Profile Management
 router.get('/profile', teacherController.getProfile);
 

@@ -103,3 +103,76 @@ exports.getChildrenSubmissions = async (parent_id) => {
     const result = await db.query(query, [parent_id]);
     return result.rows;
 };
+
+// Get first-time login information
+exports.getFirstTimeInfo = async (userId) => {
+    try {
+        const query = `
+            SELECT 
+                u.user_id, u.username, u.email, u.role, u.created_at, u.password_reset_required,
+                p.parent_id, p.first_name, p.last_name, p.phone_number
+            FROM users u
+            JOIN parents p ON u.user_id = p.parent_id
+            WHERE u.user_id = $1 AND u.role = 'parent';
+        `;
+        const result = await db.query(query, [userId]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Complete profile setup
+exports.completeSetup = async (userId, updateData) => {
+    try {
+        // Start a transaction
+        const client = await db.connect();
+        
+        try {
+            await client.query('BEGIN');
+            
+            // Update users table
+            const updateUserQuery = `
+                UPDATE users 
+                SET password_hash = $1, email = $2, password_reset_required = FALSE
+                WHERE user_id = $3
+                RETURNING user_id, username, email, role;
+            `;
+            const userResult = await client.query(updateUserQuery, [
+                updateData.newPassword, 
+                updateData.email, 
+                userId
+            ]);
+            
+            // Update parents table
+            const updateParentQuery = `
+                UPDATE parents 
+                SET first_name = $1, last_name = $2, phone_number = $3
+                WHERE parent_id = $4
+                RETURNING parent_id, first_name, last_name, phone_number;
+            `;
+            const parentResult = await client.query(updateParentQuery, [
+                updateData.firstName,
+                updateData.lastName,
+                updateData.phoneNumber,
+                userId
+            ]);
+            
+            await client.query('COMMIT');
+            
+            // Return combined user data
+            return {
+                ...userResult.rows[0],
+                ...parentResult.rows[0]
+            };
+            
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
+    } catch (error) {
+        throw error;
+    }
+};

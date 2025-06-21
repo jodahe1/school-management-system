@@ -58,8 +58,21 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
 
     // Handle successful login
     if (data.student) {
-      localStorage.setItem('student', JSON.stringify(data.student));
-      window.location.href = 'studentDashboard.html';
+      // Check if this is a first-time login
+      if (data.student.password_reset_required) {
+        // Store temporary data for first-time login
+        localStorage.setItem('tempUserData', JSON.stringify({
+          user_id: data.student.user_id,
+          username: data.student.username,
+          password: password, // Store password temporarily for verification
+          role: 'student'
+        }));
+        window.location.href = 'firstTimeLogin.html';
+      } else {
+        // Normal login - store student data and redirect to dashboard
+        localStorage.setItem('student', JSON.stringify(data.student));
+        window.location.href = 'studentDashboard.html';
+      }
     } else {
       throw new Error('Invalid response from server');
     }

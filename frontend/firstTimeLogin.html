@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>First Time Login - Welcome</title>
+  <link rel="stylesheet" href="css/firstTimeLogin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="welcome-card">
+      <div class="welcome-header">
+        <i class="fas fa-user-shield"></i>
+        <h1>Welcome to School Management System</h1>
+        <p>This is your first time logging in. Please review your information and set up your profile.</p>
+      </div>
+
+      <div class="credentials-section">
+        <h2><i class="fas fa-key"></i> Your Login Credentials</h2>
+        <div class="credentials-grid">
+          <div class="credential-item">
+            <span class="label">Username:</span>
+            <span class="value" id="displayUsername">Loading...</span>
+          </div>
+          <div class="credential-item">
+            <span class="label">Password:</span>
+            <span class="value" id="displayPassword">Loading...</span>
+            <button class="toggle-password" onclick="togglePassword()">
+              <i class="fas fa-eye" id="eyeIcon"></i>
+            </button>
+          </div>
+          <div class="credential-item">
+            <span class="label">Role:</span>
+            <span class="value" id="displayRole">Loading...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="user-info-section">
+        <h2><i class="fas fa-user"></i> Your Information</h2>
+        <div class="user-info-grid" id="userInfoGrid">
+          <div class="loading-message">
+            <div class="spinner"></div>
+            <p>Loading your information...</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-section">
+        <div class="warning-box">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p><strong>Important:</strong> You must change your password and verify your information before proceeding.</p>
+        </div>
+        <button class="btn-primary" onclick="proceedToSetup()">
+          <i class="fas fa-arrow-right"></i>
+          Continue to Profile Setup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/firstTimeLogin.js"></script>
+</body>
+</html> 
