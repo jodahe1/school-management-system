@@ -220,6 +220,51 @@ const getStudentDetails = async (student_id) => {
     return result.rows[0];
 };
 
+// Get Student Grades
+const getStudentGrades = async (student_id) => {
+    const query = `
+        SELECT g.grade_id, g.grade, g.comments, g.created_at,
+               s.subject_name, sem.semester_name
+        FROM grades g
+        JOIN subjects s ON g.subject_id = s.subject_id
+        JOIN semesters sem ON g.semester_id = sem.semester_id
+        WHERE g.student_id = $1
+        ORDER BY g.created_at DESC;
+    `;
+    const result = await pool.query(query, [student_id]);
+    return result.rows;
+};
+
+// Get Teacher Materials
+const getTeacherMaterials = async (teacher_id) => {
+    const query = `
+        SELECT m.material_id, m.title, m.file_path, m.uploaded_at,
+               c.class_name, s.subject_name
+        FROM materials m
+        JOIN classes c ON m.class_id = c.class_id
+        JOIN subjects s ON m.subject_id = s.subject_id
+        WHERE m.teacher_id = $1
+        ORDER BY m.uploaded_at DESC;
+    `;
+    const result = await pool.query(query, [teacher_id]);
+    return result.rows;
+};
+
+// Get Teacher Assignments
+const getTeacherAssignments = async (teacher_id) => {
+    const query = `
+        SELECT a.assignment_id, a.title, a.description, a.due_date, a.file_path, a.created_at,
+               c.class_name, s.subject_name
+        FROM assignments a
+        JOIN classes c ON a.class_id = c.class_id
+        JOIN subjects s ON a.subject_id = s.subject_id
+        WHERE a.teacher_id = $1
+        ORDER BY a.created_at DESC;
+    `;
+    const result = await pool.query(query, [teacher_id]);
+    return result.rows;
+};
+
 const getStudentsForContext = async (teacher_id, class_id, subject_id, semester_id) => {
     const isValid = await validateTeacherClassSubject(teacher_id, class_id, subject_id);
     if (!isValid) return null;
@@ -400,5 +445,8 @@ module.exports = {
     createAnnouncement,
     getClassAnnouncements,
     getFirstTimeInfo,
-    completeSetup
+    completeSetup,
+    getStudentGrades,
+    getTeacherMaterials,
+    getTeacherAssignments
 };

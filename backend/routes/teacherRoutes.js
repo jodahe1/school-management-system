@@ -25,17 +25,23 @@ router.post('/attendance', teacherController.recordAttendance);
 
 // Grading
 router.post('/grades', teacherController.assignGrades);
+router.get('/student-grades', teacherController.getStudentGrades);
 
 // Materials
 router.post('/materials', teacherController.uploadMaterials);
+router.get('/materials', teacherController.getTeacherMaterials);
 
 // Assignments
 router.post('/assignments', teacherController.createAssignment);
+router.get('/assignments', teacherController.getTeacherAssignments);
 router.get('/submissions', teacherController.getSubmissions);
 router.get('/students-by-context', teacherController.getStudentsForContext);
 
 // Announcements
 router.post('/announcements', teacherController.createAnnouncement);
 router.get('/announcements', teacherController.getClassAnnouncements);
+
+// Submissions Overview (Coming Soon)
+router.get('/submissions-overview', teacherController.submissionsOverviewComingSoon);
 
 module.exports = router;

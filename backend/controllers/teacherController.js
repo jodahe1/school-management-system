@@ -163,6 +163,39 @@ const getStudentDetails = async (req, res) => {
     }
 };
 
+// Get Student Grades
+const getStudentGrades = async (req, res) => {
+    try {
+        const { student_id } = req.query;
+        const grades = await teacherModel.getStudentGrades(student_id);
+        res.status(200).json(grades);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Get Teacher Materials
+const getTeacherMaterials = async (req, res) => {
+    try {
+        const { teacher_id } = req.query;
+        const materials = await teacherModel.getTeacherMaterials(teacher_id);
+        res.status(200).json(materials);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Get Teacher Assignments
+const getTeacherAssignments = async (req, res) => {
+    try {
+        const { teacher_id } = req.query;
+        const assignments = await teacherModel.getTeacherAssignments(teacher_id);
+        res.status(200).json(assignments);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 const getStudentsForContext = async (req, res) => {
     try {
         const { teacher_id, class_id, subject_id, semester_id } = req.query;
@@ -286,6 +319,21 @@ const completeSetup = async (req, res) => {
     }
 };
 
+// Submissions Overview (Coming Soon)
+const submissionsOverviewComingSoon = (req, res) => {
+    res.status(200).json({
+        message: 'Submissions Feature Coming Soon!',
+        details: "We're working hard to bring you a comprehensive submissions management system. This feature will allow you to:",
+        features: [
+            'View all student submissions in one place',
+            'Grade assignments with detailed feedback',
+            'Track submission deadlines and late submissions',
+            'Generate submission reports and analytics'
+        ],
+        note: 'Stay tuned for updates! In the meantime, you can view individual student submissions from the student details modal.'
+    });
+};
+
 module.exports = {
     loginTeacher,
     getProfile,
@@ -298,9 +346,13 @@ module.exports = {
     getTeacherClasses,
     getClassStudents,
     getStudentDetails,
+    getStudentGrades,
+    getTeacherMaterials,
+    getTeacherAssignments,
     getStudentsForContext,
     createAnnouncement,
     getClassAnnouncements,
     getFirstTimeInfo,
-    completeSetup
+    completeSetup,
+    submissionsOverviewComingSoon
 };

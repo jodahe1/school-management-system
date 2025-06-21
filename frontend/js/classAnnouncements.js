@@ -5,6 +5,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    // Back button functionality
+    document.getElementById('backToClass').addEventListener('click', () => {
+        window.location.href = 'teacherDashboard.html';
+    });
+
     // Initialize form elements
     const classSelect = document.getElementById('announcement-class');
     const subjectSelect = document.getElementById('announcement-subject');

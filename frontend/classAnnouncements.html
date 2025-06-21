@@ -10,18 +10,16 @@
 <body>
     <div class="dashboard-container">
         <header>
-            <h1>Teacher Dashboard</h1>
+            <div class="header-top">
+                <button id="backToClass" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Class
+                </button>
+                <h1>Class Announcements</h1>
+            </div>
             <div class="header-actions">
                 <a href="teacherChat.html" class="chat-btn"><i class="fas fa-comments"></i> Chat</a>
             </div>
         </header>
-
-        <aside class="dashboard-sidebar">
-            <button onclick="showSection('class-announcements-section')" class="sidebar-btn active">
-                <i class="fas fa-bullhorn"></i> Class Announcements
-            </button>
-            <!-- Keep other sidebar buttons from original dashboard -->
-        </aside>
 
         <main class="dashboard-main">
             <!-- Class Announcements Section -->

@@ -6,6 +6,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
   
+    // Back button functionality
+    document.getElementById('backToClass').addEventListener('click', () => {
+      window.location.href = 'teacherDashboard.html';
+    });
+
     const teacherId = teacher.user_id;
     document.getElementById('attendance-date').valueAsDate = new Date();
   
