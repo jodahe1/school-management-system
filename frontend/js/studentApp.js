@@ -8,19 +8,19 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
   errorMessage.style.display = 'none';
 
   // Get form values
-  const email = document.getElementById('email').value.trim();
+  const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value.trim();
 
   // Validate inputs
-  if (!email || !password) {
+  if (!username || !password) {
     errorMessage.textContent = 'Please fill in all fields.';
     errorMessage.style.display = 'block';
     return;
   }
 
-  // Validate email format
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errorMessage.textContent = 'Please enter a valid email address.';
+  // Validate username format (basic validation)
+  if (username.length < 3) {
+    errorMessage.textContent = 'Username must be at least 3 characters long.';
     errorMessage.style.display = 'block';
     return;
   }
@@ -38,7 +38,7 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ username, password }),
     });
 
     // Check if response is OK (status 200-299)

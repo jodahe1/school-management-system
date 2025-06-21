@@ -2,13 +2,15 @@
 const pool = require('../config/db');
 
 // Login Student
-const loginStudent = async (email, password) => {
+const loginStudent = async (username, password) => {
     try {
         const query = `
-            SELECT * FROM users
-            WHERE email = $1 AND password_hash = $2 AND role = 'student';
+            SELECT u.user_id, u.username, u.email, u.role, s.student_id, s.first_name, s.last_name
+            FROM users u
+            JOIN students s ON u.user_id = s.student_id
+            WHERE u.username = $1 AND u.password_hash = $2 AND u.role = 'student';
         `;
-        const result = await pool.query(query, [email, password]);
+        const result = await pool.query(query, [username, password]);
         return result.rows[0];
     } catch (error) {
         throw error;

@@ -5,13 +5,26 @@ const pool = require('../config/db'); // Import the pool object
 // Login Student
 const loginStudent = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const student = await studentModel.loginStudent(email, password);
+        const { username, password } = req.body;
+        
+        // Validate input
+        if (!username || !password) {
+            return res.status(400).json({ message: 'Username and password are required' });
+        }
+        
+        console.log('Login attempt:', { username, password: '***' });
+        
+        const student = await studentModel.loginStudent(username, password);
+        
         if (!student) {
+            console.log('Login failed: No student found with these credentials');
             return res.status(401).json({ message: 'Invalid credentials' });
         }
+        
+        console.log('Login successful for student:', student.username);
         res.status(200).json({ message: 'Login successful', student });
     } catch (error) {
+        console.error('Login error:', error);
         res.status(500).json({ message: 'Database error', error: error.message });
     }
 };
