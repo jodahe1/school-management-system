@@ -3,28 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Chat</title>
+    <title>Chat</title>
     <link rel="stylesheet" href="css/chat.css">
 </head>
 <body>
     <div class="chat-container">
-        <div class="chat-header">
-            <h2>Messages</h2>
-            <select id="teacherSelect" class="teacher-select">
-                <option value="" disabled selected>Loading teachers...</option>
-            </select>
-        </div>
-        
-        <div class="messages" id="messagesContainer">
-            <div class="loading-messages">Please select a teacher</div>
-        </div>
-        
-        <div class="input-area">
-            <input type="text" id="messageInput" placeholder="Select a teacher first" disabled>
-            <button id="sendButton" disabled>Send</button>
-        </div>
+        <aside class="chat-sidebar">
+            <h2>Conversations</h2>
+            <ul id="conversation-list"></ul>
+        </aside>
+        <main class="chat-main">
+            <div id="chat-header"></div>
+            <div id="message-list" class="message-list"></div>
+            <form id="message-form">
+                <input type="text" id="message-input" placeholder="Type your message..." autocomplete="off" required />
+                <button type="submit">Send</button>
+            </form>
+        </main>
     </div>
-
     <script src="js/chat.js"></script>
 </body>
-</html>
+</html> 

@@ -21,6 +21,18 @@ async function fetchStudentInfo() {
   document.getElementById('sidebarStudentName').textContent = `${studentInfo.first_name} ${studentInfo.last_name}`;
   document.getElementById('sidebarStudentId').textContent = `ID: ${studentInfo.username || student.user_id}`;
   document.getElementById('sidebarStudentClass').textContent = `Class: ${studentInfo.class_name || 'N/A'}`;
+
+  // Add Chat button to sidebar or header
+  const chatBtn = document.createElement('button');
+  chatBtn.textContent = 'Chat';
+  chatBtn.className = 'sidebar-btn';
+  chatBtn.onclick = function() {
+    localStorage.setItem('user', JSON.stringify({ userId: studentInfo.user_id, userType: 'student', userName: `${studentInfo.first_name} ${studentInfo.last_name}` }));
+    window.location.href = 'chat.html';
+  };
+  // Add to sidebar or appropriate place in DOM
+  const sidebar = document.querySelector('.sidebar') || document.body;
+  sidebar.appendChild(chatBtn);
 }
 
 // Helper function for API calls

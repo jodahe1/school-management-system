@@ -35,22 +35,22 @@
     <div class="main-content-with-sidebar">
         <header class="header">
             <div class="header-left">
-                <h1>Teacher Dashboard</h1>
+        <h1>Teacher Dashboard</h1>
                 <p id="welcomeMessage">Welcome back! Ready to inspire today?</p>
             </div>
             <div class="header-right">
-                <a href="teacherChat.html" class="chat-btn" id="chatBtn">
-                    <i class="fas fa-comments"></i> Chat
-                    <span class="notification-badge" id="messageBadge">0</span>
-                </a>
+            <a href="teacherChat.html" class="chat-btn" id="chatBtn">
+                <i class="fas fa-comments"></i> Chat
+                <span class="notification-badge" id="messageBadge">0</span>
+            </a>
                 <button id="logoutButton" class="logout-btn">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
-            </div>
-        </header>
+        </div>
+    </header>
 
         <main class="dashboard-content">
-            <!-- Profile Section -->
+        <!-- Profile Section -->
             <section id="profile" class="dashboard-section">
                 <div class="section-header">
                     <h2><i class="fas fa-user"></i> My Profile</h2>
@@ -100,9 +100,9 @@
                         </div>
                     </div>
                 </div>
-            </section>
+        </section>
 
-            <!-- Schedule Section -->
+        <!-- Schedule Section -->
             <section id="schedule" class="dashboard-section section-hidden">
                 <div class="section-header">
                     <h2><i class="fas fa-calendar-alt"></i> My Schedule</h2>
@@ -120,9 +120,9 @@
                         </div>
                     </div>
                 </div>
-            </section>
+        </section>
 
-            <!-- Classes Section -->
+        <!-- Classes Section -->
             <section id="classes" class="dashboard-section section-hidden">
                 <div class="section-header">
                     <h2><i class="fas fa-users"></i> My Classes</h2>
@@ -216,7 +216,7 @@
                         <p>Loading assignments...</p>
                     </div>
                 </div>
-            </section>
+        </section>
 
             <!-- Submissions Section -->
             <section id="submissions" class="dashboard-section section-hidden">
@@ -323,11 +323,11 @@
                     <div class="form-actions">
                         <button type="button" class="btn-secondary" onclick="closeModal('materialModal')">Cancel</button>
                         <button type="submit" class="btn-primary">Upload Material</button>
-                    </div>
+                </div>
                 </form>
             </div>
         </div>
-    </div>
+            </div>
 
     <!-- Create Assignment Modal -->
     <div id="assignmentModal" class="modal">
@@ -391,11 +391,11 @@
                     </div>
                     <div class="form-group">
                         <label for="grade-value">Grade (0-100)</label>
-                        <input type="number" id="grade-value" min="0" max="100" step="0.1" required>
+                    <input type="number" id="grade-value" min="0" max="100" step="0.1" required>
                     </div>
                     <div class="form-group">
                         <label for="grade-comments">Comments</label>
-                        <textarea id="grade-comments" rows="3"></textarea>
+                    <textarea id="grade-comments" rows="3"></textarea>
                     </div>
                     <div class="form-actions">
                         <button type="button" class="btn-secondary" onclick="closeModal('gradeModal')">Cancel</button>
@@ -485,7 +485,7 @@
                 </form>
             </div>
         </div>
-    </div>
+            </div>
 
     <!-- View Student Submissions Modal -->
     <div id="submissionsModal" class="modal">

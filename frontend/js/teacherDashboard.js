@@ -2,9 +2,9 @@
 const API_BASE_URL = 'http://localhost:5000';
 
 // Load teacher data from localStorage
-const teacher = JSON.parse(localStorage.getItem('teacher'));
-if (!teacher) {
-    window.location.href = 'teacherLogin.html';
+    const teacher = JSON.parse(localStorage.getItem('teacher'));
+    if (!teacher) {
+        window.location.href = 'teacherLogin.html';
     throw new Error('Teacher not found');
 }
 
@@ -60,7 +60,7 @@ function setupEventListeners() {
     document.getElementById('refreshStudents')?.addEventListener('click', () => loadStudents());
     document.getElementById('refreshMaterials')?.addEventListener('click', () => loadMaterials());
     document.getElementById('refreshAssignments')?.addEventListener('click', () => loadAssignments());
-    
+
     // Action buttons
     document.getElementById('backToClasses')?.addEventListener('click', () => showSection('classes'));
     document.getElementById('startAttendanceBtn')?.addEventListener('click', startAttendance);
@@ -112,6 +112,20 @@ function setupEventListeners() {
     document.getElementById('sendMaterialBtn')?.addEventListener('click', () => showMaterialModal());
     document.getElementById('createAssignmentBtn')?.addEventListener('click', () => showAssignmentModal());
     document.getElementById('viewSubmissionsBtn')?.addEventListener('click', () => showSubmissionsModal());
+
+    // Fix Chat button to set user info and go to chat.html
+    const chatBtn = document.getElementById('chatBtn');
+    if (chatBtn) {
+        chatBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.setItem('user', JSON.stringify({
+                userId: teacher.user_id,
+                userType: 'teacher',
+                userName: `${teacher.first_name} ${teacher.last_name}`
+            }));
+            window.location.href = 'chat.html';
+        });
+    }
 }
 
 // Show section and hide others
@@ -216,16 +230,16 @@ async function loadTeacherStats() {
 }
 
 // Load schedule
-async function loadSchedule() {
+    async function loadSchedule() {
     const scheduleGrid = document.getElementById('schedule-grid');
     
-    try {
+        try {
         const response = await fetch(`${API_BASE_URL}/api/teacher/schedule?teacher_id=${teacher.user_id}`);
         if (!response.ok) throw new Error('Failed to load schedule');
         
-        const schedule = await response.json();
-        
-        if (schedule.length === 0) {
+            const schedule = await response.json();
+            
+            if (schedule.length === 0) {
             scheduleGrid.innerHTML = `
                 <div class="no-data">
                     <i class="fas fa-calendar-times" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
@@ -252,8 +266,8 @@ async function loadSchedule() {
             </div>
         `).join('');
         
-    } catch (error) {
-        console.error('Error loading schedule:', error);
+        } catch (error) {
+            console.error('Error loading schedule:', error);
         scheduleGrid.innerHTML = `
             <div class="error-message">
                 <i class="fas fa-exclamation-triangle" style="color: #e74c3c; font-size: 2rem; margin-bottom: 1rem;"></i>
@@ -271,9 +285,9 @@ async function loadClasses() {
         const response = await fetch(`${API_BASE_URL}/api/teacher/classes?teacher_id=${teacher.user_id}`);
         if (!response.ok) throw new Error('Failed to load classes');
         
-        const classes = await response.json();
-        
-        if (classes.length === 0) {
+            const classes = await response.json();
+            
+            if (classes.length === 0) {
             classesGrid.innerHTML = `
                 <div class="no-data">
                     <i class="fas fa-users" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
@@ -300,8 +314,8 @@ async function loadClasses() {
             </div>
         `).join('');
         
-    } catch (error) {
-        console.error('Error loading classes:', error);
+        } catch (error) {
+            console.error('Error loading classes:', error);
         classesGrid.innerHTML = `
             <div class="error-message">
                 <i class="fas fa-exclamation-triangle" style="color: #e74c3c; font-size: 2rem; margin-bottom: 1rem;"></i>
@@ -332,10 +346,10 @@ async function loadStudents() {
         const response = await fetch(`${API_BASE_URL}/api/teacher/students?class_id=${currentClassId}`);
         if (!response.ok) throw new Error('Failed to load students');
         
-        const students = await response.json();
+            const students = await response.json();
         studentsData = students;
-        
-        if (students.length === 0) {
+            
+            if (students.length === 0) {
             studentsGrid.innerHTML = `
                 <div class="no-data">
                     <i class="fas fa-user-graduate" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
@@ -358,8 +372,8 @@ async function loadStudents() {
             </div>
         `).join('');
         
-    } catch (error) {
-        console.error('Error loading students:', error);
+        } catch (error) {
+            console.error('Error loading students:', error);
         studentsGrid.innerHTML = `
             <div class="error-message">
                 <i class="fas fa-exclamation-triangle" style="color: #e74c3c; font-size: 2rem; margin-bottom: 1rem;"></i>
@@ -521,10 +535,10 @@ async function handleMaterialSubmit(e) {
             showToast('Material uploaded successfully!', false);
             closeModal('materialModal');
             loadMaterials();
-        } else {
+            } else {
             throw new Error('Failed to upload material');
-        }
-    } catch (error) {
+            }
+        } catch (error) {
         console.error('Error uploading material:', error);
         showToast('Failed to upload material', true);
     }
@@ -707,7 +721,7 @@ async function loadSubjectsForSelect(selectId) {
             select.innerHTML = '<option value="">Select Subject</option>' +
                 subjects.map(subject => `<option value="${subject.subject_id}">${subject.subject_name}</option>`).join('');
         }
-    } catch (error) {
+        } catch (error) {
         console.error('Error loading subjects:', error);
     }
 }
@@ -793,33 +807,33 @@ async function loadStudentSubmissions(studentId) {
 }
 
 // Handle grade submission
-async function handleGradeSubmit(e) {
-    e.preventDefault();
-    
-    const formData = {
+    async function handleGradeSubmit(e) {
+        e.preventDefault();
+        
+        const formData = {
         teacher_id: teacher.user_id,
-        student_id: document.getElementById('grade-student-id').value,
+            student_id: document.getElementById('grade-student-id').value,
         subject_id: document.getElementById('grade-subject').value,
         semester_id: document.getElementById('grade-semester').value,
-        grade: document.getElementById('grade-value').value,
-        comments: document.getElementById('grade-comments').value
-    };
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/teacher/grades`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        });
+            grade: document.getElementById('grade-value').value,
+            comments: document.getElementById('grade-comments').value
+        };
         
-        if (response.ok) {
+        try {
+        const response = await fetch(`${API_BASE_URL}/api/teacher/grades`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            
+            if (response.ok) {
             showToast('Grade assigned successfully!', false);
             closeModal('gradeModal');
             // Refresh student grades in modal
             const studentId = formData.student_id;
             await showStudentDetails(studentId);
-        } else {
-            const errorData = await response.json();
+            } else {
+                const errorData = await response.json();
             throw new Error(errorData.message || 'Failed to assign grade');
         }
     } catch (error) {
@@ -830,28 +844,28 @@ async function handleGradeSubmit(e) {
 
 // Handle send material submission
 async function handleSendMaterialSubmit(e) {
-    e.preventDefault();
-    
-    const formData = {
+        e.preventDefault();
+        
+        const formData = {
         teacher_id: teacher.user_id,
         class_id: document.getElementById('send-material-class').value,
         subject_id: document.getElementById('send-material-subject').value,
         title: document.getElementById('send-material-title').value,
         file_path: document.getElementById('send-material-file').value
-    };
-    
-    try {
+        };
+
+        try {
         const response = await fetch(`${API_BASE_URL}/api/teacher/materials`, {
-            method: 'POST',
+                method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        });
-        
-        if (response.ok) {
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
             showToast('Material sent successfully!', false);
             closeModal('sendMaterialModal');
             loadMaterials(); // Refresh materials list
-        } else {
+            } else {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Failed to send material');
         }
@@ -863,9 +877,9 @@ async function handleSendMaterialSubmit(e) {
 
 // Handle student assignment submission
 async function handleStudentAssignmentSubmit(e) {
-    e.preventDefault();
-    
-    const formData = {
+        e.preventDefault();
+        
+        const formData = {
         teacher_id: teacher.user_id,
         class_id: document.getElementById('student-assignment-class').value,
         subject_id: document.getElementById('student-assignment-subject').value,
@@ -873,25 +887,25 @@ async function handleStudentAssignmentSubmit(e) {
         description: document.getElementById('student-assignment-description').value,
         due_date: document.getElementById('student-assignment-due-date').value,
         file_path: document.getElementById('student-assignment-file').value || null
-    };
-    
-    try {
+        };
+
+        try {
         const response = await fetch(`${API_BASE_URL}/api/teacher/assignments`, {
-            method: 'POST',
+                method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        });
-        
-        if (response.ok) {
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
             showToast('Assignment created successfully!', false);
             closeModal('studentAssignmentModal');
             loadAssignments(); // Refresh assignments list
-        } else {
+            } else {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Failed to create assignment');
-        }
-    } catch (error) {
-        console.error('Error creating assignment:', error);
+            }
+        } catch (error) {
+            console.error('Error creating assignment:', error);
         showToast(error.message || 'Failed to create assignment', true);
     }
 }
