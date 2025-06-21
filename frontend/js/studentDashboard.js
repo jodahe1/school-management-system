@@ -8,8 +8,20 @@ if (!student) {
 // API base URL
 const API_BASE_URL = 'http://localhost:5000';
 
-// Display student name
-document.getElementById('studentName').textContent = student.username || 'Student';
+// Fetch and display student information in sidebar
+async function fetchStudentInfo() {
+  const studentInfo = await fetchWithErrorHandling(
+    `api/student/${student.user_id}/info`,
+    'Failed to load student information'
+  );
+  
+  if (!studentInfo) return;
+
+  // Update sidebar with student information
+  document.getElementById('sidebarStudentName').textContent = `${studentInfo.first_name} ${studentInfo.last_name}`;
+  document.getElementById('sidebarStudentId').textContent = `ID: ${studentInfo.username || student.user_id}`;
+  document.getElementById('sidebarStudentClass').textContent = `Class: ${studentInfo.class_name || 'N/A'}`;
+}
 
 // Helper function for API calls
 async function fetchWithErrorHandling(endpoint, errorMessage) {
@@ -47,6 +59,7 @@ async function fetchGrades() {
   
   if (!grades) return;
 
+  // Update grades table
   const tableBody = document.querySelector('#gradesTable tbody');
   tableBody.innerHTML = grades.length > 0 
     ? grades.map(grade => `
@@ -58,6 +71,60 @@ async function fetchGrades() {
         </tr>
       `).join('')
     : '<tr><td colspan="4">No grades available</td></tr>';
+
+  // Calculate and update grade average
+  updateGradeAverage(grades);
+}
+
+// Calculate and update grade average in the progress circle
+function updateGradeAverage(grades) {
+  const progressCircle = document.querySelector('.progress-circle-fill');
+  const progressPercent = document.querySelector('.progress-percent');
+  
+  if (!grades || grades.length === 0) {
+    // No grades available
+    progressCircle.style.strokeDasharray = '0, 100';
+    progressPercent.textContent = 'N/A';
+    return;
+  }
+
+  // Filter out grades that are not numeric
+  const numericGrades = grades.filter(grade => {
+    const gradeValue = parseFloat(grade.grade);
+    return !isNaN(gradeValue) && gradeValue >= 0 && gradeValue <= 100;
+  });
+
+  if (numericGrades.length === 0) {
+    // No valid grades found
+    progressCircle.style.strokeDasharray = '0, 100';
+    progressPercent.textContent = 'N/A';
+    return;
+  }
+
+  // Calculate average
+  const totalGrade = numericGrades.reduce((sum, grade) => sum + parseFloat(grade.grade), 0);
+  const averageGrade = Math.round(totalGrade / numericGrades.length);
+  
+  // Update progress circle
+  const circumference = 2 * Math.PI * 15.9155; // r = 15.9155
+  const progress = (averageGrade / 100) * circumference;
+  const remaining = circumference - progress;
+  
+  progressCircle.style.strokeDasharray = `${progress}, ${remaining}`;
+  progressPercent.textContent = `${averageGrade}%`;
+  
+  // Update color based on grade
+  if (averageGrade >= 90) {
+    progressCircle.style.stroke = '#4bb543'; // Green for A
+  } else if (averageGrade >= 80) {
+    progressCircle.style.stroke = '#4895ef'; // Blue for B
+  } else if (averageGrade >= 70) {
+    progressCircle.style.stroke = '#fca311'; // Orange for C
+  } else if (averageGrade >= 60) {
+    progressCircle.style.stroke = '#ff6b35'; // Red-orange for D
+  } else {
+    progressCircle.style.stroke = '#ef233c'; // Red for F
+  }
 }
 
 // Fetch and display attendance
@@ -311,6 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 // Initialize all data fetches when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+  fetchStudentInfo();
   fetchGrades();
   fetchAttendance();
   fetchMaterials();
@@ -323,6 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(checkUnreadMessages, 30000);
 
   // Add refresh button event listeners
+  document.getElementById('refreshGrades')?.addEventListener('click', fetchGrades);
   document.getElementById('refreshNotSubmitted')?.addEventListener('click', fetchNotSubmittedAssignments);
   document.getElementById('refreshSubmitted')?.addEventListener('click', fetchSubmittedAssignments);
 

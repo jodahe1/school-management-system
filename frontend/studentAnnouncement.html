@@ -12,9 +12,9 @@
     <div class="container">
         <aside class="sidebar">
             <div class="profile">
-                <img src="https://via.placeholder.com/50" alt="Profile" class="profile-img" id="profileImg"/>
-                <h3 id="studentName">Loading...</h3>
-                <p id="studentClass">Class: Loading...</p>
+                <h3 id="sidebarStudentName">[Student Name]</h3>
+                <p id="sidebarStudentId">ID: Loading...</p>
+                <p id="sidebarStudentClass">Class: Loading...</p>
             </div>
             <nav>
                 <ul>
@@ -23,12 +23,14 @@
                     <li><a href="studentDashboard.html#grades"><i class="fas fa-chart-line"></i> Grades</a></li>
                     <li><a href="studentDashboard.html#attendance"><i class="fas fa-calendar-check"></i> Attendance</a></li>
                     <li><a href="studentDashboard.html#materials"><i class="fas fa-book"></i> Materials</a></li>
+                    <li><a href="studentDashboard.html#not-submitted-assignments"><i class="fas fa-clock"></i> Not Submitted</a></li>
+                    <li><a href="studentDashboard.html#submitted-assignments"><i class="fas fa-check-circle"></i> Submitted</a></li>
                 </ul>
             </nav>
         </aside>
         <main class="main-content">
             <header>
-                <h1><i class="fas fa-bullhorn"></i> Announcements</h1>
+                <h1><i class="fas fa-bullhorn"></i> Student Announcements</h1>
                 <div class="header-actions">
                     <div class="notification-badge" id="unreadCount">0</div>
                     <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -79,13 +81,24 @@
     <script src="./js/studentAnnouncement.js"></script>
     <script>
         // Load student data and update sidebar
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const student = JSON.parse(localStorage.getItem('student'));
-            if (student) {
-                document.getElementById('studentName').textContent = student.username || 'Student';
-                document.getElementById('studentClass').textContent = `Class: ${student.class_name || 'N/A'}`;
-            } else {
+            if (!student) {
                 window.location.href = 'studentLogin.html';
+                return;
+            }
+
+            // Fetch and display student information in sidebar
+            try {
+                const response = await fetch(`http://localhost:5000/api/student/${student.user_id}/info`);
+                if (response.ok) {
+                    const studentInfo = await response.json();
+                    document.getElementById('sidebarStudentName').textContent = `${studentInfo.first_name} ${studentInfo.last_name}`;
+                    document.getElementById('sidebarStudentId').textContent = `ID: ${studentInfo.username || student.user_id}`;
+                    document.getElementById('sidebarStudentClass').textContent = `Class: ${studentInfo.class_name || 'N/A'}`;
+                }
+            } catch (error) {
+                console.error('Failed to load student information:', error);
             }
 
             // Logout functionality
