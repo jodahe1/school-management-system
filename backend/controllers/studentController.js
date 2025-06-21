@@ -74,6 +74,28 @@ const getAssignments = async (req, res) => {
     }
 };
 
+// Fetch Not Submitted Assignments
+const getNotSubmittedAssignments = async (req, res) => {
+    try {
+        const { studentId } = req.params;
+        const assignments = await studentModel.getNotSubmittedAssignments(studentId);
+        res.status(200).json(assignments);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Fetch Submitted Assignments
+const getSubmittedAssignments = async (req, res) => {
+    try {
+        const { studentId } = req.params;
+        const assignments = await studentModel.getSubmittedAssignments(studentId);
+        res.status(200).json(assignments);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 // Submit Assignment
 const submitAssignment = async (req, res) => {
     try {
@@ -162,6 +184,8 @@ module.exports = {
     getStudentAttendance,
     getMaterials,
     getAssignments,
+    getNotSubmittedAssignments,
+    getSubmittedAssignments,
     submitAssignment,
     getChatMessages,
     getStudentAnnouncements,

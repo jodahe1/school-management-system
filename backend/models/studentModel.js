@@ -100,6 +100,57 @@ const getAssignments = async (studentId) => {
     }
 };
 
+// Fetch Not Submitted Assignments for Student's Class
+const getNotSubmittedAssignments = async (studentId) => {
+    try {
+        const query = `
+            SELECT a.assignment_id, sb.subject_name, a.title, a.description, a.due_date, a.file_path
+            FROM assignments a
+            JOIN subjects sb ON a.subject_id = sb.subject_id
+            JOIN students s ON a.class_id = s.class_id
+            WHERE s.student_id = $1
+            AND a.assignment_id NOT IN (
+                SELECT assignment_id 
+                FROM submissions 
+                WHERE student_id = $1
+            );
+        `;
+        const result = await pool.query(query, [studentId]);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Fetch Submitted Assignments for Student's Class
+const getSubmittedAssignments = async (studentId) => {
+    try {
+        const query = `
+            SELECT 
+                a.assignment_id, 
+                sb.subject_name, 
+                a.title, 
+                a.description, 
+                a.due_date, 
+                a.file_path,
+                s.submitted_file_path,
+                s.submission_date,
+                s.grade,
+                s.feedback
+            FROM assignments a
+            JOIN subjects sb ON a.subject_id = sb.subject_id
+            JOIN students st ON a.class_id = st.class_id
+            JOIN submissions s ON a.assignment_id = s.assignment_id AND st.student_id = s.student_id
+            WHERE st.student_id = $1
+            ORDER BY s.submission_date DESC;
+        `;
+        const result = await pool.query(query, [studentId]);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
 // Submit Assignment
 const submitAssignment = async (studentId, assignmentId, submittedFilePath) => {
     try {
@@ -205,6 +256,8 @@ module.exports = {
     getStudentAttendance,
     getMaterials,
     getAssignments,
+    getNotSubmittedAssignments,
+    getSubmittedAssignments,
     submitAssignment,
     getChatMessages,
      getStudentAnnouncements,

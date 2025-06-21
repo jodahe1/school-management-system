@@ -22,6 +22,12 @@ router.get('/:studentId/materials', studentController.getMaterials);
 // Fetch Assignments for Student's Class
 router.get('/:studentId/assignments', studentController.getAssignments);
 
+// Fetch Not Submitted Assignments for Student's Class
+router.get('/:studentId/assignments/not-submitted', studentController.getNotSubmittedAssignments);
+
+// Fetch Submitted Assignments for Student's Class
+router.get('/:studentId/assignments/submitted', studentController.getSubmittedAssignments);
+
 // Submit Assignment
 router.post('/:studentId/assignments/submit', studentController.submitAssignment);
 

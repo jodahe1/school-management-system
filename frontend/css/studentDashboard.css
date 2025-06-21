@@ -402,8 +402,6 @@ tr:hover {
   background-color: #3a56d4;
 }
 
-/* Add these new styles to your existing CSS file */
-
 /* Smooth scrolling behavior */
 html {
   scroll-behavior: smooth;
@@ -445,8 +443,6 @@ section:target {
   0% { background-color: rgba(67, 97, 238, 0.1); }
   100% { background-color: white; }
 }
-
-/* Add these new styles to your existing CSS file */
 
 /* Materials Section Specific Styles */
 .materials-grid {
@@ -588,5 +584,186 @@ section:target {
 @media (max-width: 768px) {
   .materials-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Assignment Sections Styles */
+.assignments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.assignment-card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  border-left: 4px solid var(--primary-color);
+}
+
+.assignment-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.assignment-card.not-submitted {
+  border-left-color: var(--warning-color);
+}
+
+.assignment-card.submitted {
+  border-left-color: var(--success-color);
+}
+
+.assignment-card.graded {
+  border-left-color: var(--accent-color);
+}
+
+.assignment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.assignment-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--dark-color);
+  margin: 0;
+}
+
+.assignment-subject {
+  background: var(--primary-color);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.assignment-details {
+  margin-bottom: 1rem;
+}
+
+.assignment-details p {
+  margin: 0.5rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.assignment-details strong {
+  color: var(--dark-color);
+}
+
+.assignment-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.assignment-actions .btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-submit {
+  background: var(--warning-color);
+  color: white;
+}
+
+.btn-submit:hover {
+  background: #e0940f;
+}
+
+.btn-download {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-download:hover {
+  background: var(--secondary-color);
+}
+
+.btn-view {
+  background: var(--accent-color);
+  color: white;
+}
+
+.btn-view:hover {
+  background: #3a7bd5;
+}
+
+.assignment-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-submitted {
+  background: rgba(75, 181, 67, 0.1);
+  color: var(--success-color);
+}
+
+.status-graded {
+  background: rgba(67, 97, 238, 0.1);
+  color: var(--accent-color);
+}
+
+.grade-info {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin-top: 1rem;
+  border-left: 3px solid var(--success-color);
+}
+
+.grade-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--success-color);
+}
+
+.grade-info p {
+  margin: 0.25rem 0;
+  color: #666;
+}
+
+.feedback-text {
+  font-style: italic;
+  color: #555;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: #fff3cd;
+  border-radius: 4px;
+  border-left: 3px solid var(--warning-color);
+}
+
+/* Responsive adjustments for assignments */
+@media (max-width: 768px) {
+  .assignments-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .assignment-actions {
+    flex-direction: column;
+  }
+  
+  .assignment-actions .btn {
+    justify-content: center;
   }
 }

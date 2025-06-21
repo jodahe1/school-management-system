@@ -107,7 +107,7 @@ async function fetchMaterials() {
 // Fetch and display assignments
 async function fetchAssignments() {
   const assignments = await fetchWithErrorHandling(
-    `api/student/${student.user_id}/assignments`,
+    `api/student/${student.user_id}/assignments/not-submitted`,
     'Failed to load assignments'
   );
 
@@ -135,7 +135,93 @@ async function fetchAssignments() {
       </li>
     `).join('');
   } else {
-    upcomingContainer.innerHTML = '<li class="no-data">No assignments available</li>';
+    upcomingContainer.innerHTML = '<li class="no-data">No upcoming assignments</li>';
+  }
+}
+
+// Fetch and display not submitted assignments
+async function fetchNotSubmittedAssignments() {
+  const assignments = await fetchWithErrorHandling(
+    `api/student/${student.user_id}/assignments/not-submitted`,
+    'Failed to load not submitted assignments'
+  );
+
+  if (!assignments) return;
+
+  const gridContainer = document.getElementById('notSubmittedAssignmentsGrid');
+  if (assignments.length > 0) {
+    gridContainer.innerHTML = assignments.map(assignment => `
+      <div class="assignment-card not-submitted">
+        <div class="assignment-header">
+          <h3 class="assignment-title">${assignment.title || 'Untitled Assignment'}</h3>
+          <span class="assignment-subject">${assignment.subject_name || 'General'}</span>
+        </div>
+        <div class="assignment-details">
+          <p><strong>Due Date:</strong> ${new Date(assignment.due_date).toLocaleDateString()}</p>
+          <p><strong>Description:</strong> ${assignment.description || 'No description provided'}</p>
+        </div>
+        <div class="assignment-actions">
+          <button onclick="submitAssignment(${assignment.assignment_id})" class="btn btn-submit">
+            <i class="fas fa-upload"></i> Submit Assignment
+          </button>
+          ${assignment.file_path ? `<a href="${assignment.file_path}" target="_blank" class="btn btn-download">
+            <i class="fas fa-download"></i> Download
+          </a>` : ''}
+        </div>
+      </div>
+    `).join('');
+  } else {
+    gridContainer.innerHTML = '<div class="no-data">No pending assignments to submit</div>';
+  }
+}
+
+// Fetch and display submitted assignments
+async function fetchSubmittedAssignments() {
+  const assignments = await fetchWithErrorHandling(
+    `api/student/${student.user_id}/assignments/submitted`,
+    'Failed to load submitted assignments'
+  );
+
+  if (!assignments) return;
+
+  const gridContainer = document.getElementById('submittedAssignmentsGrid');
+  if (assignments.length > 0) {
+    gridContainer.innerHTML = assignments.map(assignment => `
+      <div class="assignment-card ${assignment.grade ? 'graded' : 'submitted'}">
+        <div class="assignment-header">
+          <h3 class="assignment-title">${assignment.title || 'Untitled Assignment'}</h3>
+          <span class="assignment-subject">${assignment.subject_name || 'General'}</span>
+        </div>
+        <div class="assignment-details">
+          <p><strong>Due Date:</strong> ${new Date(assignment.due_date).toLocaleDateString()}</p>
+          <p><strong>Submitted:</strong> ${new Date(assignment.submission_date).toLocaleDateString()}</p>
+          <p><strong>Description:</strong> ${assignment.description || 'No description provided'}</p>
+        </div>
+        <div class="assignment-actions">
+          <span class="assignment-status ${assignment.grade ? 'status-graded' : 'status-submitted'}">
+            <i class="fas ${assignment.grade ? 'fa-star' : 'fa-check'}"></i>
+            ${assignment.grade ? 'Graded' : 'Submitted'}
+          </span>
+          <a href="${assignment.submitted_file_path}" target="_blank" class="btn btn-view">
+            <i class="fas fa-eye"></i> View Submission
+          </a>
+          ${assignment.file_path ? `<a href="${assignment.file_path}" target="_blank" class="btn btn-download">
+            <i class="fas fa-download"></i> Download Original
+          </a>` : ''}
+        </div>
+        ${assignment.grade ? `
+          <div class="grade-info">
+            <h4><i class="fas fa-star"></i> Grade Information</h4>
+            <p><strong>Grade:</strong> ${assignment.grade}</p>
+            ${assignment.feedback ? `<div class="feedback-text">
+              <strong>Feedback:</strong> ${assignment.feedback}
+            </div>` : ''}
+          </div>
+        ` : ''}
+      </div>
+    `).join('');
+  } else {
+    gridContainer.innerHTML = '<div class="no-data">No submitted assignments found</div>';
   }
 }
 
@@ -156,7 +242,10 @@ async function submitAssignment(assignmentId) {
 
     if (response.ok) {
       showToast('Assignment submitted successfully!', false);
+      // Refresh both assignment sections
       fetchAssignments();
+      fetchNotSubmittedAssignments();
+      fetchSubmittedAssignments();
     } else {
       const errorData = await response.json();
       showToast(errorData.message || 'Failed to submit assignment.');
@@ -226,10 +315,16 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchAttendance();
   fetchMaterials();
   fetchAssignments();
+  fetchNotSubmittedAssignments();
+  fetchSubmittedAssignments();
   checkUnreadMessages();
 
   // Set interval to check for new messages every 30 seconds
   setInterval(checkUnreadMessages, 30000);
+
+  // Add refresh button event listeners
+  document.getElementById('refreshNotSubmitted')?.addEventListener('click', fetchNotSubmittedAssignments);
+  document.getElementById('refreshSubmitted')?.addEventListener('click', fetchSubmittedAssignments);
 
   // Logout functionality
   document.getElementById('logoutBtn').addEventListener('click', () => {

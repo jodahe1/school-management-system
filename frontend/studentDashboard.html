@@ -23,6 +23,8 @@
         <li><a href="#grades"><i class="fas fa-chart-line"></i> Grades</a></li>
         <li><a href="#attendance"><i class="fas fa-calendar-check"></i> Attendance</a></li>
         <li><a href="#materials"><i class="fas fa-book"></i> Materials</a></li>
+        <li><a href="#not-submitted-assignments"><i class="fas fa-clock"></i> Not Submitted</a></li>
+        <li><a href="#submitted-assignments"><i class="fas fa-check-circle"></i> Submitted</a></li>
       </ul>
     </nav>
   </aside>
@@ -156,6 +158,38 @@
     </div>
   </div>
 </section>
+
+      <!-- Not Submitted Assignments Section -->
+      <section id="not-submitted-assignments" class="full-width-section">
+        <div class="section-header">
+          <h2><i class="fas fa-clock"></i> Not Submitted Assignments</h2>
+          <div class="section-actions">
+            <button id="refreshNotSubmitted"><i class="fas fa-sync-alt"></i> Refresh</button>
+          </div>
+        </div>
+        <div class="assignments-grid" id="notSubmittedAssignmentsGrid">
+          <div class="loading-message">
+            <div class="spinner"></div>
+            <p>Loading assignments...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Submitted Assignments Section -->
+      <section id="submitted-assignments" class="full-width-section">
+        <div class="section-header">
+          <h2><i class="fas fa-check-circle"></i> Submitted Assignments</h2>
+          <div class="section-actions">
+            <button id="refreshSubmitted"><i class="fas fa-sync-alt"></i> Refresh</button>
+          </div>
+        </div>
+        <div class="assignments-grid" id="submittedAssignmentsGrid">
+          <div class="loading-message">
+            <div class="spinner"></div>
+            <p>Loading assignments...</p>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
