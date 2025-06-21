@@ -113,32 +113,30 @@ async function fetchAssignments() {
 
   if (!assignments) return;
 
-  const pendingAssignments = Array.isArray(assignments) ? assignments.filter(a => !a.submitted_file_path) : [];
-  const submittedAssignments = Array.isArray(assignments) ? assignments.filter(a => a.submitted_file_path) : [];
-
-  // Display pending assignments
-  const pendingContainer = document.getElementById('pendingAssignments');
-  pendingContainer.innerHTML = pendingAssignments.length > 0
-    ? pendingAssignments.map(assignment => `
-        <div class="assignment-card pending">
-          <h3>${assignment.title || 'Untitled Assignment'}</h3>
+  // Display assignments in the upcomingAssignments container
+  const upcomingContainer = document.getElementById('upcomingAssignments');
+  if (assignments.length > 0) {
+    upcomingContainer.innerHTML = assignments.map(assignment => `
+      <li class="assignment-item">
+        <div class="assignment-info">
+          <h4>${assignment.title || 'Untitled Assignment'}</h4>
+          <p><strong>Subject:</strong> ${assignment.subject_name || 'N/A'}</p>
           <p><strong>Due:</strong> ${new Date(assignment.due_date).toLocaleDateString()}</p>
-          <button onclick="submitAssignment(${assignment.assignment_id})" class="submit-btn">Submit</button>
+          <p><strong>Description:</strong> ${assignment.description || 'No description'}</p>
         </div>
-      `).join('')
-    : '<p class="no-data">No pending assignments</p>';
-
-  // Display submitted assignments
-  const submittedContainer = document.getElementById('submittedAssignments');
-  submittedContainer.innerHTML = submittedAssignments.length > 0
-    ? submittedAssignments.map(assignment => `
-        <div class="assignment-card submitted">
-          <h3>${assignment.title || 'Untitled Assignment'}</h3>
-          <p><strong>Submitted:</strong> ${new Date(assignment.submission_date).toLocaleDateString()}</p>
-          <p><strong>Status:</strong> ${assignment.grade ? 'Graded' : 'Submitted'}</p>
+        <div class="assignment-actions">
+          <button onclick="submitAssignment(${assignment.assignment_id})" class="submit-btn">
+            <i class="fas fa-upload"></i> Submit
+          </button>
+          ${assignment.file_path ? `<a href="${assignment.file_path}" target="_blank" class="download-btn">
+            <i class="fas fa-download"></i> Download
+          </a>` : ''}
         </div>
-      `).join('')
-    : '<p class="no-data">No submitted assignments</p>';
+      </li>
+    `).join('');
+  } else {
+    upcomingContainer.innerHTML = '<li class="no-data">No assignments available</li>';
+  }
 }
 
 // Submit assignment
