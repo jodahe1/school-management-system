@@ -75,7 +75,7 @@ exports.getChildrenMaterials = async (parent_id) => {
 // View Children's Assignments
 exports.getChildrenAssignments = async (parent_id) => {
     const query = `
-        SELECT c.class_name, sub.subject_name, sem.semester_name, a.title, a.description, a.due_date, a.file_path
+        SELECT a.assignment_id, c.class_name, sub.subject_name, sem.semester_name, a.title, a.description, a.due_date, a.file_path
         FROM assignments a
         JOIN classes c ON a.class_id = c.class_id
         JOIN subjects sub ON a.subject_id = sub.subject_id
@@ -91,7 +91,7 @@ exports.getChildrenAssignments = async (parent_id) => {
 // View Children's Submissions
 exports.getChildrenSubmissions = async (parent_id) => {
     const query = `
-        SELECT CONCAT(s.first_name, ' ', s.last_name) AS student_name,
+        SELECT sb.assignment_id, CONCAT(s.first_name, ' ', s.last_name) AS student_name,
                a.title AS assignment_title, sub.subject_name,
                sb.submitted_file_path, sb.submission_date, sb.grade, sb.feedback
         FROM submissions sb

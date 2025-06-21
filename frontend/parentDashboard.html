@@ -8,48 +8,187 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <header>
-    <h1>Welcome, Parent!</h1>
-    <div class="header-actions">
-      <a href="parentChat.html" class="btn chat-btn" id="chatBtn">
-        <i class="fas fa-comments"></i> Chat
-        <span class="notification-badge" id="messageBadge">0</span>
-      </a>
-      <button id="logoutButton" class="btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="parent-info">
+      <h3 id="parentName">[Parent Name]</h3>
+      <p id="parentId">ID: Loading...</p>
+      <p id="viewingChild">Viewing: All Children</p>
     </div>
-  </header>
+    <nav>
+      <ul>
+        <li class="active"><a href="#dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="#attendance"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+        <li><a href="#unsubmitted-assignments"><i class="fas fa-clock"></i> Unsubmitted</a></li>
+        <li><a href="#submitted-assignments"><i class="fas fa-check-circle"></i> Submitted</a></li>
+        <li><a href="#grades"><i class="fas fa-chart-line"></i> Grades</a></li>
+        <li><a href="#materials"><i class="fas fa-book"></i> Materials</a></li>
+      </ul>
+    </nav>
+  </aside>
 
-  <main>
-    <section id="childrenProfiles">
-      <h2>Children Profiles</h2>
-      <ul id="profilesList"></ul>
-    </section>
+  <!-- Main Content -->
+  <div class="main-content-with-sidebar">
+    <header>
+      <h1>Parent Dashboard</h1>
+      <div class="header-actions">
+        <a href="parentChat.html" class="btn chat-btn" id="chatBtn">
+          <i class="fas fa-comments"></i> Chat
+          <span class="notification-badge" id="messageBadge">0</span>
+        </a>
+        <button id="logoutButton" class="btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </header>
 
-    <section id="gradesSection">
-      <h2>Children Grades</h2>
-      <ul id="gradesList"></ul>
-    </section>
+    <main class="dashboard-content">
+      <!-- Dashboard Section -->
+      <section id="dashboard" class="dashboard-section">
+        <h2><i class="fas fa-users"></i> My Children</h2>
+        <div class="dashboard-layout">
+          <!-- Parent Info Card -->
+          <div class="parent-info-card">
+            <div class="parent-info-header">
+              <i class="fas fa-user-circle"></i>
+              <h3>Parent Information</h3>
+            </div>
+            <div class="parent-info-content">
+              <div class="info-item">
+                <span class="info-label">Name:</span>
+                <span class="info-value" id="dashboardParentName">Loading...</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">ID:</span>
+                <span class="info-value" id="dashboardParentId">Loading...</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Viewing:</span>
+                <span class="info-value" id="dashboardViewingChild">All Children</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Children Grid -->
+          <div class="children-grid" id="childrenGrid">
+            <div class="loading-message">
+              <div class="spinner"></div>
+              <p>Loading children profiles...</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section id="attendanceSection">
-      <h2>Children Attendance</h2>
-      <ul id="attendanceList"></ul>
-    </section>
+      <!-- Attendance Section -->
+      <section id="attendance" class="full-width-section section-hidden">
+        <div class="section-header">
+          <h2><i class="fas fa-calendar-check"></i> Children Attendance</h2>
+          <div class="section-actions">
+            <button id="refreshAttendance"><i class="fas fa-sync-alt"></i> Refresh</button>
+          </div>
+        </div>
+        <div class="attendance-container" id="attendanceContainer">
+          <div class="loading-message">
+            <div class="spinner"></div>
+            <p>Loading attendance data...</p>
+          </div>
+        </div>
+      </section>
 
-    <section id="materialsSection">
-      <h2>Class Materials</h2>
-      <ul id="materialsList"></ul>
-    </section>
+      <!-- Unsubmitted Assignments Section -->
+      <section id="unsubmitted-assignments" class="full-width-section section-hidden">
+        <div class="section-header">
+          <h2><i class="fas fa-clock"></i> Unsubmitted Assignments</h2>
+          <div class="section-actions">
+            <button id="refreshUnsubmitted"><i class="fas fa-sync-alt"></i> Refresh</button>
+          </div>
+        </div>
+        <div class="assignments-grid" id="unsubmittedAssignmentsGrid">
+          <div class="loading-message">
+            <div class="spinner"></div>
+            <p>Loading unsubmitted assignments...</p>
+          </div>
+        </div>
+      </section>
 
-    <section id="assignmentsSection">
-      <h2>Assignments</h2>
-      <ul id="assignmentsList"></ul>
-    </section>
+      <!-- Submitted Assignments Section -->
+      <section id="submitted-assignments" class="full-width-section section-hidden">
+        <div class="section-header">
+          <h2><i class="fas fa-check-circle"></i> Submitted Assignments</h2>
+          <div class="section-actions">
+            <button id="refreshSubmitted"><i class="fas fa-sync-alt"></i> Refresh</button>
+          </div>
+        </div>
+        <div class="assignments-grid" id="submittedAssignmentsGrid">
+          <div class="loading-message">
+            <div class="spinner"></div>
+            <p>Loading submitted assignments...</p>
+          </div>
+        </div>
+      </section>
 
-    <section id="submissionsSection">
-      <h2>Submissions</h2>
-      <ul id="submissionsList"></ul>
-    </section>
-  </main>
+      <!-- Grades Section -->
+      <section id="grades" class="full-width-section section-hidden">
+        <div class="section-header">
+          <h2><i class="fas fa-chart-line"></i> Children Grades</h2>
+          <div class="section-actions">
+            <button id="refreshGrades"><i class="fas fa-sync-alt"></i> Refresh</button>
+          </div>
+        </div>
+        <div class="grades-container" id="gradesContainer">
+          <div class="loading-message">
+            <div class="spinner"></div>
+            <p>Loading grades...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Materials Section -->
+      <section id="materials" class="full-width-section section-hidden">
+        <div class="section-header">
+          <h2><i class="fas fa-book"></i> Class Materials</h2>
+          <div class="section-actions">
+            <button id="refreshMaterials"><i class="fas fa-sync-alt"></i> Refresh</button>
+          </div>
+        </div>
+        <div class="materials-grid" id="materialsGrid">
+          <div class="loading-message">
+            <div class="spinner"></div>
+            <p>Loading materials...</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Selected Child Details Modal -->
+  <div id="childModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="child-details">
+        <div class="child-header">
+          <h2 id="modalChildName">Child Name</h2>
+          <span class="child-id" id="modalChildId">ID: Loading...</span>
+        </div>
+        
+        <div class="child-info-grid">
+          <div class="info-card">
+            <h3><i class="fas fa-graduation-cap"></i> Academic Info</h3>
+            <p><strong>Class:</strong> <span id="modalChildClass">Loading...</span></p>
+            <p><strong>Date of Birth:</strong> <span id="modalChildDOB">Loading...</span></p>
+          </div>
+          
+          <div class="info-card">
+            <h3><i class="fas fa-chart-line"></i> Recent Grades</h3>
+            <div id="modalChildGrades">Loading grades...</div>
+          </div>
+          
+          <div class="info-card">
+            <h3><i class="fas fa-calendar-check"></i> Attendance</h3>
+            <div id="modalChildAttendance">Loading attendance...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="js/parent.js"></script>
 </body>
