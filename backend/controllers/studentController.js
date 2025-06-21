@@ -243,6 +243,61 @@ const completeSetup = async (req, res) => {
     }
 };
 
+// Get profile information
+const getProfile = async (req, res) => {
+    try {
+        const { user_id } = req.query;
+        const profile = await studentModel.getProfile(user_id);
+        if (!profile) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+        res.status(200).json(profile);
+    } catch (error) {
+        console.error('Get profile error:', error);
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Update profile
+const updateProfile = async (req, res) => {
+    try {
+        const { user_id, currentPassword, newPassword, firstName, lastName, email, dateOfBirth } = req.body;
+        
+        // If password change is requested, validate current password
+        if (currentPassword && newPassword) {
+            const validatePasswordQuery = `
+                SELECT password_hash FROM users WHERE user_id = $1 AND role = 'student';
+            `;
+            const passwordResult = await pool.query(validatePasswordQuery, [user_id]);
+            
+            if (passwordResult.rows.length === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            
+            if (passwordResult.rows[0].password_hash !== currentPassword) {
+                return res.status(401).json({ message: 'Current password is incorrect' });
+            }
+        }
+        
+        // Update user information
+        const updatedUser = await studentModel.updateProfile(user_id, {
+            newPassword,
+            firstName,
+            lastName,
+            email,
+            dateOfBirth
+        });
+        
+        res.status(200).json({ 
+            message: 'Profile updated successfully',
+            user: updatedUser
+        });
+    } catch (error) {
+        console.error('Update profile error:', error);
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     loginStudent,
     getStudentInfo,
@@ -258,5 +313,7 @@ module.exports = {
     getUnreadAnnouncementsCount,
     markAnnouncementAsRead,
     getFirstTimeInfo,
-    completeSetup
+    completeSetup,
+    getProfile,
+    updateProfile
 };

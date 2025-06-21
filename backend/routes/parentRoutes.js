@@ -11,6 +11,10 @@ router.post('/login', ParentController.login);
 router.get('/first-time-info', ParentController.getFirstTimeInfo);
 router.post('/complete-setup', ParentController.completeSetup);
 
+// Profile management routes
+router.get('/profile', ParentController.getProfile);
+router.post('/update-profile', ParentController.updateProfile);
+
 // View Children's Profiles
 router.get('/children', ParentController.getChildrenProfiles);
 

@@ -325,6 +325,87 @@ const completeSetup = async (userId, updateData) => {
     }
 };
 
+// Get profile information
+const getProfile = async (userId) => {
+    try {
+        const query = `
+            SELECT 
+                u.user_id, u.username, u.email, u.role,
+                s.student_id, s.first_name, s.last_name, s.date_of_birth, c.class_name
+            FROM users u
+            JOIN students s ON u.user_id = s.student_id
+            JOIN classes c ON s.class_id = c.class_id
+            WHERE u.user_id = $1 AND u.role = 'student';
+        `;
+        const result = await pool.query(query, [userId]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Update profile
+const updateProfile = async (userId, updateData) => {
+    try {
+        // Start a transaction
+        const client = await pool.connect();
+        
+        try {
+            await client.query('BEGIN');
+            
+            // Update users table
+            let updateUserQuery = `
+                UPDATE users 
+                SET email = $1
+            `;
+            let userParams = [updateData.email];
+            let paramIndex = 2;
+            
+            // Add password update if provided
+            if (updateData.newPassword) {
+                updateUserQuery += `, password_hash = $${paramIndex}`;
+                userParams.push(updateData.newPassword);
+                paramIndex++;
+            }
+            
+            updateUserQuery += ` WHERE user_id = $${paramIndex} RETURNING user_id, username, email, role;`;
+            userParams.push(userId);
+            
+            const userResult = await client.query(updateUserQuery, userParams);
+            
+            // Update students table
+            const updateStudentQuery = `
+                UPDATE students 
+                SET first_name = $1, last_name = $2, date_of_birth = $3
+                WHERE student_id = $4
+                RETURNING student_id, first_name, last_name, date_of_birth;
+            `;
+            const studentResult = await client.query(updateStudentQuery, [
+                updateData.firstName,
+                updateData.lastName,
+                updateData.dateOfBirth,
+                userId
+            ]);
+            
+            await client.query('COMMIT');
+            
+            // Return combined user data
+            return {
+                ...userResult.rows[0],
+                ...studentResult.rows[0]
+            };
+            
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     loginStudent,
     getStudentInfo,
@@ -340,5 +421,7 @@ module.exports = {
     getUnreadAnnouncementsCount,
     markAnnouncementAsRead,
     getFirstTimeInfo,
-    completeSetup
+    completeSetup,
+    getProfile,
+    updateProfile
 };

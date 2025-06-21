@@ -11,6 +11,10 @@ router.post('/login', studentController.loginStudent);
 router.get('/first-time-info', studentController.getFirstTimeInfo);
 router.post('/complete-setup', studentController.completeSetup);
 
+// Profile management routes
+router.get('/profile', studentController.getProfile);
+router.post('/update-profile', studentController.updateProfile);
+
 // Fetch Student Personal Info
 router.get('/:studentId/info', studentController.getStudentInfo);
 

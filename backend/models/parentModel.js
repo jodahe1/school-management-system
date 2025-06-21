@@ -176,3 +176,83 @@ exports.completeSetup = async (userId, updateData) => {
         throw error;
     }
 };
+
+// Get profile information
+exports.getProfile = async (userId) => {
+    try {
+        const query = `
+            SELECT 
+                u.user_id, u.username, u.email, u.role,
+                p.parent_id, p.first_name, p.last_name, p.phone_number
+            FROM users u
+            JOIN parents p ON u.user_id = p.parent_id
+            WHERE u.user_id = $1 AND u.role = 'parent';
+        `;
+        const result = await db.query(query, [userId]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Update profile
+exports.updateProfile = async (userId, updateData) => {
+    try {
+        // Start a transaction
+        const client = await db.connect();
+        
+        try {
+            await client.query('BEGIN');
+            
+            // Update users table
+            let updateUserQuery = `
+                UPDATE users 
+                SET email = $1
+            `;
+            let userParams = [updateData.email];
+            let paramIndex = 2;
+            
+            // Add password update if provided
+            if (updateData.newPassword) {
+                updateUserQuery += `, password_hash = $${paramIndex}`;
+                userParams.push(updateData.newPassword);
+                paramIndex++;
+            }
+            
+            updateUserQuery += ` WHERE user_id = $${paramIndex} RETURNING user_id, username, email, role;`;
+            userParams.push(userId);
+            
+            const userResult = await client.query(updateUserQuery, userParams);
+            
+            // Update parents table
+            const updateParentQuery = `
+                UPDATE parents 
+                SET first_name = $1, last_name = $2, phone_number = $3
+                WHERE parent_id = $4
+                RETURNING parent_id, first_name, last_name, phone_number;
+            `;
+            const parentResult = await client.query(updateParentQuery, [
+                updateData.firstName,
+                updateData.lastName,
+                updateData.phoneNumber,
+                userId
+            ]);
+            
+            await client.query('COMMIT');
+            
+            // Return combined user data
+            return {
+                ...userResult.rows[0],
+                ...parentResult.rows[0]
+            };
+            
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
+    } catch (error) {
+        throw error;
+    }
+};
