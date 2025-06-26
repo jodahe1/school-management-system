@@ -7,7 +7,7 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5f7fa;
+  background-color: #f8fafc;
   color: #333;
   line-height: 1.6;
 }
@@ -15,7 +15,7 @@ body {
 /* Sidebar Styles */
 .sidebar {
   width: 250px;
-  background-color: #2c3e50;
+  background-color: #0284c7;
   color: white;
   padding: 20px 0;
   height: 100vh;
@@ -41,7 +41,7 @@ body {
   font-size: 14px;
   margin: 5px 0;
   opacity: 0.9;
-  color: #bdc3c7;
+  color: #f8fafc;
 }
 
 nav ul {
@@ -72,7 +72,7 @@ nav ul li a i {
 }
 
 nav ul li.active {
-  background-color: #3498db;
+  background-color: #0ea5e9;
 }
 
 /* Main Content with Sidebar */
@@ -83,7 +83,7 @@ nav ul li.active {
 
 /* Header Styles */
 header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
   color: white;
   padding: 1rem 2rem;
   display: flex;
@@ -171,7 +171,7 @@ header h1 {
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #0ea5e9;
   position: static;
   max-width: 400px;
 }
@@ -182,16 +182,16 @@ header h1 {
   gap: 0.75rem;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid #f8fafc;
 }
 
 .parent-info-header i {
   font-size: 1.5rem;
-  color: #667eea;
+  color: #0ea5e9;
 }
 
 .parent-info-header h3 {
-  color: #2c3e50;
+  color: #0284c7;
   margin: 0;
   font-size: 1.2rem;
 }
@@ -207,18 +207,18 @@ header h1 {
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem;
-  background: #f8f9fa;
+  background: #f8fafc;
   border-radius: 6px;
 }
 
 .info-label {
   font-weight: 600;
-  color: #2c3e50;
+  color: #0284c7;
   font-size: 0.9rem;
 }
 
 .info-value {
-  color: #667eea;
+  color: #0ea5e9;
   font-weight: 500;
   font-size: 0.9rem;
 }
@@ -246,11 +246,11 @@ header h1 {
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid #f8fafc;
 }
 
 .section-header h2 {
-  color: #2c3e50;
+  color: #0284c7;
   margin: 0;
   font-size: 1.5rem;
   display: flex;
@@ -259,7 +259,7 @@ header h1 {
 }
 
 .section-actions button {
-  background: #667eea;
+  background: #0ea5e9;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -273,7 +273,7 @@ header h1 {
 }
 
 .section-actions button:hover {
-  background: #5a6fd8;
+  background: #0284c7;
 }
 
 /* Children Grid */
@@ -302,17 +302,17 @@ header h1 {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: linear-gradient(90deg, #0ea5e9, #0284c7);
 }
 
 .child-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-color: #667eea;
+  border-color: #0ea5e9;
 }
 
 .child-card h3 {
-  color: #2c3e50;
+  color: #0284c7;
   margin-bottom: 0.5rem;
   font-size: 1.3rem;
 }
@@ -338,7 +338,7 @@ header h1 {
 .stat-value {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #667eea;
+  color: #0ea5e9;
 }
 
 .stat-label {
@@ -355,14 +355,14 @@ header h1 {
 }
 
 .attendance-card {
-  background: #f8f9fa;
+  background: #f8fafc;
   border-radius: 8px;
   padding: 1.5rem;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #0ea5e9;
 }
 
 .attendance-card h3 {
-  color: #2c3e50;
+  color: #0284c7;
   margin-bottom: 1rem;
   font-size: 1.2rem;
 }
@@ -381,9 +381,9 @@ header h1 {
 }
 
 .attendance-table th {
-  background: #f1f3f4;
+  background: #f8fafc;
   font-weight: 600;
-  color: #2c3e50;
+  color: #0284c7;
 }
 
 .attendance-table .present {
@@ -411,7 +411,7 @@ header h1 {
 }
 
 .attendance-table tr:hover {
-  background-color: rgba(102, 126, 234, 0.1);
+  background-color: rgba(14, 165, 233, 0.1);
 }
 
 /* Assignments Grid */
@@ -426,8 +426,8 @@ header h1 {
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: var(--transition);
-  border-left: 4px solid var(--primary-color);
+  transition: all 0.3s ease;
+  border-left: 4px solid #0ea5e9;
 }
 
 .assignment-card:hover {
@@ -444,7 +444,7 @@ header h1 {
 }
 
 .assignment-card.graded {
-  border-left-color: #4895ef;
+  border-left-color: #0ea5e9;
 }
 
 .assignment-header {
@@ -457,12 +457,12 @@ header h1 {
 .assignment-title {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: #0284c7;
   margin: 0;
 }
 
 .assignment-subject {
-  background: #667eea;
+  background: #0ea5e9;
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
@@ -481,7 +481,7 @@ header h1 {
 }
 
 .assignment-details strong {
-  color: #2c3e50;
+  color: #0284c7;
 }
 
 .assignment-actions {
@@ -514,30 +514,30 @@ header h1 {
 }
 
 .btn-download {
-  background: #667eea;
+  background: #0ea5e9;
   color: white;
 }
 
 .btn-download:hover {
-  background: #5a6fd8;
+  background: #0284c7;
 }
 
 .btn-view {
-  background: #4895ef;
+  background: #0ea5e9;
   color: white;
 }
 
 .btn-view:hover {
-  background: #3a7bd5;
+  background: #0284c7;
 }
 
 .feedback {
-  background: #f8f9fa;
+  background: #f8fafc;
   padding: 0.5rem;
   border-radius: 4px;
   font-size: 0.9rem;
   color: #666;
-  border-left: 3px solid #667eea;
+  border-left: 3px solid #0ea5e9;
   margin-top: 0.5rem;
 }
 
@@ -549,14 +549,14 @@ header h1 {
 }
 
 .grade-card {
-  background: #f8f9fa;
+  background: #f8fafc;
   border-radius: 8px;
   padding: 1.5rem;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #0ea5e9;
 }
 
 .grade-card h3 {
-  color: #2c3e50;
+  color: #0284c7;
   margin-bottom: 1rem;
   font-size: 1.2rem;
 }
@@ -578,7 +578,7 @@ header h1 {
 .grade-value {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #667eea;
+  color: #0ea5e9;
 }
 
 /* Materials Grid */
@@ -594,7 +594,7 @@ header h1 {
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #0ea5e9;
 }
 
 .material-card:hover {
@@ -603,7 +603,7 @@ header h1 {
 }
 
 .material-card h3 {
-  color: #2c3e50;
+  color: #0284c7;
   margin-bottom: 0.5rem;
   font-size: 1.2rem;
 }
@@ -615,7 +615,7 @@ header h1 {
 }
 
 .material-card .download-btn {
-  background: #667eea;
+  background: #0ea5e9;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -629,7 +629,7 @@ header h1 {
 }
 
 .material-card .download-btn:hover {
-  background: #5a6fd8;
+  background: #0284c7;
 }
 
 /* Loading Message */
@@ -643,7 +643,7 @@ header h1 {
   width: 40px;
   height: 40px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #667eea;
+  border-top: 4px solid #0ea5e9;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 1rem;
@@ -720,16 +720,16 @@ header h1 {
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid #f8fafc;
 }
 
 .child-header h2 {
-  color: #2c3e50;
+  color: #0284c7;
   margin: 0;
 }
 
 .child-id {
-  background: #667eea;
+  background: #0ea5e9;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -744,14 +744,14 @@ header h1 {
 }
 
 .info-card {
-  background: #f8f9fa;
+  background: #f8fafc;
   padding: 1.5rem;
   border-radius: 8px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #0ea5e9;
 }
 
 .info-card h3 {
-  color: #2c3e50;
+  color: #0284c7;
   margin-bottom: 1rem;
   font-size: 1.1rem;
   display: flex;
@@ -765,7 +765,7 @@ header h1 {
 }
 
 .info-card strong {
-  color: #2c3e50;
+  color: #0284c7;
 }
 
 /* Responsive Design */
