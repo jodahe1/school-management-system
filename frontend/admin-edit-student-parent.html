@@ -57,27 +57,41 @@
                 <section id="student-details-section" style="display: none;">
                     <h2>Student and Parent Details</h2>
                     <form id="edit-student-form">
-                        <h3>Student Information</h3>
-                        <label for="student-first-name">First Name:</label>
-                        <input type="text" id="student-first-name" name="firstName" required>
-
-                        <label for="student-last-name">Last Name:</label>
-                        <input type="text" id="student-last-name" name="lastName" required>
-
-                        <label for="student-dob">Date of Birth:</label>
-                        <input type="date" id="student-dob" name="dob" required>
-
-                        <h3>Parent Information</h3>
-                        <label for="parent-first-name">First Name:</label>
-                        <input type="text" id="parent-first-name" name="firstName" required>
-
-                        <label for="parent-last-name">Last Name:</label>
-                        <input type="text" id="parent-last-name" name="lastName" required>
-
-                        <label for="parent-phone">Phone Number:</label>
-                        <input type="text" id="parent-phone" name="phoneNumber" required>
-
-                        <button type="submit">Save Changes</button>
+                        <div class="form-two-column">
+                            <div class="form-column student-info">
+                                <h3>Student Information</h3>
+                                <div class="form-row-single">
+                                    <label for="student-first-name">First Name:</label>
+                                    <input type="text" id="student-first-name" name="firstName" required>
+                                </div>
+                                <div class="form-row-single">
+                                    <label for="student-last-name">Last Name:</label>
+                                    <input type="text" id="student-last-name" name="lastName" required>
+                                </div>
+                                <div class="form-row-single">
+                                    <label for="student-dob">Date of Birth:</label>
+                                    <input type="date" id="student-dob" name="dob" required>
+                                </div>
+                            </div>
+                            <div class="form-column parent-info">
+                                <h3>Parent Information</h3>
+                                <div class="form-row-single">
+                                    <label for="parent-first-name">First Name:</label>
+                                    <input type="text" id="parent-first-name" name="firstName" required>
+                                </div>
+                                <div class="form-row-single">
+                                    <label for="parent-last-name">Last Name:</label>
+                                    <input type="text" id="parent-last-name" name="lastName" required>
+                                </div>
+                                <div class="form-row-single">
+                                    <label for="parent-phone">Phone Number:</label>
+                                    <input type="text" id="parent-phone" name="phoneNumber" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="submit-btn">Save Changes</button>
+                        </div>
                     </form>
                     <p id="update-message"></p>
                 </section>

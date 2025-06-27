@@ -302,9 +302,9 @@ h2 i {
 }
 
 #classes-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 #classes-list p {
@@ -323,18 +323,24 @@ h2 i {
   background: var(--white);
   border-radius: var(--radius);
   padding: 1.5rem;
-  text-align: center;
+  text-align: left;
   box-shadow: var(--shadow);
   border: 1px solid var(--gray-200);
   cursor: pointer;
   transition: all 0.2s ease;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  outline: none;
 }
 
 .class-card:hover,
-.student-card:hover {
-  transform: translateY(-4px);
+.class-card:focus {
+  background: var(--primary-light);
+  border-left: 6px solid var(--primary);
   box-shadow: var(--shadow-lg);
   border-color: var(--primary);
+  color: var(--primary-dark);
 }
 
 .class-card h3 {
@@ -355,9 +361,9 @@ h2 i {
 }
 
 #students-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 #students-list p {
@@ -376,6 +382,30 @@ h2 i {
 }
 
 /* Student Cards */
+.student-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--gray-200);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  outline: none;
+  color: var(--gray-900);
+  letter-spacing: 0.01em;
+}
+
+.student-card:hover, .student-card:focus {
+  background: var(--accent-light);
+  border-left: 6px solid var(--accent);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
 
 .student-card h3 {
   font-size: 1.2rem;
@@ -391,11 +421,8 @@ h2 i {
 
 /* Student Details Section */
 #student-details-section {
-  background: var(--white);
-  border-radius: var(--radius-xl);
-  padding: 2rem;
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--gray-200);
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* Form Styling */
@@ -653,5 +680,90 @@ h2 i {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+/* Two-column form layout for student/parent details */
+.form-two-column {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 6rem;
+  width: 100%;
+}
+
+.form-column {
+  flex: 1 1 0;
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  padding: 2.5rem 2rem 2rem 2rem;
+  box-shadow: var(--shadow-sm);
+  min-width: 340px;
+  max-width: 500px;
+}
+
+.student-info {
+  align-items: flex-start;
+}
+
+.parent-info {
+  align-items: flex-end;
+}
+
+.form-row-single {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.form-row-single label {
+  flex: 0 0 160px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: 0;
+  margin-right: 1.5rem;
+  text-align: right;
+}
+
+.form-row-single input {
+  flex: 1 1 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-900);
+  outline: none;
+}
+
+@media (max-width: 1200px) {
+  .form-two-column {
+    gap: 2rem;
+  }
+  .form-column {
+    min-width: 220px;
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .form-two-column {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .form-column {
+    max-width: 100%;
+    min-width: 0;
+    align-items: stretch;
+  }
+  .parent-info, .student-info {
+    align-items: stretch;
+  }
+  .form-row-single label {
+    text-align: left;
+    margin-bottom: 0.5rem;
   }
 }

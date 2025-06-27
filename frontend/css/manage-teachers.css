@@ -19,6 +19,7 @@
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
   --radius: 12px;
+  --radius-md: 16px;
 }
 
 * {
@@ -212,6 +213,7 @@ h2 {
 
 /* Teacher Cards */
 .teacher-card {
+  position: relative;
   background: var(--white);
   border-radius: var(--radius);
   padding: 1.5rem;
@@ -221,6 +223,7 @@ h2 {
   align-items: center;
   gap: 1.5rem;
   transition: all 0.2s ease;
+  margin-bottom: 1rem;
 }
 
 .teacher-card:hover {
@@ -248,10 +251,11 @@ h2 {
 }
 
 .teacher-name {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: var(--gray-900);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-right: auto;
+  letter-spacing: 0.01em;
 }
 
 .teacher-subject {
@@ -281,28 +285,60 @@ h2 {
   transition: all 0.2s ease;
 }
 
+.teacher-popup {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: -70px;
+  transform: translateX(-50%);
+  min-width: 180px;
+  background: var(--white);
+  color: var(--gray-900);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  z-index: 10;
+  border: 1px solid var(--gray-200);
+  pointer-events: none;
+  white-space: pre-line;
+}
+
+.teacher-card:hover .teacher-popup {
+  display: block;
+}
+
 .edit-btn {
-  background: rgba(14, 165, 233, 0.1);
-  color: var(--primary);
-  border: 1px solid rgba(14, 165, 233, 0.2);
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-right: 0.5rem;
+  transition: background 0.2s, color 0.2s;
 }
 
 .edit-btn:hover {
-  background: var(--primary);
+  background: var(--primary-dark);
   color: var(--white);
-  transform: translateY(-2px);
 }
 
 .delete-btn {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: var(--danger);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
 }
 
 .delete-btn:hover {
-  background: var(--danger);
+  background: #b91c1c;
   color: var(--white);
-  transform: translateY(-2px);
 }
 
 /* Add Teacher Button */
@@ -436,4 +472,100 @@ h2 {
 .sidebar-nav ul li a:focus {
   outline: 2px solid var(--primary);
   outline-offset: -2px;
+}
+
+.edit-teacher-card {
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  border: 1.5px solid var(--primary);
+  padding: 2rem 2.5rem 1.5rem 2.5rem;
+  margin: 1.5rem 0 1.5rem 0;
+  max-width: 650px;
+  min-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 20;
+}
+
+.edit-teacher-card h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+#edit-teacher-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+#edit-teacher-form label {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: 0.3rem;
+  margin-top: 0.2rem;
+  letter-spacing: 0.01em;
+}
+
+#edit-teacher-form input[type="text"] {
+  font-size: 1.08rem;
+  font-weight: 500;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-900);
+  outline: none;
+  margin-bottom: 0.2rem;
+  transition: border 0.2s;
+}
+
+#edit-teacher-form input[type="text"]:focus {
+  border-color: var(--primary);
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 1.2rem;
+}
+
+.form-buttons button {
+  min-width: 150px;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: none;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.form-buttons button[type="submit"], .form-buttons .save-btn {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.form-buttons button[type="submit"]:hover, .form-buttons .save-btn:hover {
+  background: var(--primary-dark);
+  color: var(--white);
+  box-shadow: var(--shadow-lg);
+}
+
+.form-buttons button[type="button"], .form-buttons .cancel-btn {
+  background: var(--gray-600);
+  color: var(--white);
+}
+
+.form-buttons button[type="button"]:hover, .form-buttons .cancel-btn:hover {
+  background: var(--gray-900);
+  color: var(--white);
+  box-shadow: var(--shadow-lg);
 }

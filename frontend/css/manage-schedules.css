@@ -266,10 +266,11 @@ h2::before {
 
 /* MODERNIZED CLASSES LIST */
 #classes-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: clamp(1rem, 3vw, 1.5rem);
-  animation: staggerIn 0.8s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  height: 100%;
 }
 
 #classes-list p {
@@ -298,17 +299,43 @@ h2::before {
 
 /* MODERNIZED CLASS CARDS */
 .class-card {
+  width: 100%;
+  max-width: none;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
   background: var(--white);
   border-radius: var(--radius-lg);
-  padding: clamp(1.5rem, 3vw, 2rem);
-  text-align: center;
+  padding: 1.5rem 2rem;
+  text-align: left;
   box-shadow: var(--shadow);
   border: 1px solid var(--gray-200);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(10px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 0.5rem;
+  outline: none;
+  color: var(--gray-900);
+  letter-spacing: 0.01em;
+}
+
+.class-card .class-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  letter-spacing: 0.01em;
+  display: block;
+}
+
+.class-card:hover, .class-card:focus {
+  background: var(--primary-dark);
+  border-left: 10px solid var(--primary);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary);
+  color: var(--white);
+}
+
+.class-card:hover .class-name, .class-card:focus .class-name {
+  color: var(--white);
 }
 
 .class-card::before {
@@ -349,9 +376,10 @@ h2::before {
 
 /* MODERNIZED SCHEDULES LIST */
 #schedules-list {
-  display: grid;
-  gap: clamp(1rem, 2.5vw, 1.5rem);
-  animation: fadeInUp 0.6s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
 }
 
 #schedules-list p {
@@ -387,41 +415,38 @@ h2::before {
 
 /* MODERNIZED SCHEDULE CARDS */
 .schedule-card {
+  width: 100%;
+  max-width: none;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
   background: var(--white);
   border-radius: var(--radius-lg);
-  padding: clamp(1.5rem, 3vw, 2rem);
+  padding: 1.5rem 2rem;
+  text-align: left;
   box-shadow: var(--shadow);
   border: 1px solid var(--gray-200);
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: clamp(1rem, 3vw, 2rem);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 0.5rem;
+  outline: none;
+  color: var(--gray-900);
+  letter-spacing: 0.01em;
 }
 
-.schedule-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-.schedule-card:hover::before {
-  transform: scaleX(1);
-}
-
-.schedule-card:hover {
-  transform: translateY(-6px);
+.schedule-card:hover, .schedule-card:focus {
+  background: var(--primary-dark);
+  border-left: 10px solid var(--primary);
   box-shadow: var(--shadow-xl);
   border-color: var(--primary);
+  color: var(--white);
+}
+
+.schedule-card:hover .schedule-title, .schedule-card:focus .schedule-title,
+.schedule-card:hover .schedule-details, .schedule-card:focus .schedule-details,
+.schedule-card:hover .schedule-time, .schedule-card:focus .schedule-time {
+  color: var(--white);
+  background: transparent;
 }
 
 .schedule-icon {
@@ -458,74 +483,69 @@ h2::before {
 }
 
 .schedule-title {
-  font-size: clamp(1.1rem, 2.5vw, 1.375rem);
+  font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  color: var(--gray-900);
+  color: var(--primary);
   letter-spacing: -0.01em;
   line-height: 1.3;
 }
 
 .schedule-details {
-  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-size: 1rem;
   color: var(--gray-600);
   margin-bottom: 0.5rem;
   line-height: 1.4;
 }
 
 .schedule-time {
-  font-size: clamp(0.85rem, 2vw, 0.95rem);
-  color: var(--primary);
+  font-size: 0.98rem;
+  color: var(--success);
   font-weight: 600;
   font-family: 'Fira Mono', monospace;
-  background: rgba(14, 165, 233, 0.1);
-  padding: 0.25rem 0.5rem;
+  background: rgba(16, 185, 129, 0.08);
+  padding: 0.25rem 0.7rem;
   border-radius: 6px;
   display: inline-block;
 }
 
 .schedule-actions {
   display: flex;
-  gap: clamp(0.5rem, 2vw, 0.75rem);
-  flex-shrink: 0;
+  gap: 1rem;
+  margin-left: auto;
 }
 
-.schedule-action-btn {
-  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(0.75rem, 3vw, 1.25rem);
-  border: none;
+.schedule-action-btn, .edit-btn, .delete-btn {
+  min-width: 120px;
+  padding: 0.9rem 1.5rem;
+  font-size: 1.08rem;
+  font-weight: 700;
   border-radius: var(--radius);
-  font-size: clamp(0.85rem, 2vw, 0.95rem);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: none;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
 .edit-btn {
-  background: rgba(14, 165, 233, 0.1);
-  color: var(--primary);
-  border: 1px solid rgba(14, 165, 233, 0.2);
+  background: var(--primary);
+  color: var(--white);
 }
 
 .edit-btn:hover {
-  background: var(--primary);
+  background: var(--primary-dark);
   color: var(--white);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-xl);
 }
 
 .delete-btn {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: var(--danger);
+  color: var(--white);
 }
 
 .delete-btn:hover {
-  background: var(--danger);
+  background: #b91c1c;
   color: var(--white);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-xl);
 }
 
 /* MODERNIZED ADD SCHEDULE BUTTON */

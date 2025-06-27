@@ -24,21 +24,29 @@ const fetchTeachers = async () => {
         teachersList.innerHTML = '';
 
         teachers.forEach((teacher) => {
-            const div = document.createElement('div');
-            div.className = 'teacher-item'; // Add class for styling
-            div.innerHTML = `
-                <p>${teacher.first_name} ${teacher.last_name} (${teacher.subject_teaches})</p>
+            const card = document.createElement('div');
+            card.className = 'teacher-card';
+            card.innerHTML = `
+                <span class="teacher-name">${teacher.first_name} ${teacher.last_name}</span>
                 <button class="edit-btn" data-id="${teacher.teacher_id}">Edit</button>
                 <button class="delete-btn" data-id="${teacher.teacher_id}">Delete</button>
             `;
-            teachersList.appendChild(div);
+            // Popup for extra info
+            const popup = document.createElement('div');
+            popup.className = 'teacher-popup';
+            popup.innerHTML = `<strong>Subject:</strong> ${teacher.subject_teaches || 'N/A'}<br>${teacher.email ? `<strong>Email:</strong> ${teacher.email}` : ''}`;
+            popup.style.display = 'none';
+            card.appendChild(popup);
+            card.addEventListener('mouseenter', () => { popup.style.display = 'block'; });
+            card.addEventListener('mouseleave', () => { popup.style.display = 'none'; });
+            teachersList.appendChild(card);
         });
 
         // Add event listeners for edit buttons
         document.querySelectorAll('.edit-btn').forEach((btn) => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
                 const teacherId = btn.dataset.id;
-                openEditTeacherForm(teacherId);
+                openEditTeacherForm(teacherId, btn.closest('.teacher-card'));
             });
         });
 
@@ -57,7 +65,7 @@ const fetchTeachers = async () => {
 };
 
 // Open Edit Teacher Form
-const openEditTeacherForm = (teacherId) => {
+const openEditTeacherForm = (teacherId, cardElement) => {
     // Find the teacher in the cache
     const teacher = teachersCache.find(t => t.teacher_id === parseInt(teacherId));
     if (!teacher) {
@@ -97,9 +105,14 @@ const openEditTeacherForm = (teacherId) => {
         </form>
     `;
 
-    // Append the form at the end of the teachers list
-    const teachersList = document.getElementById('teachers-list');
-    teachersList.appendChild(formContainer);
+    // Insert the form directly after the teacher card
+    if (cardElement && cardElement.parentNode) {
+        cardElement.parentNode.insertBefore(formContainer, cardElement.nextSibling);
+    } else {
+        // fallback: append at end
+        const teachersList = document.getElementById('teachers-list');
+        teachersList.appendChild(formContainer);
+    }
 
     // Scroll to the form for better visibility
     formContainer.scrollIntoView({ behavior: 'smooth' });

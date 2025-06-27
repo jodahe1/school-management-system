@@ -669,17 +669,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Add Chat button to sidebar or header
-  const chatBtn = document.createElement('button');
-  chatBtn.textContent = 'Chat';
-  chatBtn.className = 'sidebar-btn';
-  chatBtn.onclick = function() {
-    localStorage.setItem('user', JSON.stringify({ userId: parent.user_id, userType: 'parent', userName: parent.username }));
-    window.location.href = 'chat.html';
-  };
-  // Add to sidebar or appropriate place in DOM
-  const sidebar = document.querySelector('.sidebar') || document.body;
-  sidebar.appendChild(chatBtn);
+  // Make header chat button work
+  const headerChatBtn = document.getElementById('chatBtn');
+  if (headerChatBtn) {
+    headerChatBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      localStorage.setItem('user', JSON.stringify({ userId: parent.user_id, userType: 'parent', userName: parent.username }));
+      window.location.href = 'chat.html';
+    });
+  }
 });
 
 // Make functions globally available

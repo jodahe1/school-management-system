@@ -25,10 +25,13 @@ const fetchClasses = async () => {
 
         classesList.innerHTML = '';
         classes.forEach((cls) => {
-            const button = document.createElement('button');
-            button.textContent = cls.class_name;
-            button.onclick = () => fetchStudents(cls.class_id, cls.class_name);
-            classesList.appendChild(button);
+            const card = document.createElement('div');
+            card.className = 'class-card';
+            card.textContent = cls.class_name;
+            card.tabIndex = 0;
+            card.onclick = () => fetchStudents(cls.class_id, cls.class_name);
+            card.onkeypress = (e) => { if (e.key === 'Enter' || e.key === ' ') card.onclick(); };
+            classesList.appendChild(card);
         });
     } catch (error) {
         console.error('Error fetching classes:', error);
@@ -53,10 +56,13 @@ const fetchStudents = async (classId, className) => {
 
         studentsList.innerHTML = '';
         students.forEach((student) => {
-            const button = document.createElement('button');
-            button.textContent = `${student.first_name} ${student.last_name}`;
-            button.onclick = () => fetchStudentDetails(student.student_id);
-            studentsList.appendChild(button);
+            const card = document.createElement('div');
+            card.className = 'student-card';
+            card.textContent = `${student.first_name} ${student.last_name}`;
+            card.tabIndex = 0;
+            card.onclick = () => fetchStudentDetails(student.student_id);
+            card.onkeypress = (e) => { if (e.key === 'Enter' || e.key === ' ') card.onclick(); };
+            studentsList.appendChild(card);
         });
     } catch (error) {
         console.error('Error fetching students:', error);
