@@ -172,3 +172,82 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 // Initialize the Dashboard
 fetchAnalytics();
+
+// Sidebar navigation for Manage Semesters
+const manageSemestersBtn = document.getElementById('manage-semesters-btn');
+if (manageSemestersBtn) {
+    manageSemestersBtn.addEventListener('click', () => {
+        // Navigation handled by sidebar logic
+    });
+}
+
+// SEMESTER MANAGEMENT LOGIC
+async function fetchSemesters() {
+    const res = await fetch('http://localhost:5000/api/admin/semesters');
+    const semesters = await res.json();
+    const list = document.getElementById('semesters-list');
+    if (!list) return;
+    list.innerHTML = '';
+    semesters.forEach(sem => {
+        const div = document.createElement('div');
+        div.className = 'semester-row';
+        div.innerHTML = `
+            <strong>${sem.semester_name}</strong> (${sem.start_date.split('T')[0]} to ${sem.end_date.split('T')[0]}) 
+            <span style="color:${sem.is_active ? 'green' : 'gray'}">${sem.is_active ? 'Active' : 'Inactive'}</span>
+            <button class="edit-semester-btn" data-id="${sem.semester_id}">Edit</button>
+            <button class="delete-semester-btn" data-id="${sem.semester_id}">Delete</button>
+        `;
+        list.appendChild(div);
+    });
+    document.querySelectorAll('.edit-semester-btn').forEach(btn => {
+        btn.onclick = () => editSemesterPrompt(btn.dataset.id);
+    });
+    document.querySelectorAll('.delete-semester-btn').forEach(btn => {
+        btn.onclick = () => deleteSemester(btn.dataset.id);
+    });
+}
+
+if (document.getElementById('add-semester-form')) {
+    document.getElementById('add-semester-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = {
+            semesterName: document.getElementById('semester-name').value,
+            startDate: document.getElementById('semester-start').value,
+            endDate: document.getElementById('semester-end').value,
+            isActive: document.getElementById('semester-active').value === 'true'
+        };
+        await fetch('http://localhost:5000/api/admin/semesters', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        fetchSemesters();
+        e.target.reset();
+    });
+}
+
+function editSemesterPrompt(id) {
+    const semRow = Array.from(document.querySelectorAll('.semester-row')).find(row => row.querySelector('.edit-semester-btn').dataset.id == id);
+    if (!semRow) return;
+    const name = prompt('New Semester Name:');
+    const start = prompt('New Start Date (YYYY-MM-DD):');
+    const end = prompt('New End Date (YYYY-MM-DD):');
+    const isActive = confirm('Set as active?');
+    if (name && start && end) {
+        fetch(`http://localhost:5000/api/admin/semesters/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ semesterName: name, startDate: start, endDate: end, isActive })
+        }).then(fetchSemesters);
+    }
+}
+
+function deleteSemester(id) {
+    if (confirm('Are you sure you want to delete this semester?')) {
+        fetch(`http://localhost:5000/api/admin/semesters/${id}`, {
+            method: 'DELETE'
+        }).then(fetchSemesters);
+    }
+}
+
+if (document.getElementById('semesters-list')) fetchSemesters();

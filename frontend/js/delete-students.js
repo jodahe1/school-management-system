@@ -16,10 +16,13 @@ const fetchClasses = async () => {
 
         document.getElementById('classes-list').innerHTML = '';
         classes.forEach((cls) => {
-            const button = document.createElement('button');
-            button.textContent = cls.class_name;
-            button.onclick = () => fetchStudents(cls.class_id, cls.class_name);
-            document.getElementById('classes-list').appendChild(button);
+            const card = document.createElement('div');
+            card.className = 'class-card';
+            card.innerHTML = `<span class="class-name">${cls.class_name}</span>`;
+            card.tabIndex = 0;
+            card.onclick = () => fetchStudents(cls.class_id, cls.class_name);
+            card.onkeypress = (e) => { if (e.key === 'Enter' || e.key === ' ') card.onclick(); };
+            document.getElementById('classes-list').appendChild(card);
         });
     } catch (error) {
         console.error('Error fetching classes:', error);
@@ -44,10 +47,13 @@ const fetchStudents = async (classId, className) => {
 
         document.getElementById('students-list').innerHTML = '';
         students.forEach((student) => {
-            const button = document.createElement('button');
-            button.textContent = `${student.first_name} ${student.last_name}`;
-            button.onclick = () => confirmDelete(student.student_id, `${student.first_name} ${student.last_name}`);
-            document.getElementById('students-list').appendChild(button);
+            const card = document.createElement('div');
+            card.className = 'student-card';
+            card.innerHTML = `<span class=\"student-name\">${student.first_name} ${student.last_name}</span>`;
+            card.tabIndex = 0;
+            card.onclick = () => confirmDelete(student.student_id, `${student.first_name} ${student.last_name}`);
+            card.onkeypress = (e) => { if (e.key === 'Enter' || e.key === ' ') card.onclick(); };
+            document.getElementById('students-list').appendChild(card);
         });
     } catch (error) {
         console.error('Error fetching students:', error);

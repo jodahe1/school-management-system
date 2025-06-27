@@ -251,11 +251,23 @@ h2 {
   letter-spacing: 0.01em;
 }
 
+.class-card .class-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--danger);
+  letter-spacing: 0.01em;
+  display: block;
+}
+
 .class-card:hover, .class-card:focus {
-  background: var(--primary-dark);
-  border-left: 8px solid var(--primary);
+  background: var(--danger);
+  border-left: 10px solid var(--danger);
   box-shadow: var(--shadow-lg);
-  border-color: var(--primary);
+  border-color: var(--danger);
+  color: var(--white);
+}
+
+.class-card:hover .class-name, .class-card:focus .class-name {
   color: var(--white);
 }
 
@@ -467,10 +479,22 @@ h2 {
   letter-spacing: 0.01em;
 }
 
+.student-card .student-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--danger);
+  letter-spacing: 0.01em;
+  display: block;
+}
+
 .student-card:hover, .student-card:focus {
-  background: var(--primary-dark);
-  border-left: 8px solid var(--primary);
+  background: var(--danger);
+  border-left: 10px solid var(--danger);
   box-shadow: var(--shadow-lg);
-  border-color: var(--primary);
+  border-color: var(--danger);
+  color: var(--white);
+}
+
+.student-card:hover .student-name, .student-card:focus .student-name {
   color: var(--white);
 }

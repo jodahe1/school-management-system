@@ -875,3 +875,149 @@ body {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Manage Semesters Section */
+#manage-semesters .container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: 2.5rem 2rem;
+  border: 1px solid var(--gray-200);
+}
+
+#manage-semesters h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 1.5rem;
+  padding-left: 0;
+  border-left: none;
+}
+
+.semester-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  padding: 1.1rem 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.08rem;
+  font-weight: 500;
+  color: var(--gray-900);
+  gap: 1rem;
+}
+
+.semester-row strong {
+  color: var(--primary-dark);
+  font-size: 1.13rem;
+  font-weight: 700;
+  margin-right: 0.5rem;
+}
+
+.semester-row span {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.semester-row button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: none;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.semester-row .edit-semester-btn {
+  background: var(--primary);
+  color: var(--white);
+}
+.semester-row .edit-semester-btn:hover {
+  background: var(--primary-dark);
+  color: var(--white);
+  box-shadow: var(--shadow-md);
+}
+
+.semester-row .delete-semester-btn {
+  background: var(--danger);
+  color: var(--white);
+}
+.semester-row .delete-semester-btn:hover {
+  background: #b91c1c;
+  color: var(--white);
+  box-shadow: var(--shadow-md);
+}
+
+#add-semester-form {
+  margin-bottom: 2.5rem;
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border: 1px solid var(--gray-200);
+}
+
+#add-semester-form h2 {
+  color: var(--primary-dark);
+  font-size: 1.15rem;
+  margin-bottom: 1.2rem;
+  padding-left: 0;
+  border-left: none;
+}
+
+#add-semester-form .form-row {
+  gap: 1.2rem;
+}
+
+#add-semester-form .form-group label {
+  color: var(--gray-700);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+#add-semester-form .form-group input,
+#add-semester-form .form-group select {
+  font-size: 1.05rem;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-900);
+  margin-bottom: 0.2rem;
+  transition: border 0.2s;
+}
+
+#add-semester-form .form-group input:focus,
+#add-semester-form .form-group select:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+#add-semester-form .submit-btn {
+  margin-top: 1.2rem;
+  width: 100%;
+  padding: 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--white);
+  box-shadow: var(--shadow-md);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+#add-semester-form .submit-btn:hover {
+  background: linear-gradient(135deg, var(--primary-dark), #0369a1);
+  box-shadow: var(--shadow-lg);
+}
