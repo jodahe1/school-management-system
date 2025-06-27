@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Payment - Stripe</title>
+    <link rel="stylesheet" href="css/parent-payment.css">
+</head>
+<body>
+    <div class="payment-container">
+        <h2>Parent Payment Portal</h2>
+        <div class="parent-info">
+            <p><strong>Parent Name:</strong> Abebe</p>
+            <p><strong>Child Name:</strong> Belay Abebe</p>
+        </div>
+        <form id="payment-form">
+            <label for="amount">Amount (USD):</label>
+            <input type="number" id="amount" name="amount" min="1" required>
+            <button type="submit">Pay with Stripe</button>
+        </form>
+        <div id="payment-message"></div>
+    </div>
+    <!-- Stripe.js would be included here in a real integration -->
+</body>
+</html> 

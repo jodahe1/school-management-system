@@ -1,0 +1,66 @@
+body {
+    background: #e3eafc;
+}
+
+.payment-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.payment-container h2 {
+    margin-bottom: 20px;
+    color: #32325d;
+}
+
+.parent-info {
+    margin-bottom: 20px;
+    background: #f6f9fc;
+    padding: 15px;
+    border-radius: 6px;
+    text-align: left;
+}
+
+.parent-info p {
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+#payment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#amount {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button[type="submit"] {
+    background: #6772e5;
+    color: #fff;
+    border: none;
+    padding: 10px 0;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+button[type="submit"]:hover {
+    background: #5469d4;
+}
+
+#payment-message {
+    margin-top: 15px;
+    color: #43a047;
+    font-weight: bold;
+} 

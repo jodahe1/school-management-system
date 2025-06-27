@@ -24,7 +24,7 @@ async function fetchStudentInfo() {
 
   // Add Chat button to sidebar or header
   const chatBtn = document.createElement('button');
-  chatBtn.textContent = 'Chat';
+  chatBtn.innerHTML = '<i class="fas fa-comments"></i> <span>Chat</span>';
   chatBtn.className = 'sidebar-btn';
   chatBtn.onclick = function() {
     localStorage.setItem('user', JSON.stringify({ userId: studentInfo.user_id, userType: 'student', userName: `${studentInfo.first_name} ${studentInfo.last_name}` }));
