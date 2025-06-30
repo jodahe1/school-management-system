@@ -2,6 +2,10 @@
 
 let selectedClassId = null;
 let selectedStudentId = null;
+let expandedClassId = null;
+let expandedStudentsDiv = null;
+let expandedConfirmationDiv = null;
+let lastExpandedClassCard = null;
 
 // Fetch All Classes
 const fetchClasses = async () => {
@@ -20,7 +24,10 @@ const fetchClasses = async () => {
             card.className = 'class-card';
             card.innerHTML = `<span class="class-name">${cls.class_name}</span>`;
             card.tabIndex = 0;
-            card.onclick = () => fetchStudents(cls.class_id, cls.class_name);
+            card.onclick = () => {
+                lastExpandedClassCard = card;
+                toggleClassStudents(cls.class_id, cls.class_name, card);
+            };
             card.onkeypress = (e) => { if (e.key === 'Enter' || e.key === ' ') card.onclick(); };
             document.getElementById('classes-list').appendChild(card);
         });
@@ -30,68 +37,112 @@ const fetchClasses = async () => {
     }
 };
 
-// Fetch Students in a Specific Class
-const fetchStudents = async (classId, className) => {
+// Toggle Students for a Class (Toaster style)
+const toggleClassStudents = async (classId, className, classCard) => {
+    // Collapse if already expanded
+    if (expandedClassId === classId) {
+        if (expandedStudentsDiv) expandedStudentsDiv.remove();
+        expandedClassId = null;
+        expandedStudentsDiv = null;
+        return;
+    }
+    // Collapse previous
+    if (expandedStudentsDiv) expandedStudentsDiv.remove();
+    expandedClassId = classId;
+    lastExpandedClassCard = classCard;
+    expandedStudentsDiv = document.createElement('div');
+    expandedStudentsDiv.className = 'students-toaster-list';
+    expandedStudentsDiv.innerHTML = '<p>Loading students...</p>';
+    // Insert after classCard
+    classCard.insertAdjacentElement('afterend', expandedStudentsDiv);
+    // Fetch and render students
     try {
-        selectedClassId = classId;
-        document.getElementById('selected-class-name').textContent = className;
-        document.getElementById('students-section').style.display = 'block';
-
         const response = await fetch(`http://localhost:5000/api/admin/classes/${classId}/students`);
         const students = await response.json();
-
         if (students.length === 0) {
-            document.getElementById('students-list').innerHTML = '<p>No students found in this class.</p>';
+            expandedStudentsDiv.innerHTML = '<p>No students found in this class.</p>';
             return;
         }
-
-        document.getElementById('students-list').innerHTML = '';
+        expandedStudentsDiv.innerHTML = '';
         students.forEach((student) => {
-            const card = document.createElement('div');
-            card.className = 'student-card';
-            card.innerHTML = `<span class=\"student-name\">${student.first_name} ${student.last_name}</span>`;
-            card.tabIndex = 0;
-            card.onclick = () => confirmDelete(student.student_id, `${student.first_name} ${student.last_name}`);
-            card.onkeypress = (e) => { if (e.key === 'Enter' || e.key === ' ') card.onclick(); };
-            document.getElementById('students-list').appendChild(card);
+            const studentCard = document.createElement('div');
+            studentCard.className = 'student-card';
+            studentCard.innerHTML = `<span class="student-name">${student.first_name} ${student.last_name}</span>`;
+            studentCard.tabIndex = 0;
+            studentCard.onclick = () => showDeleteConfirmationToaster(student, studentCard);
+            studentCard.onkeypress = (e) => { if (e.key === 'Enter' || e.key === ' ') studentCard.onclick(); };
+            expandedStudentsDiv.appendChild(studentCard);
         });
     } catch (error) {
-        console.error('Error fetching students:', error);
-        document.getElementById('students-list').innerHTML = '<p>Error loading students. Please try again.</p>';
+        expandedStudentsDiv.innerHTML = '<p>Error loading students. Please try again.</p>';
     }
 };
 
-// Confirm Deletion
-const confirmDelete = (studentId, studentName) => {
-    selectedStudentId = studentId;
-    document.getElementById('student-to-delete').textContent = studentName;
-    document.getElementById('delete-confirmation-section').style.display = 'block';
-};
-
-// Handle Delete Confirmation
-document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+// Show delete confirmation as a toaster below the student card
+const showDeleteConfirmationToaster = async (student, studentCard) => {
+    // Remove previous confirmation if any
+    if (expandedConfirmationDiv) expandedConfirmationDiv.remove();
+    expandedConfirmationDiv = document.createElement('div');
+    expandedConfirmationDiv.className = 'delete-confirmation-toaster';
+    expandedConfirmationDiv.innerHTML = '<h2>Confirm Deletion</h2><p>Loading student info...</p>';
+    studentCard.insertAdjacentElement('afterend', expandedConfirmationDiv);
     try {
-        await fetch(`http://localhost:5000/api/admin/students/${selectedStudentId}/delete`, {
-            method: 'DELETE',
-        });
-
-        document.getElementById('delete-message').textContent = 'Student deleted successfully!';
-        document.getElementById('delete-message').style.color = 'green';
-
-        // Reset the UI
-        document.getElementById('delete-confirmation-section').style.display = 'none';
-        fetchStudents(selectedClassId, document.getElementById('selected-class-name').textContent);
+        const response = await fetch(`http://localhost:5000/api/admin/students/${student.student_id}/details`);
+        const d = await response.json();
+        if (!d) {
+            expandedConfirmationDiv.innerHTML = '<h2>Confirm Deletion</h2><p>Student not found.</p>';
+            return;
+        }
+        expandedConfirmationDiv.innerHTML = `
+            <h2>Confirm Deletion</h2>
+            <div style="font-size:1.2rem;font-weight:700;margin-bottom:1rem;color:#ef4444;">${d.student_first_name || ''} ${d.student_last_name || ''}</div>
+            <table class="student-info-table" style="margin-bottom:1.5rem;">
+                <tr><th>Student First Name</th><td>${d.student_first_name || ''}</td></tr>
+                <tr><th>Student Last Name</th><td>${d.student_last_name || ''}</td></tr>
+                <tr><th>Date of Birth</th><td>${d.date_of_birth ? d.date_of_birth.split('T')[0] : ''}</td></tr>
+                <tr><th>Parent First Name</th><td>${d.parent_first_name || ''}</td></tr>
+                <tr><th>Parent Last Name</th><td>${d.parent_last_name || ''}</td></tr>
+                <tr><th>Parent Phone</th><td>${d.phone_number || ''}</td></tr>
+            </table>
+            <div class="form-actions-row">
+                <button class="submit-btn confirm-delete-btn">Yes, Delete</button>
+                <button class="cancel-btn cancel-delete-btn">Cancel</button>
+            </div>
+            <div class="delete-message"></div>
+        `;
+        // Add event listeners for the new buttons
+        expandedConfirmationDiv.querySelector('.confirm-delete-btn').onclick = async () => {
+            try {
+                await fetch(`http://localhost:5000/api/admin/students/${student.student_id}/delete`, {
+                    method: 'DELETE',
+                });
+                expandedConfirmationDiv.querySelector('.delete-message').textContent = 'Student deleted successfully!';
+                expandedConfirmationDiv.querySelector('.delete-message').style.color = 'green';
+                setTimeout(() => {
+                    expandedConfirmationDiv.remove();
+                    expandedConfirmationDiv = null;
+                    // Refresh students list
+                    toggleClassStudents(expandedClassId, '', studentCard.closest('.class-card'));
+                }, 1200);
+            } catch (error) {
+                expandedConfirmationDiv.querySelector('.delete-message').textContent = 'An error occurred while deleting the student.';
+                expandedConfirmationDiv.querySelector('.delete-message').style.color = 'red';
+            }
+        };
+        expandedConfirmationDiv.querySelector('.cancel-delete-btn').onclick = () => {
+            expandedConfirmationDiv.remove();
+            expandedConfirmationDiv = null;
+        };
     } catch (error) {
-        console.error('Error deleting student:', error);
-        document.getElementById('delete-message').textContent = 'An error occurred while deleting the student.';
-        document.getElementById('delete-message').style.color = 'red';
+        expandedConfirmationDiv.innerHTML = '<h2>Confirm Deletion</h2><p>Error loading student info.</p>';
     }
-});
+};
 
 // Handle Cancel Deletion
 document.getElementById('cancel-delete-btn').addEventListener('click', () => {
     document.getElementById('delete-confirmation-section').style.display = 'none';
 });
+
 // js/delete-students.js
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -176,5 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
         classesList.innerHTML = '<p>Classes loaded (placeholder).</p>';
     }
 });
+
 // Initialize the Page
 fetchClasses();

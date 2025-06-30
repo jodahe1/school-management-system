@@ -51,7 +51,7 @@ const getStudentsByClass = async (classId) => {
             SELECT s.student_id, u.username, u.email, s.first_name, s.last_name, s.date_of_birth
             FROM students s
             JOIN users u ON s.student_id = u.user_id
-            WHERE s.class_id = $1;
+            WHERE s.class_id = $1 AND u.deleted_at IS NULL;
         `;
         const result = await pool.query(query, [classId]);
         return result.rows;
@@ -118,14 +118,10 @@ const updateParent = async (parentId, firstName, lastName, phoneNumber) => {
 // Delete Student
 const deleteStudent = async (studentId) => {
     try {
-        const studentQuery = `
-            DELETE FROM students
-            WHERE student_id = $1;
-        `;
-        await pool.query(studentQuery, [studentId]);
-
+        // Soft delete in users table only
         const userQuery = `
-            DELETE FROM users
+            UPDATE users
+            SET deleted_at = NOW()
             WHERE user_id = $1;
         `;
         await pool.query(userQuery, [studentId]);
@@ -469,6 +465,7 @@ const getAllUsers = async () => {
             SELECT 
                 user_id, username, email, role
             FROM users
+            WHERE deleted_at IS NULL
         `;
         const result = await pool.query(query);
         return result.rows;
