@@ -480,6 +480,12 @@ h2 i {
   border-color: var(--gray-300);
 }
 
+.submit-btn, .cancel-btn {
+  width: 180px;
+  min-width: 0;
+  text-align: center;
+}
+
 .submit-btn {
   padding: 1rem 2rem;
   font-size: 1rem;
@@ -685,13 +691,11 @@ h2 i {
 
 /* Two-column form layout for student/parent details */
 .form-two-column {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 6rem;
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 3rem;
   width: 100%;
 }
-
 .form-column {
   flex: 1 1 0;
   background: var(--gray-50);
@@ -700,14 +704,27 @@ h2 i {
   box-shadow: var(--shadow-sm);
   min-width: 340px;
   max-width: 500px;
+  position: relative;
 }
-
 .student-info {
-  align-items: flex-start;
+  background: var(--gray-50);
+  border-right: 2px solid var(--gray-200);
+}
+.parent-info {
+  background: var(--gray-100);
 }
 
-.parent-info {
-  align-items: flex-end;
+/* Vertical divider for visual separation */
+.form-two-column .student-info::after {
+  content: '';
+  position: absolute;
+  top: 2rem;
+  right: 0;
+  width: 2px;
+  height: calc(100% - 4rem);
+  background: var(--gray-200);
+  border-radius: 2px;
+  z-index: 1;
 }
 
 .form-row-single {
@@ -751,7 +768,7 @@ h2 i {
 
 @media (max-width: 900px) {
   .form-two-column {
-    flex-direction: column;
+    flex-direction: column !important;
     gap: 2rem;
   }
   .form-column {
@@ -765,5 +782,249 @@ h2 i {
   .form-row-single label {
     text-align: left;
     margin-bottom: 0.5rem;
+  }
+  .form-two-column .student-info::after {
+    display: none;
+  }
+  .submit-btn, .cancel-btn {
+    width: 100%;
+  }
+}
+
+/* Toaster student list below class card */
+.students-toaster-list {
+  margin: 0 0 1.5rem 0;
+  padding: 1rem 0 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--gray-50);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Student info table */
+.student-info-table-container {
+  margin: 1rem 0 1.5rem 2.5rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  max-width: 500px;
+}
+
+.student-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+.student-info-table th,
+.student-info-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--gray-200);
+  text-align: left;
+}
+.student-info-table th {
+  background: var(--gray-100);
+  color: var(--primary-dark);
+  font-weight: 600;
+  width: 40%;
+}
+.student-info-table td {
+  color: var(--gray-800);
+}
+.student-info-table tr:last-child th,
+.student-info-table tr:last-child td {
+  border-bottom: none;
+}
+
+@media (max-width: 600px) {
+  .student-info-table-container {
+    margin-left: 0.5rem;
+    padding: 0.75rem 0.5rem;
+    max-width: 100%;
+  }
+  .students-toaster-list {
+    padding-left: 0.5rem;
+  }
+  .student-info-table th, .student-info-table td {
+    padding: 0.5rem 0.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Edit button style */
+.edit-info-btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  color: var(--white);
+  cursor: pointer;
+  transition: var(--transition-slow);
+  box-shadow: var(--shadow-md);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+}
+.edit-info-btn:hover {
+  background: linear-gradient(135deg, var(--accent-light), var(--accent));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Edit form styling */
+.edit-student-parent-form {
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem 1.25rem;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 420px;
+}
+.edit-student-parent-form h4 {
+  color: var(--primary-dark);
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+.edit-student-parent-form label {
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--gray-700);
+  margin-bottom: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.edit-student-parent-form input[type="text"],
+.edit-student-parent-form input[type="date"] {
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  color: var(--gray-900);
+  transition: var(--transition);
+  font-family: inherit;
+}
+.edit-student-parent-form input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.08);
+}
+
+.edit-student-parent-form .submit-btn {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-slow);
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
+  box-shadow: var(--shadow-md);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: inline-block;
+}
+.edit-student-parent-form .submit-btn:hover {
+  background: linear-gradient(135deg, var(--primary-dark), #0369a1);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+.edit-student-parent-form .cancel-btn {
+  background: var(--danger-light);
+  color: var(--danger);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-slow);
+  margin-top: 0.5rem;
+  display: inline-block;
+}
+.edit-student-parent-form .cancel-btn:hover {
+  background: var(--danger);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Update message styling */
+.update-message {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 500;
+  background: var(--gray-50);
+  color: var(--gray-700);
+  border: 1px solid var(--gray-200);
+  display: none;
+}
+.update-message[style*="color: green"] {
+  color: var(--success);
+  background: rgba(16, 185, 129, 0.1);
+  border-color: var(--success);
+  display: block;
+}
+.update-message[style*="color: red"] {
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--danger);
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .edit-student-parent-form {
+    padding: 0.75rem 0.5rem;
+    max-width: 100%;
+  }
+  .edit-info-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Info and edit form side by side */
+.info-edit-flex {
+  display: flex;
+  flex-direction: row;
+  gap: 2.5rem;
+  align-items: flex-start;
+  margin-top: 0.5rem;
+}
+.info-table-side {
+  min-width: 260px;
+  max-width: 420px;
+  flex: 1 1 0;
+}
+.edit-form-side {
+  min-width: 260px;
+  max-width: 420px;
+  flex: 1 1 0;
+}
+@media (max-width: 900px) {
+  .info-edit-flex {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .info-table-side, .edit-form-side {
+    max-width: 100%;
+    min-width: 0;
   }
 }
