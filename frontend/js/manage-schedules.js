@@ -35,10 +35,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             classesList.innerHTML = '';
             classes.forEach((cls) => {
-                const button = document.createElement('button');
-                button.textContent = cls.class_name;
-                button.onclick = () => fetchSchedules(cls.class_id, cls.class_name);
-                classesList.appendChild(button);
+                const classCard = document.createElement('div');
+                classCard.className = 'class-card';
+                classCard.tabIndex = 0;
+                classCard.innerHTML = `<span class="class-name">${cls.class_name}</span>`;
+                classCard.addEventListener('click', () => handleClassClick(cls.class_id, cls.class_name, classCard));
+                classCard.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleClassClick(cls.class_id, cls.class_name, classCard);
+                    }
+                });
+                classesList.appendChild(classCard);
             });
         } catch (error) {
             console.error('Error fetching classes:', error);
@@ -46,13 +54,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Fetch Schedules for a Specific Class
-    const fetchSchedules = async (classId, className) => {
-        try {
-            selectedClassId = classId;
-            schedulesSection.style.display = 'block';
-            selectedClassName.textContent = className;
+    // Handle Class Click: Show schedules below the clicked class
+    const handleClassClick = async (classId, className, classCard) => {
+        // Remove any existing schedules list and add button
+        document.querySelectorAll('.schedules-list-inline').forEach(el => el.remove());
+        document.querySelectorAll('.add-new-schedule-btn').forEach(el => el.remove());
+        selectedClassId = classId;
+        selectedClassName.textContent = className;
 
+        // Create a container for the schedules
+        const schedulesContainer = document.createElement('div');
+        schedulesContainer.className = 'schedules-list-inline';
+        schedulesContainer.style.marginTop = '1rem';
+        schedulesContainer.innerHTML = '<p>Loading schedules...</p>';
+
+        // Insert schedulesContainer right after the classCard
+        classCard.insertAdjacentElement('afterend', schedulesContainer);
+
+        try {
             const response = await fetch(`http://localhost:5000/api/admin/schedules/class/${classId}`);
             if (!response.ok) {
                 const errorText = await response.text();
@@ -61,28 +80,91 @@ document.addEventListener('DOMContentLoaded', () => {
             const schedules = await response.json();
 
             if (schedules.length === 0) {
-                schedulesList.innerHTML = '<p>No schedules found for this class.</p>';
-                return;
+                schedulesContainer.innerHTML = '<p>No schedules found for this class.</p>';
+            } else {
+                schedulesContainer.innerHTML = '';
+                schedules.forEach((schedule) => {
+                    const teacherDisplay = (schedule.teacher_first_name && schedule.teacher_last_name)
+                        ? `${schedule.teacher_first_name} ${schedule.teacher_last_name}`
+                        : (schedule.teacher_name || '');
+                    const div = document.createElement('div');
+                    div.classList.add('schedule-card');
+                    div.innerHTML = `
+                        <div class="schedule-info">
+                            <div class="schedule-title">${schedule.subject_name}</div>
+                            <div class="schedule-details">${teacherDisplay} | ${schedule.day_of_week}, Period ${schedule.period_number}</div>
+                            <div class="schedule-time">${schedule.start_time} - ${schedule.end_time}</div>
+                        </div>
+                        <div class="schedule-actions">
+                            <button class="edit-btn" data-id="${schedule.schedule_id}">Edit</button>
+                            <button class="delete-btn" data-id="${schedule.schedule_id}">Delete</button>
+                        </div>
+                    `;
+                    schedulesContainer.appendChild(div);
+                });
             }
 
-            schedulesList.innerHTML = '';
-            schedules.forEach((schedule) => {
-                const div = document.createElement('div');
-                div.classList.add('schedule-item');
-                div.innerHTML = `
-                    <p>${schedule.teacher_name} | ${schedule.subject_name} | ${schedule.day_of_week}, Period ${schedule.period_number} (${schedule.start_time} - ${schedule.end_time})</p>
-                    <button class="edit-btn" data-id="${schedule.schedule_id}">Edit</button>
-                    <button class="delete-btn" data-id="${schedule.schedule_id}">Delete</button>
-                `;
-                schedulesList.appendChild(div);
+            // Always add the Add New Schedule Button (inline) after the schedulesContainer
+            const addBtn = document.createElement('button');
+            addBtn.className = 'add-new-schedule-btn';
+            addBtn.id = 'add-new-schedule-btn';
+            addBtn.innerHTML = 'Add New Schedule';
+            addBtn.addEventListener('click', () => {
+                // Remove any existing inline add/edit forms
+                document.querySelectorAll('.inline-edit-schedule-form').forEach(f => f.remove());
+                // Prevent multiple add buttons
+                document.querySelectorAll('.add-new-schedule-btn').forEach((btn, idx) => {
+                    if (btn !== addBtn) btn.remove();
+                });
+                const blankSchedule = {
+                    schedule_id: '',
+                    teacher_id: '',
+                    subject_id: '',
+                    semester_id: '',
+                    day_of_week: 'Monday',
+                    period_number: '',
+                    start_time: '',
+                    end_time: ''
+                };
+                let addForm;
+                addForm = createInlineAddForm(blankSchedule, () => {
+                    // On save, remove the form and refresh the list (which will re-add the button)
+                    if (addForm) addForm.remove();
+                    handleClassClick(classId, className, classCard);
+                }, () => {
+                    if (addForm) addForm.remove();
+                });
+                addBtn.insertAdjacentElement('afterend', addForm);
+            });
+            schedulesContainer.insertAdjacentElement('afterend', addBtn);
+
+            schedulesContainer.querySelectorAll('.edit-btn').forEach((btn) => {
+                btn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('.inline-edit-schedule-form').forEach(f => f.remove());
+                    try {
+                        const response = await fetch(`http://localhost:5000/api/admin/schedules/${btn.dataset.id}`);
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error(`Failed to fetch schedule: ${errorText}`);
+                        }
+                        const schedule = await response.json();
+                        const scheduleCard = btn.closest('.schedule-card');
+                        const form = createInlineEditForm(schedule, () => {
+                            handleClassClick(classId, className, classCard);
+                        }, () => {
+                            form.remove();
+                        });
+                        scheduleCard.insertAdjacentElement('afterend', form);
+                    } catch (error) {
+                        showToast('Error loading schedule: ' + error.message, 'error');
+                    }
+                });
             });
 
-            document.querySelectorAll('.edit-btn').forEach((btn) => {
-                btn.addEventListener('click', () => openEditScheduleModal(btn.dataset.id));
-            });
-
-            document.querySelectorAll('.delete-btn').forEach((btn) => {
-                btn.addEventListener('click', async () => {
+            schedulesContainer.querySelectorAll('.delete-btn').forEach((btn) => {
+                btn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
                     const scheduleId = btn.dataset.id;
                     if (confirm('Are you sure you want to delete this schedule?')) {
                         try {
@@ -93,16 +175,16 @@ document.addEventListener('DOMContentLoaded', () => {
                                 const errorText = await response.text();
                                 throw new Error(`Delete failed: ${errorText}`);
                             }
-                            fetchSchedules(selectedClassId, className);
+                            handleClassClick(classId, className, classCard);
                         } catch (error) {
-                            alert(`Delete failed: ${error.message}`);
+                            showToast('Delete failed: ' + error.message, 'error');
                         }
                     }
                 });
             });
         } catch (error) {
             console.error('Error fetching schedules:', error);
-            schedulesList.innerHTML = `<p>Error loading schedules: ${error.message}</p>`;
+            schedulesContainer.innerHTML = `<p>Error loading schedules: ${error.message}</p>`;
         }
     };
 
@@ -218,6 +300,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Toast Notification System
+    function showToast(message, type = 'success') {
+        let toast = document.createElement('div');
+        toast.className = `custom-toast custom-toast-${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    }
+
     // Save Updated or New Schedule
     scheduleForm.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -248,11 +345,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     : `Create failed: ${errorText}`);
             }
 
+            showToast('Schedule saved successfully!', 'success');
             updateMessage.textContent = 'Schedule saved successfully!';
             updateMessage.className = 'success';
             scheduleFormSection.style.display = 'none';
-            fetchSchedules(selectedClassId, selectedClassName.textContent);
+            fetchClasses();
         } catch (error) {
+            showToast('Error saving schedule: ' + error.message, 'error');
             console.error('Error saving schedule:', error);
             updateMessage.textContent = `Error saving schedule: ${error.message}`;
             updateMessage.className = 'error';
@@ -264,14 +363,252 @@ document.addEventListener('DOMContentLoaded', () => {
         scheduleFormSection.style.display = 'none';
     });
 
-    // Add New Schedule Button
-    addNewScheduleBtn.addEventListener('click', () => {
-        openEditScheduleModal(null);
-    });
-
     // Initialize the Page
     fetchClasses();
     populateDropdowns();
+
+    // Helper: Populate teachers for a class
+    async function populateTeachersDropdown(dropdown, classId, selectedTeacherId = '') {
+        dropdown.innerHTML = '';
+        if (!classId) return;
+        const res = await fetch(`http://localhost:5000/api/admin/class/${classId}/teachers`);
+        const teachers = await res.json();
+        teachers.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t.teacher_id;
+            opt.textContent = `${t.first_name} ${t.last_name}`;
+            if (t.teacher_id == selectedTeacherId) opt.selected = true;
+            dropdown.appendChild(opt);
+        });
+    }
+    // Helper: Populate subjects for a class+teacher
+    async function populateSubjectsDropdown(dropdown, classId, teacherId, selectedSubjectId = '') {
+        dropdown.innerHTML = '';
+        if (!classId || !teacherId) return;
+        const res = await fetch(`http://localhost:5000/api/admin/class/${classId}/teacher/${teacherId}/subjects`);
+        const subjects = await res.json();
+        subjects.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.subject_id;
+            opt.textContent = s.subject_name;
+            if (s.subject_id == selectedSubjectId) opt.selected = true;
+            dropdown.appendChild(opt);
+        });
+    }
+
+    // Update createInlineEditForm to use new dropdown logic
+    function createInlineEditForm(schedule, onSave, onCancel) {
+        const form = document.createElement('form');
+        form.className = 'inline-edit-schedule-form';
+        form.style.margin = '1.5rem 0';
+        form.style.background = '#fff';
+        form.style.borderRadius = '16px';
+        form.style.boxShadow = '0 4px 16px rgba(0,0,0,0.07)';
+        form.style.padding = '2rem';
+        form.style.border = '1px solid #e5e7eb';
+        form.innerHTML = `
+            <input type="hidden" name="scheduleId" value="${schedule.schedule_id}">
+            <div style="display: grid; gap: 1.2rem; grid-template-columns: 1fr 1fr;">
+                <div>
+                    <label>Teacher:</label>
+                    <select name="teacherId" required></select>
+                </div>
+                <div>
+                    <label>Subject:</label>
+                    <select name="subjectId" required></select>
+                </div>
+                <div>
+                    <label>Semester:</label>
+                    <select name="semesterId" required></select>
+                </div>
+                <div>
+                    <label>Day of Week:</label>
+                    <select name="dayOfWeek" required>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                        <option value="Sunday">Sunday</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Period Number:</label>
+                    <input type="number" name="periodNumber" min="1" max="8" required value="${schedule.period_number}">
+                </div>
+                <div>
+                    <label>Start Time:</label>
+                    <input type="time" name="startTime" required value="${schedule.start_time}">
+                </div>
+                <div>
+                    <label>End Time:</label>
+                    <input type="time" name="endTime" required value="${schedule.end_time}">
+                </div>
+            </div>
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                <button type="submit" style="background: var(--primary); color: #fff; border-radius: 8px; padding: 0.7rem 1.5rem; border: none; font-weight: 700;">Save</button>
+                <button type="button" class="cancel-inline-edit-btn" style="background: #f3f4f6; color: #374151; border-radius: 8px; padding: 0.7rem 1.5rem; border: none; font-weight: 700;">Cancel</button>
+            </div>
+        `;
+        // Populate dropdowns
+        const teacherSelect = form.querySelector('select[name="teacherId"]');
+        const subjectSelect = form.querySelector('select[name="subjectId"]');
+        const semesterSelect = form.querySelector('select[name="semesterId"]');
+        // Teachers for this class
+        populateTeachersDropdown(teacherSelect, selectedClassId, schedule.teacher_id).then(() => {
+            // Subjects for this class+teacher
+            populateSubjectsDropdown(subjectSelect, selectedClassId, teacherSelect.value, schedule.subject_id);
+        });
+        // When teacher changes, update subjects
+        teacherSelect.addEventListener('change', () => {
+            populateSubjectsDropdown(subjectSelect, selectedClassId, teacherSelect.value);
+        });
+        // Semesters (all)
+        fetch('http://localhost:5000/api/admin/dropdown/semesters').then(r => r.json()).then(semesters => {
+            semesterSelect.innerHTML = '';
+            semesters.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.semester_id;
+                opt.textContent = s.semester_name;
+                if (s.semester_id == schedule.semester_id) opt.selected = true;
+                semesterSelect.appendChild(opt);
+            });
+        });
+        // Set day of week
+        form.querySelector('select[name="dayOfWeek"]').value = schedule.day_of_week;
+        // ... existing submit/cancel logic ...
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            try {
+                const response = await fetch(`http://localhost:5000/api/admin/schedules/${schedule.schedule_id}/update`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...data, classId: selectedClassId })
+                });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Update failed: ${errorText}`);
+                }
+                showToast('Schedule updated successfully!', 'success');
+                if (onSave) onSave();
+            } catch (error) {
+                showToast('Error saving schedule: ' + error.message, 'error');
+            }
+        });
+        form.querySelector('.cancel-inline-edit-btn').addEventListener('click', () => {
+            if (onCancel) onCancel();
+        });
+        return form;
+    }
+
+    // Update createInlineAddForm to use new dropdown logic
+    function createInlineAddForm(schedule, onSave, onCancel) {
+        const form = document.createElement('form');
+        form.className = 'inline-edit-schedule-form';
+        form.style.margin = '1.5rem 0';
+        form.style.background = '#fff';
+        form.style.borderRadius = '16px';
+        form.style.boxShadow = '0 4px 16px rgba(0,0,0,0.07)';
+        form.style.padding = '2rem';
+        form.style.border = '1px solid #e5e7eb';
+        form.innerHTML = `
+            <div style="display: grid; gap: 1.2rem; grid-template-columns: 1fr 1fr;">
+                <div>
+                    <label>Teacher:</label>
+                    <select name="teacherId" required></select>
+                </div>
+                <div>
+                    <label>Subject:</label>
+                    <select name="subjectId" required></select>
+                </div>
+                <div>
+                    <label>Semester:</label>
+                    <select name="semesterId" required></select>
+                </div>
+                <div>
+                    <label>Day of Week:</label>
+                    <select name="dayOfWeek" required>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                        <option value="Sunday">Sunday</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Period Number:</label>
+                    <input type="number" name="periodNumber" min="1" max="8" required value="">
+                </div>
+                <div>
+                    <label>Start Time:</label>
+                    <input type="time" name="startTime" required value="">
+                </div>
+                <div>
+                    <label>End Time:</label>
+                    <input type="time" name="endTime" required value="">
+                </div>
+            </div>
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                <button type="submit" style="background: var(--primary); color: #fff; border-radius: 8px; padding: 0.7rem 1.5rem; border: none; font-weight: 700;">Save</button>
+                <button type="button" class="cancel-inline-edit-btn" style="background: #f3f4f6; color: #374151; border-radius: 8px; padding: 0.7rem 1.5rem; border: none; font-weight: 700;">Cancel</button>
+            </div>
+        `;
+        // Populate dropdowns
+        const teacherSelect = form.querySelector('select[name="teacherId"]');
+        const subjectSelect = form.querySelector('select[name="subjectId"]');
+        const semesterSelect = form.querySelector('select[name="semesterId"]');
+        // Teachers for this class
+        populateTeachersDropdown(teacherSelect, selectedClassId).then(() => {
+            // Subjects for this class+teacher
+            populateSubjectsDropdown(subjectSelect, selectedClassId, teacherSelect.value);
+        });
+        // When teacher changes, update subjects
+        teacherSelect.addEventListener('change', () => {
+            populateSubjectsDropdown(subjectSelect, selectedClassId, teacherSelect.value);
+        });
+        // Semesters (all)
+        fetch('http://localhost:5000/api/admin/dropdown/semesters').then(r => r.json()).then(semesters => {
+            semesterSelect.innerHTML = '';
+            semesters.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.semester_id;
+                opt.textContent = s.semester_name;
+                semesterSelect.appendChild(opt);
+            });
+        });
+        // Set day of week
+        form.querySelector('select[name="dayOfWeek"]').value = 'Monday';
+        // ... existing submit/cancel logic ...
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/schedules/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...data, classId: selectedClassId })
+                });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Create failed: ${errorText}`);
+                }
+                showToast('Schedule added successfully!', 'success');
+                if (onSave) onSave();
+            } catch (error) {
+                showToast('Error adding schedule: ' + error.message, 'error');
+            }
+        });
+        form.querySelector('.cancel-inline-edit-btn').addEventListener('click', () => {
+            if (onCancel) onCancel();
+        });
+        return form;
+    }
 });
 
 // js/delete-students.js

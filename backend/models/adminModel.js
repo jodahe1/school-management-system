@@ -287,11 +287,11 @@ const getSchedulesByClass = async (classId) => {
     try {
         const query = `
             SELECT 
-                s.schedule_id, c.class_name, u.username AS teacher_name, sb.subject_name, 
+                s.schedule_id, c.class_name, t.first_name AS teacher_first_name, t.last_name AS teacher_last_name, sb.subject_name, 
                 sm.semester_name, s.day_of_week, s.period_number, s.start_time, s.end_time
             FROM schedules s
             JOIN classes c ON s.class_id = c.class_id
-            JOIN users u ON s.teacher_id = u.user_id
+            JOIN teachers t ON s.teacher_id = t.teacher_id
             JOIN subjects sb ON s.subject_id = sb.subject_id
             JOIN semesters sm ON s.semester_id = sm.semester_id
             WHERE s.class_id = $1;
@@ -336,7 +336,8 @@ const getAllSemestersForDropdown = async () => {
     try {
         const query = `
             SELECT semester_id, semester_name
-            FROM semesters;
+            FROM semesters
+            WHERE is_active = true;
         `;
         const result = await pool.query(query);
         return result.rows;
@@ -614,6 +615,32 @@ const deleteClass = async (classId) => {
     }
 };
 
+// Get teachers for a class
+const getTeachersByClass = async (classId) => {
+    const query = `
+        SELECT t.teacher_id, t.first_name, t.last_name
+        FROM class_teacher_subject cts
+        JOIN teachers t ON cts.teacher_id = t.teacher_id
+        WHERE cts.class_id = $1
+        GROUP BY t.teacher_id, t.first_name, t.last_name
+    `;
+    const result = await pool.query(query, [classId]);
+    return result.rows;
+};
+
+// Get subjects for a class and teacher
+const getSubjectsByClassAndTeacher = async (classId, teacherId) => {
+    const query = `
+        SELECT s.subject_id, s.subject_name
+        FROM class_teacher_subject cts
+        JOIN subjects s ON cts.subject_id = s.subject_id
+        WHERE cts.class_id = $1 AND cts.teacher_id = $2
+        GROUP BY s.subject_id, s.subject_name
+    `;
+    const result = await pool.query(query, [classId, teacherId]);
+    return result.rows;
+};
+
 module.exports = {
     createAdmin,
     verifyAdmin,
@@ -648,5 +675,7 @@ module.exports = {
     deleteSemester,
     addClass,
     updateClass,
-    deleteClass
+    deleteClass,
+    getTeachersByClass,
+    getSubjectsByClassAndTeacher
 };

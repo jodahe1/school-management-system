@@ -35,7 +35,9 @@ const {
     manageClasses,
     createClass,
     editClass,
-    removeClass
+    removeClass,
+    getTeachersByClass,
+    getSubjectsByClassAndTeacher
 } = require('../controllers/adminController');
 
 // Add Admin
@@ -124,5 +126,9 @@ router.get('/classes/manage', manageClasses);
 router.post('/classes', createClass);
 router.put('/classes/:classId', editClass);
 router.delete('/classes/:classId', removeClass);
+
+// New routes
+router.get('/class/:classId/teachers', getTeachersByClass);
+router.get('/class/:classId/teacher/:teacherId/subjects', getSubjectsByClassAndTeacher);
 
 module.exports = router;

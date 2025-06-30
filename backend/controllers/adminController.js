@@ -286,9 +286,6 @@ const fetchSchedulesForClass = async (req, res) => {
     try {
         const { classId } = req.params;
         const schedules = await adminModel.getSchedulesByClass(classId);
-        if (schedules.length === 0) {
-            return res.status(200).json({ message: 'No schedules found for this class', schedules: [] });
-        }
         res.status(200).json(schedules);
     } catch (error) {
         console.error('Error fetching schedules for class:', error);
@@ -491,6 +488,27 @@ const removeClass = async (req, res) => {
     }
 };
 
+// Add these controller functions:
+const getTeachersByClass = async (req, res) => {
+    try {
+        const { classId } = req.params;
+        const teachers = await adminModel.getTeachersByClass(classId);
+        res.status(200).json(teachers);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+const getSubjectsByClassAndTeacher = async (req, res) => {
+    try {
+        const { classId, teacherId } = req.params;
+        const subjects = await adminModel.getSubjectsByClassAndTeacher(classId, teacherId);
+        res.status(200).json(subjects);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     addAdmin,
     loginAdmin,
@@ -524,5 +542,7 @@ module.exports = {
     manageClasses,
     createClass,
     editClass,
-    removeClass
+    removeClass,
+    getTeachersByClass,
+    getSubjectsByClassAndTeacher
 };
