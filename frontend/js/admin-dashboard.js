@@ -197,6 +197,7 @@ async function fetchSemesters() {
             <button class="edit-semester-btn" data-id="${sem.semester_id}">Edit</button>
             <button class="delete-semester-btn" data-id="${sem.semester_id}">Delete</button>
         `;
+        div.semesterData = sem; // Attach data for easy access
         list.appendChild(div);
     });
     document.querySelectorAll('.edit-semester-btn').forEach(btn => {
@@ -227,19 +228,73 @@ if (document.getElementById('add-semester-form')) {
 }
 
 function editSemesterPrompt(id) {
-    const semRow = Array.from(document.querySelectorAll('.semester-row')).find(row => row.querySelector('.edit-semester-btn').dataset.id == id);
-    if (!semRow) return;
-    const name = prompt('New Semester Name:');
-    const start = prompt('New Start Date (YYYY-MM-DD):');
-    const end = prompt('New End Date (YYYY-MM-DD):');
-    const isActive = confirm('Set as active?');
-    if (name && start && end) {
-        fetch(`http://localhost:5000/api/admin/semesters/${id}`, {
+    // Remove any existing edit forms
+    const existingForm = document.getElementById('inline-edit-semester-form');
+    if (existingForm) existingForm.remove();
+
+    // Find the semester data
+    const sem = Array.from(document.querySelectorAll('.edit-semester-btn')).find(btn => btn.dataset.id == id).closest('.semester-row').semesterData;
+    // If not found, fallback to fetching from the DOM
+    let semesterName = '', startDate = '', endDate = '', isActive = false;
+    if (sem) {
+        semesterName = sem.semester_name;
+        startDate = sem.start_date.split('T')[0];
+        endDate = sem.end_date.split('T')[0];
+        isActive = sem.is_active;
+    } else {
+        // fallback: parse from DOM
+        const row = Array.from(document.querySelectorAll('.edit-semester-btn')).find(btn => btn.dataset.id == id).closest('.semester-row');
+        const strong = row.querySelector('strong');
+        const span = row.querySelector('span');
+        semesterName = strong ? strong.textContent : '';
+        const dateMatch = row.innerHTML.match(/\((\d{4}-\d{2}-\d{2}) to (\d{4}-\d{2}-\d{2})\)/);
+        if (dateMatch) {
+            startDate = dateMatch[1];
+            endDate = dateMatch[2];
+        }
+        isActive = span && span.textContent.trim().toLowerCase() === 'active';
+    }
+
+    // Create the form card
+    const formDiv = document.createElement('div');
+    formDiv.className = 'semester-row edit-form-row';
+    formDiv.id = 'inline-edit-semester-form';
+    formDiv.innerHTML = `
+        <input type="text" id="edit-semester-name" value="${semesterName}" style="min-width:100px;" />
+        <input type="date" id="edit-semester-start" value="${startDate}" />
+        <input type="date" id="edit-semester-end" value="${endDate}" />
+        <select id="edit-semester-active">
+            <option value="true" ${isActive ? 'selected' : ''}>Active</option>
+            <option value="false" ${!isActive ? 'selected' : ''}>Inactive</option>
+        </select>
+        <button id="save-semester-btn">Save</button>
+        <button id="cancel-semester-btn">Back</button>
+    `;
+
+    // Insert after the clicked semester-row
+    const row = Array.from(document.querySelectorAll('.edit-semester-btn')).find(btn => btn.dataset.id == id).closest('.semester-row');
+    row.parentNode.insertBefore(formDiv, row.nextSibling);
+
+    // Save handler
+    document.getElementById('save-semester-btn').onclick = async function() {
+        const data = {
+            semesterName: document.getElementById('edit-semester-name').value,
+            startDate: document.getElementById('edit-semester-start').value,
+            endDate: document.getElementById('edit-semester-end').value,
+            isActive: document.getElementById('edit-semester-active').value === 'true'
+        };
+        await fetch(`http://localhost:5000/api/admin/semesters/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ semesterName: name, startDate: start, endDate: end, isActive })
-        }).then(fetchSemesters);
-    }
+            body: JSON.stringify(data)
+        });
+        fetchSemesters();
+        formDiv.remove();
+    };
+    // Back handler
+    document.getElementById('cancel-semester-btn').onclick = function() {
+        formDiv.remove();
+    };
 }
 
 function deleteSemester(id) {

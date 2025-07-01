@@ -1057,3 +1057,56 @@ body {
   background: linear-gradient(135deg, var(--primary-dark), #0369a1);
   box-shadow: var(--shadow-lg);
 }
+
+.edit-form-row {
+  background: var(--gray-50) !important;
+  border: 2px solid var(--primary-dark) !important;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 1rem;
+  padding: 1.1rem 1.5rem;
+  border-radius: var(--radius-md);
+  display: grid;
+  grid-template-columns: 2fr 3fr 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+}
+.edit-form-row input,
+.edit-form-row select {
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--gray-300);
+  background: var(--white);
+  color: var(--gray-900);
+}
+.edit-form-row input:focus,
+.edit-form-row select:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+.edit-form-row button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-sm);
+  margin-left: 0;
+}
+#save-semester-btn {
+  background: var(--success);
+  color: var(--white);
+}
+#save-semester-btn:hover {
+  background: var(--primary-dark);
+}
+#cancel-semester-btn {
+  background: var(--gray-200);
+  color: var(--gray-700);
+}
+#cancel-semester-btn:hover {
+  background: var(--gray-400);
+  color: var(--white);
+}
