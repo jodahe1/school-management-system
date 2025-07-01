@@ -190,7 +190,7 @@ async function fetchSemesters() {
     list.innerHTML = '';
     semesters.forEach(sem => {
         const div = document.createElement('div');
-        div.className = 'semester-row';
+        div.className = 'semester-row ' + (sem.is_active ? 'active-semester' : 'inactive-semester');
         div.innerHTML = `
             <strong>${sem.semester_name}</strong> (${sem.start_date.split('T')[0]} to ${sem.end_date.split('T')[0]}) 
             <span style="color:${sem.is_active ? 'green' : 'gray'}">${sem.is_active ? 'Active' : 'Inactive'}</span>

@@ -878,13 +878,49 @@ body {
 
 /* Manage Semesters Section */
 #manage-semesters .container {
-  max-width: 700px;
-  margin: 0 auto;
-  background: var(--white);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  padding: 2.5rem 2rem;
-  border: 1px solid var(--gray-200);
+  max-width: none;
+  width: 100%;
+  padding: 2.5rem 0.5rem;
+}
+
+#semesters-list {
+  width: 100%;
+}
+
+.semester-row {
+  display: grid;
+  grid-template-columns: 2fr 3fr 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.semester-row strong {
+  min-width: 120px;
+  text-align: left;
+}
+
+.semester-row span {
+  min-width: 80px;
+  text-align: center;
+}
+
+.semester-row button {
+  min-width: 90px;
+  margin-left: 0;
+}
+
+/* Hover color for active/inactive semesters */
+.semester-row.active-semester:hover {
+  background: #d1fae5 !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 2px #10b98133;
+}
+
+.semester-row.inactive-semester:hover {
+  background: #fee2e2 !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px #ef444433;
 }
 
 #manage-semesters h2 {
