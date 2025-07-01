@@ -334,6 +334,57 @@ const submissionsOverviewComingSoon = (req, res) => {
     });
 };
 
+// Update Teacher Profile
+const updateProfile = async (req, res) => {
+    try {
+        const { user_id, firstName, lastName, email, currentPassword, newPassword } = req.body;
+
+        // Validate current password if provided
+        if (currentPassword) {
+            const validatePasswordQuery = `
+                SELECT password_hash FROM users WHERE user_id = $1 AND role = 'teacher';
+            `;
+            const passwordResult = await pool.query(validatePasswordQuery, [user_id]);
+            if (passwordResult.rows.length === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            if (passwordResult.rows[0].password_hash !== currentPassword) {
+                return res.status(401).json({ message: 'Current password is incorrect' });
+            }
+        }
+
+        // Update users table (email and optionally password)
+        let userResult;
+        if (newPassword) {
+            const updateUserQuery = `
+                UPDATE users SET email = $1, password_hash = $2 WHERE user_id = $3 AND role = 'teacher' RETURNING user_id, email, role;
+            `;
+            userResult = await pool.query(updateUserQuery, [email, newPassword, user_id]);
+        } else {
+            const updateUserQuery = `
+                UPDATE users SET email = $1 WHERE user_id = $2 AND role = 'teacher' RETURNING user_id, email, role;
+            `;
+            userResult = await pool.query(updateUserQuery, [email, user_id]);
+        }
+
+        // Update teachers table (first and last name)
+        const updateTeacherQuery = `
+            UPDATE teachers SET first_name = $1, last_name = $2 WHERE teacher_id = $3 RETURNING teacher_id, first_name, last_name, subject_teaches;
+        `;
+        const teacherResult = await pool.query(updateTeacherQuery, [firstName, lastName, user_id]);
+
+        res.status(200).json({
+            message: 'Profile updated successfully',
+            user: {
+                ...userResult.rows[0],
+                ...teacherResult.rows[0]
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     loginTeacher,
     getProfile,
@@ -354,5 +405,6 @@ module.exports = {
     getClassAnnouncements,
     getFirstTimeInfo,
     completeSetup,
-    submissionsOverviewComingSoon
+    submissionsOverviewComingSoon,
+    updateProfile
 };

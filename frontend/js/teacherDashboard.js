@@ -45,7 +45,7 @@ function setupEventListeners() {
                 const sectionId = href.substring(1);
                 showSection(sectionId);
                 updateActiveNav(link);
-            } else if (href === 'editProfile.html') {
+            } else if (href.endsWith('.html')) {
                 window.location.href = href;
             }
         });

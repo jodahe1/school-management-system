@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit My Profile - Teacher</title>
+  <link rel="stylesheet" href="css/teacherstyles.css">
+  <link rel="stylesheet" href="css/edit-me-teacher.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="teacher-info">
+        <div class="teacher-avatar">
+          <i class="fas fa-chalkboard-teacher"></i>
+        </div>
+        <h3 id="teacherName">[Teacher Name]</h3>
+        <p id="teacherId">ID: Loading...</p>
+        <p id="teacherSubject">Subject: Loading...</p>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="teacherDashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+          <li class="active"><a href="edit-me-teacher.html"><i class="fas fa-user-edit"></i> Edit Me</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main class="main-content-with-sidebar">
+      <header class="header">
+        <div class="header-left">
+          <h1>Edit My Profile</h1>
+        </div>
+      </header>
+      <div class="dashboard-content">
+        <section class="dashboard-section">
+          <form id="editTeacherForm">
+            <div class="form-section">
+              <h2><i class="fas fa-user"></i> Personal Information</h2>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="firstName">First Name</label>
+                  <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Last Name</label>
+                  <input type="text" id="lastName" name="lastName" required>
+                </div>
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" name="email" required>
+                </div>
+              </div>
+            </div>
+            <div class="form-section">
+              <h2><i class="fas fa-lock"></i> Change Password (Optional)</h2>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="currentPassword">Current Password</label>
+                  <input type="password" id="currentPassword" name="currentPassword">
+                </div>
+                <div class="form-group">
+                  <label for="newPassword">New Password</label>
+                  <input type="password" id="newPassword" name="newPassword">
+                </div>
+                <div class="form-group">
+                  <label for="confirmPassword">Confirm New Password</label>
+                  <input type="password" id="confirmPassword" name="confirmPassword">
+                </div>
+              </div>
+            </div>
+            <div class="form-section">
+              <div class="button-group">
+                <button type="button" class="btn-secondary" id="backBtn">
+                  <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button type="submit" class="btn-primary" id="submitBtn">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </div>
+            </div>
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+          </form>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script src="js/edit-me-teacher.js"></script>
+</body>
+</html> 

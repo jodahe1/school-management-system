@@ -11,6 +11,7 @@ router.post('/complete-setup', teacherController.completeSetup);
 
 // Profile Management
 router.get('/profile', teacherController.getProfile);
+router.post('/update-profile', teacherController.updateProfile);
 
 // Schedule Viewing
 router.get('/schedule', teacherController.getSchedule);
