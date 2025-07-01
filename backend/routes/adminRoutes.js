@@ -37,7 +37,9 @@ const {
     editClass,
     removeClass,
     getTeachersByClass,
-    getSubjectsByClassAndTeacher
+    getSubjectsByClassAndTeacher,
+    removeAdmin,
+    fetchAllAdmins
 } = require('../controllers/adminController');
 
 // Add Admin
@@ -130,5 +132,11 @@ router.delete('/classes/:classId', removeClass);
 // New routes
 router.get('/class/:classId/teachers', getTeachersByClass);
 router.get('/class/:classId/teacher/:teacherId/subjects', getSubjectsByClassAndTeacher);
+
+// Delete Admin
+router.delete('/admins/:adminId/delete', removeAdmin);
+
+// Fetch All Admins
+router.get('/admins', fetchAllAdmins);
 
 module.exports = router;

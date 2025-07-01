@@ -164,8 +164,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Initialize with dashboard visible
-    document.querySelector('.sidebar-nav li.active a').click();
+    // Initialize with dashboard visible, but only for hash links
+    const activeLink = document.querySelector('.sidebar-nav li.active a');
+    if (activeLink && activeLink.getAttribute('href').startsWith('#')) {
+        activeLink.click();
+    }
     
     // Form submission handlers would go here
     // ...

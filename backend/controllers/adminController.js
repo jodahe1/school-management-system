@@ -509,6 +509,27 @@ const getSubjectsByClassAndTeacher = async (req, res) => {
     }
 };
 
+// Fetch All Admins
+const fetchAllAdmins = async (req, res) => {
+    try {
+        const admins = await adminModel.getAllAdmins();
+        res.status(200).json(admins);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
+// Delete Admin
+const removeAdmin = async (req, res) => {
+    try {
+        const { adminId } = req.params;
+        await adminModel.deleteAdmin(adminId);
+        res.status(200).json({ message: 'Admin deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     addAdmin,
     loginAdmin,
@@ -544,5 +565,7 @@ module.exports = {
     editClass,
     removeClass,
     getTeachersByClass,
-    getSubjectsByClassAndTeacher
+    getSubjectsByClassAndTeacher,
+    fetchAllAdmins,
+    removeAdmin
 };

@@ -459,14 +459,28 @@ const getAllParents = async () => {
     }
 };
 
-// Fetch All Admins
+// Fetch All Users (for analytics)
 const getAllUsers = async () => {
     try {
         const query = `
-            SELECT 
-                user_id, username, email, role
+            SELECT user_id, username, email, role
             FROM users
             WHERE deleted_at IS NULL
+        `;
+        const result = await pool.query(query);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Fetch All Admins
+const getAllAdmins = async () => {
+    try {
+        const query = `
+            SELECT user_id, username, email, role
+            FROM users
+            WHERE role = 'admin' AND deleted_at IS NULL
         `;
         const result = await pool.query(query);
         return result.rows;
@@ -641,6 +655,19 @@ const getSubjectsByClassAndTeacher = async (classId, teacherId) => {
     return result.rows;
 };
 
+// Delete Admin
+const deleteAdmin = async (adminId) => {
+    try {
+        const query = `
+            DELETE FROM users
+            WHERE user_id = $1 AND role = 'admin';
+        `;
+        await pool.query(query, [adminId]);
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     createAdmin,
     verifyAdmin,
@@ -677,5 +704,7 @@ module.exports = {
     updateClass,
     deleteClass,
     getTeachersByClass,
-    getSubjectsByClassAndTeacher
+    getSubjectsByClassAndTeacher,
+    getAllAdmins,
+    deleteAdmin
 };
