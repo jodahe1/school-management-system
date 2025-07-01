@@ -306,3 +306,29 @@ function deleteSemester(id) {
 }
 
 if (document.getElementById('semesters-list')) fetchSemesters();
+
+// Quick Actions unique button handlers
+const editStudentsParentsQuickBtn = document.getElementById('edit-students-parents-btn-quick');
+if (editStudentsParentsQuickBtn) {
+    editStudentsParentsQuickBtn.addEventListener('click', () => {
+        window.location.href = 'admin-edit-student-parent.html';
+    });
+}
+const manageTeachersQuickBtn = document.getElementById('manage-teachers-btn-quick');
+if (manageTeachersQuickBtn) {
+    manageTeachersQuickBtn.addEventListener('click', () => {
+        window.location.href = 'manage-teachers.html';
+    });
+}
+const deleteStudentsQuickBtn = document.getElementById('delete-students-btn-quick');
+if (deleteStudentsQuickBtn) {
+    deleteStudentsQuickBtn.addEventListener('click', () => {
+        window.location.href = 'delete-students.html';
+    });
+}
+const manageSchedulesQuickBtn = document.getElementById('manage-schedules-btn-quick');
+if (manageSchedulesQuickBtn) {
+    manageSchedulesQuickBtn.addEventListener('click', () => {
+        window.location.href = 'manage-schedules.html';
+    });
+}
