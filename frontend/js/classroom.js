@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('start-attendance').addEventListener('click', () => {
       const subjectId = document.getElementById('subject-select').value;
       if (!subjectId) {
-        alert('Please select a subject first');
+        showToast('Please select a subject first');
         return;
       }
   
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     } catch (error) {
       console.error('Error loading classes:', error);
-      alert('Failed to load classes');
+      showToast('Failed to load classes', true);
     }
   }
   
@@ -92,11 +92,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   
       subjectSelect.disabled = uniqueSubjects.length === 0;
       if (uniqueSubjects.length === 0) {
-        alert('No subjects found for this class');
+        showToast('No subjects found for this class');
       }
     } catch (error) {
       console.error('Error loading subjects:', error);
-      alert('Failed to load subjects');
+      showToast('Failed to load subjects', true);
     }
   }
   
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     } catch (error) {
       console.error('Error loading students:', error);
-      alert('Failed to load students');
+      showToast('Failed to load students', true);
     }
   }
   
@@ -146,12 +146,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const period = document.getElementById('period-number').value;
 
     if (!classId || !subjectId || !date || !period) {
-        alert('Please fill all required fields: class, subject, date, and period.');
+        showToast('Please fill all required fields: class, subject, date, and period.');
         return;
     }
 
     if (new Date(date) > new Date()) {
-        alert('Date cannot be in the future.');
+        showToast('Date cannot be in the future.');
         return;
     }
 
@@ -182,11 +182,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (!response.ok) {
             const error = await response.json();
-            alert(`Error: ${error.message || 'Failed to record attendance'}`);
+            showToast(`Error: ${error.message || 'Failed to record attendance'}`, true);
             return;
         }
 
-        alert('Attendance recorded successfully!');
+        showToast('Attendance recorded successfully!');
         document.getElementById('submit-attendance').classList.add('hidden');
         document.querySelectorAll('.status-select').forEach(select => {
             select.disabled = true;
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error('Error submitting attendance:', error);
-        alert('Failed to submit attendance. Please check your connection and try again.');
+        showToast('Failed to submit attendance. Please check your connection and try again.', true);
     }
 }
   
@@ -210,4 +210,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Error fetching semesters:', error);
       return 1;
     }
+  }
+
+  function showToast(message, isError = false) {
+    const toastContainer = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast${isError ? ' error' : ''}`;
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
   }
