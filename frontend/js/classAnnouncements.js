@@ -5,6 +5,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    // Get class_id from URL if present
+    const urlParams = new URLSearchParams(window.location.search);
+    const preselectedClassId = urlParams.get('class_id');
+
+    // Set greeting message below the announcement title
+    const greetingDiv = document.getElementById('greeting-message');
+    if (greetingDiv) {
+        greetingDiv.textContent = `Hi teacher with id ${teacher.user_id} and this is class with id ${preselectedClassId || '[not selected]'}`;
+    }
+
     // Back button functionality
     document.getElementById('backToClass').addEventListener('click', () => {
         window.location.href = 'teacherDashboard.html';
@@ -14,15 +24,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const classSelect = document.getElementById('announcement-class');
     const subjectSelect = document.getElementById('announcement-subject');
 
-    // Load initial data
-    await loadClasses(teacher.user_id);
+    // Load initial data using the new utility
+    await loadClassesForSelect('announcement-class', teacher.user_id, preselectedClassId);
+
+    // If preselected class, load subjects
+    if (preselectedClassId) {
+        await loadSubjectsForClass(teacher.user_id, preselectedClassId, 'announcement-subject');
+        classSelect.value = preselectedClassId;
+    }
 
     // Event listeners
     classSelect.addEventListener('change', async () => {
         const classId = classSelect.value;
         if (classId) {
-            await loadSubjects(teacher.user_id, classId);
-            await loadRecentAnnouncements(classId, 6); // Using 6 as default semester
+            await loadSubjectsForClass(teacher.user_id, classId, 'announcement-subject');
+            await loadRecentAnnouncements(teacher.user_id, classId);
         } else {
             subjectSelect.innerHTML = '<option value="">Select Subject</option>';
         }
@@ -32,60 +48,44 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupAnnouncementForm(teacher.user_id);
 });
 
-// Load teacher's classes
-async function loadClasses(teacherId) {
+// Utility: Load classes for select dropdown (copied from teacherDashboard.js)
+async function loadClassesForSelect(selectId, teacherId, preselectedClassId) {
     try {
         const response = await fetch(`http://localhost:5000/api/teacher/classes?teacher_id=${teacherId}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        if (response.ok) {
+            const classes = await response.json();
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">Select Class</option>' +
+                classes.map(cls => `<option value="${cls.class_id}" ${preselectedClassId && cls.class_id == preselectedClassId ? 'selected' : ''}>${cls.class_name}</option>`).join('');
         }
-        const classes = await response.json();
-        const select = document.getElementById('announcement-class');
-        select.innerHTML = '<option value="">Select Class</option>';
-        
-        classes.forEach(cls => {
-            const option = document.createElement('option');
-            option.value = cls.class_id;
-            option.textContent = cls.class_name;
-            select.appendChild(option);
-        });
     } catch (error) {
         console.error('Error loading classes:', error);
-        alert('Failed to load classes');
     }
 }
 
-// Load subjects for selected class
-async function loadSubjects(teacherId, classId) {
+// Load subjects for selected class (filtered by teacher and class)
+async function loadSubjectsForClass(teacherId, classId, selectId) {
     try {
         const response = await fetch(`http://localhost:5000/api/teacher/schedule?teacher_id=${teacherId}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) return;
         const schedule = await response.json();
-        const select = document.getElementById('announcement-subject');
-        select.innerHTML = '<option value="">All Subjects</option>';
-        
+        const select = document.getElementById(selectId);
+        select.innerHTML = '<option value="">Select Subject</option>';
         const uniqueSubjects = new Set();
         schedule
-            .filter(item => item.class_id === parseInt(classId))
+            .filter(item => item.class_id == classId)
             .forEach(item => {
                 if (!uniqueSubjects.has(item.subject_id)) {
-                    const option = document.createElement('option');
-                    option.value = item.subject_id;
-                    option.textContent = item.subject_name;
-                    select.appendChild(option);
+                    select.innerHTML += `<option value="${item.subject_id}">${item.subject_name}</option>`;
                     uniqueSubjects.add(item.subject_id);
                 }
             });
     } catch (error) {
         console.error('Error loading subjects:', error);
-        alert('Failed to load subjects');
     }
 }
 
 // Setup announcement form submission
-// Updated setupAnnouncementForm function
 function setupAnnouncementForm(teacherId) {
     document.getElementById('announcementForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -140,7 +140,7 @@ function setupAnnouncementForm(teacherId) {
             
             // Refresh announcements list
             if (classId) {
-                await loadRecentAnnouncements(classId, semesterId);
+                await loadRecentAnnouncements(teacherId, classId);
             }
         } catch (error) {
             console.error('Full error:', {
@@ -152,12 +152,18 @@ function setupAnnouncementForm(teacherId) {
         }
     });
 }
-// Load recent announcements for selected class and semester
-async function loadRecentAnnouncements(classId, semesterId) {
+
+// Load recent announcements for selected class and teacher
+async function loadRecentAnnouncements(teacherId, classId) {
     try {
-        const response = await fetch(
-            `http://localhost:5000/api/teacher/announcements?class_id=${classId}&semester_id=${semesterId}`
-        );
+        // Print IDs to backend terminal for debugging
+        fetch('http://localhost:5000/api/debug/print-ids', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ teacherId, classId })
+        });
+        const url = `http://localhost:5000/api/teacher/announcements?teacher_id=${teacherId}&class_id=${classId}`;
+        const response = await fetch(url);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -168,7 +174,7 @@ async function loadRecentAnnouncements(classId, semesterId) {
         tbody.innerHTML = '';
         
         if (announcements.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5">No announcements found</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5">Sorry, you don\'t have any.</td></tr>';
             return;
         }
         
@@ -176,10 +182,10 @@ async function loadRecentAnnouncements(classId, semesterId) {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${ann.title}</td>
-                <td>${ann.class_name || 'All Classes'}</td>
-                <td>${ann.subject_name || 'All Subjects'}</td>
+                <td>${ann.class_name || ''}</td>
+                <td>${ann.subject_name || ''}</td>
+                <td>${ann.file_path ? `<a href="${ann.file_path}" target="_blank">View</a>` : '-'}</td>
                 <td>${new Date(ann.created_at).toLocaleDateString()}</td>
-                <td>${ann.teacher_name}</td>
             `;
             tbody.appendChild(row);
         });
