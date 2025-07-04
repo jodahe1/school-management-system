@@ -113,6 +113,10 @@ function setupEventListeners() {
     document.getElementById('createAssignmentBtn')?.addEventListener('click', () => showAssignmentModal());
     document.getElementById('viewSubmissionsBtn')?.addEventListener('click', () => showSubmissionsModal());
 
+    // Chat buttons
+    document.getElementById('chatWithStudentBtn')?.addEventListener('click', () => chatWithStudent());
+    document.getElementById('chatWithParentBtn')?.addEventListener('click', () => chatWithParent());
+
     // Fix Chat button to set user info and go to chat.html
     const chatBtn = document.getElementById('chatBtn');
     if (chatBtn) {
@@ -908,4 +912,40 @@ async function handleStudentAssignmentSubmit(e) {
             console.error('Error creating assignment:', error);
         showToast(error.message || 'Failed to create assignment', true);
     }
+}
+
+function chatWithStudent() {
+    const student = getCurrentStudent();
+    if (!student) return;
+    localStorage.setItem('user', JSON.stringify({
+        userId: teacher.user_id,
+        userType: 'teacher',
+        userName: `${teacher.first_name} ${teacher.last_name}`
+    }));
+    localStorage.setItem('chatTarget', JSON.stringify({
+        userId: student.student_id,
+        userType: 'student',
+        userName: `${student.first_name} ${student.last_name}`
+    }));
+    window.location.href = 'chat.html';
+}
+
+function chatWithParent() {
+    const student = getCurrentStudent();
+    if (!student) return;
+    if (!student.parent_id || !student.parent_first_name) {
+        showToast('Parent info not available', true);
+        return;
+    }
+    localStorage.setItem('user', JSON.stringify({
+        userId: teacher.user_id,
+        userType: 'teacher',
+        userName: `${teacher.first_name} ${teacher.last_name}`
+    }));
+    localStorage.setItem('chatTarget', JSON.stringify({
+        userId: student.parent_id,
+        userType: 'parent',
+        userName: `${student.parent_first_name} ${student.parent_last_name}`
+    }));
+    window.location.href = 'chat.html';
 }

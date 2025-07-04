@@ -23,6 +23,31 @@ async function fetchConversations() {
   const res = await fetch(`${API_BASE}/conversations?user_id=${currentUser.userId}&user_type=${currentUser.userType}`);
   const conversations = await res.json();
   renderConversations(conversations);
+
+  // Auto-select chatTarget if present
+  const chatTarget = JSON.parse(localStorage.getItem('chatTarget'));
+  if (chatTarget) {
+    // Try to find existing conversation
+    const found = conversations.find(conv =>
+      conv.other_user_id === chatTarget.userId &&
+      conv.other_user_type === chatTarget.userType
+    );
+    if (found) {
+      selectConversation(found);
+    } else {
+      // No conversation exists, create one
+      // Optionally, you can POST to your backend to create a conversation if needed
+      const newConv = {
+        other_user_id: chatTarget.userId,
+        other_user_type: chatTarget.userType,
+        other_user_name: chatTarget.userName,
+        other_user_role: chatTarget.userType.charAt(0).toUpperCase() + chatTarget.userType.slice(1)
+      };
+      selectConversation(newConv);
+    }
+    // Remove chatTarget so it doesn't auto-select again on refresh
+    localStorage.removeItem('chatTarget');
+  }
 }
 
 function renderConversations(conversations) {
