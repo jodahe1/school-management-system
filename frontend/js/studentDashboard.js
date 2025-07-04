@@ -460,15 +460,39 @@ async function fetchAndDisplayTeachers() {
     }
     grid.innerHTML = teachers.map(teacher => {
       const color = subjectColors[teacher.subject_name] || '#e0e0e0';
-      return `<div class="teacher-card" style="background:${color};">
-        <div class="teacher-info">
-          <h3>${teacher.username}</h3>
-          <p><strong>Email:</strong> ${teacher.email}</p>
-          <p><strong>Subject:</strong> ${teacher.subject_name}</p>
-        </div>
-      </div>`;
+      return `<div class="teacher-card chat-teacher-card" 
+              style="background:${color};cursor:pointer;"
+              data-teacher-id="${teacher.teacher_id}" 
+              data-teacher-name="${teacher.username}">
+    <div class="teacher-info">
+      <h3>${teacher.username}</h3>
+      <p><strong>Email:</strong> ${teacher.email}</p>
+      <p><strong>Subject:</strong> ${teacher.subject_name}</p>
+    </div>
+  </div>`;
     }).join('');
   } catch (err) {
     grid.innerHTML = `<div class="no-data">${err.message}</div>`;
   }
 }
+
+document.addEventListener('click', function(e) {
+  const card = e.target.closest('.chat-teacher-card');
+  if (card) {
+    const teacherId = card.getAttribute('data-teacher-id');
+    const teacherName = card.getAttribute('data-teacher-name');
+    // Set student as current user
+    localStorage.setItem('user', JSON.stringify({
+      userId: student.student_id,
+      userType: 'student',
+      userName: `${student.first_name} ${student.last_name}`
+    }));
+    // Set chat target as teacher
+    localStorage.setItem('chatTarget', JSON.stringify({
+      userId: teacherId,
+      userType: 'teacher',
+      userName: teacherName
+    }));
+    window.location.href = 'chat.html';
+  }
+});
