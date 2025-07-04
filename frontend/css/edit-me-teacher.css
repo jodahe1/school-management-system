@@ -158,4 +158,29 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+/* Student Sidebar Info Styles for edit-me-student.html */
+.student-info {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  margin-bottom: 2rem;
+  position: relative;
+}
+.student-avatar {
+  font-size: 2.5rem;
+  color: #0ea5e9;
+  margin-bottom: 1rem;
+}
+.student-details h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #22223b;
+}
+.student-details p {
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
+  color: #4a4e69;
 } 

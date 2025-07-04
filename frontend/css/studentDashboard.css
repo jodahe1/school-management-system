@@ -50,6 +50,8 @@ body.dashboard-page {
   z-index: 100;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: var(--box-shadow-lg);
+  overflow-y: auto;
+  max-height: 100vh;
 }
 
 .profile {
