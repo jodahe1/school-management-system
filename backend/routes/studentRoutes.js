@@ -45,4 +45,8 @@ router.get('/:studentId/chat-messages', studentController.getChatMessages);
 router.get('/:studentId/announcements', studentController.getStudentAnnouncements);
 router.get('/:studentId/announcements/unread-count', studentController.getUnreadAnnouncementsCount);
 router.put('/:studentId/announcements/:announcementId/mark-read', studentController.markAnnouncementAsRead);
+
+// Fetch Teachers for Student
+router.get('/:studentId/teachers', studentController.getStudentTeachers);
+
 module.exports = router;

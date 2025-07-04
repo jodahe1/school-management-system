@@ -413,3 +413,62 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'studentLogin.html';
   });
 });
+
+// Subject color map for teacher cards
+const subjectColors = {
+  'Math': '#fca311',
+  'Biology': '#43aa8b',
+  'Chemistry': '#577590',
+  'Physics': '#f3722c',
+  'English': '#277da1',
+  'History': '#b5838d',
+  'Geography': '#90be6d',
+  'Computer Science': '#4d908e',
+  'Art': '#f9c74f',
+  'PE': '#f94144',
+  // Add more as needed
+};
+
+// Show Teachers section and fetch teachers
+function showTeachersSection() {
+  // Hide all sections
+  document.querySelectorAll('section.full-width-section').forEach(sec => sec.style.display = 'none');
+  // Show teachers section
+  document.getElementById('teachers').style.display = '';
+  fetchAndDisplayTeachers();
+}
+
+document.getElementById('sidebarTeachersLink')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  // Remove active from all sidebar items
+  document.querySelectorAll('.sidebar li').forEach(item => item.classList.remove('active'));
+  // Set active
+  document.getElementById('sidebarTeachersLink').parentElement.classList.add('active');
+  showTeachersSection();
+});
+
+async function fetchAndDisplayTeachers() {
+  const grid = document.getElementById('teachersGrid');
+  grid.innerHTML = '<div class="loading-message"><div class="spinner"></div><p>Loading teachers...</p></div>';
+  try {
+    const res = await fetch(`http://localhost:5000/api/student/${student.user_id}/teachers`);
+    if (!res.ok) throw new Error('Failed to fetch teachers');
+    const teachers = await res.json();
+    if (!Array.isArray(teachers) || teachers.length === 0) {
+      grid.innerHTML = '<div class="no-data">No teachers found.</div>';
+      return;
+    }
+    grid.innerHTML = teachers.map(teacher => {
+      const color = subjectColors[teacher.subject_name] || '#e0e0e0';
+      return `<div class="teacher-card" style="background:${color};">
+        <div class="teacher-info">
+          <h3>${teacher.username}</h3>
+          <p><strong>Email:</strong> ${teacher.email}</p>
+          <p><strong>Subject:</strong> ${teacher.subject_name}</p>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (err) {
+    grid.innerHTML = `<div class="no-data">${err.message}</div>`;
+  }
+}

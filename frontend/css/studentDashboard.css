@@ -1127,3 +1127,39 @@ svg defs {
   0% { transform: translateY(0); }
   100% { transform: translateY(-6px); }
 }
+
+/* Teachers Section Styles */
+.teachers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+.teacher-card {
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  padding: 2rem 1.5rem;
+  color: #fff;
+  min-height: 160px;
+  display: flex;
+  align-items: flex-start;
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.teacher-card .teacher-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+}
+.teacher-card .teacher-info p {
+  margin: 0.25rem 0;
+  font-size: 1rem;
+  color: #fff;
+}
+.teacher-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+  z-index: 2;
+}

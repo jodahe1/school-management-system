@@ -406,6 +406,24 @@ const updateProfile = async (userId, updateData) => {
     }
 };
 
+// Get all teachers for a student
+const getStudentTeachers = async (studentId) => {
+    try {
+        const query = `
+            SELECT users.user_id, users.username, users.email, subjects.subject_name
+            FROM class_teacher_subject
+            JOIN subjects ON subjects.subject_id = class_teacher_subject.subject_id
+            JOIN students ON students.class_id = class_teacher_subject.class_id
+            JOIN users ON users.user_id = class_teacher_subject.teacher_id
+            WHERE students.student_id = $1;
+        `;
+        const result = await pool.query(query, [studentId]);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     loginStudent,
     getStudentInfo,
@@ -423,5 +441,6 @@ module.exports = {
     getFirstTimeInfo,
     completeSetup,
     getProfile,
-    updateProfile
+    updateProfile,
+    getStudentTeachers
 };

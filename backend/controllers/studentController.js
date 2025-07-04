@@ -298,6 +298,17 @@ const updateProfile = async (req, res) => {
     }
 };
 
+// Get all teachers for a student
+const getStudentTeachers = async (req, res) => {
+    try {
+        const { studentId } = req.params;
+        const teachers = await studentModel.getStudentTeachers(studentId);
+        res.status(200).json(teachers);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     loginStudent,
     getStudentInfo,
@@ -315,5 +326,6 @@ module.exports = {
     getFirstTimeInfo,
     completeSetup,
     getProfile,
-    updateProfile
+    updateProfile,
+    getStudentTeachers
 };
