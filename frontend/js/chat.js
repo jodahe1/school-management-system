@@ -37,11 +37,36 @@ function renderConversations(conversations) {
     chatHeader.textContent = '';
     return;
   }
+
+  // Deduplicate by other_user_id + other_user_type
+  const seen = new Set();
+  const uniqueConversations = [];
   conversations.forEach(conv => {
+    const key = `${conv.other_user_id}_${conv.other_user_type}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      uniqueConversations.push(conv);
+    }
+  });
+
+  uniqueConversations.forEach(conv => {
     const li = document.createElement('li');
-    li.textContent = conv.other_user_name || `${conv.other_user_role} ${conv.other_user_id}`;
+    // Create a span for the role with a class
+    const roleSpan = document.createElement('span');
+    roleSpan.textContent = conv.other_user_role || '';
+    roleSpan.className = 'role-badge ' + (conv.other_user_role ? conv.other_user_role.toLowerCase() : '');
+    roleSpan.style.marginRight = '8px';
+
+    li.appendChild(roleSpan);
+
+    // Add the name after the badge
+    li.appendChild(document.createTextNode(conv.other_user_name || `${conv.other_user_role} ${conv.other_user_id}`));
     li.onclick = () => selectConversation(conv);
-    if (selectedConversation && conv.other_user_id === selectedConversation.other_user_id && conv.other_user_type === selectedConversation.other_user_type) {
+    if (
+      selectedConversation &&
+      conv.other_user_id === selectedConversation.other_user_id &&
+      conv.other_user_type === selectedConversation.other_user_type
+    ) {
       li.classList.add('active');
     }
     conversationList.appendChild(li);
@@ -114,4 +139,4 @@ fetchConversations();
 globalThis.chatPollInterval = setInterval(() => {
   if (selectedConversation) fetchMessages();
   fetchConversations();
-}, 5000); 
+}, 5000);
