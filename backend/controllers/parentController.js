@@ -209,3 +209,17 @@ exports.updateProfile = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+// Get Teachers for Parent's Children
+exports.getTeachersForParentChildren = async (req, res) => {
+    try {
+        const { parent_id } = req.query;
+        if (!parent_id) {
+            return res.status(400).json({ message: 'parent_id is required' });
+        }
+        const teachers = await ParentModel.getTeachersForParentChildren(parent_id);
+        res.status(200).json(teachers);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};

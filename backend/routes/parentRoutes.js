@@ -33,4 +33,7 @@ router.get('/assignments', ParentController.getChildrenAssignments);
 // View Children's Submissions
 router.get('/submissions', ParentController.getChildrenSubmissions);
 
+// Get Teachers for Parent's Children
+router.get('/teachers', ParentController.getTeachersForParentChildren);
+
 module.exports = router;

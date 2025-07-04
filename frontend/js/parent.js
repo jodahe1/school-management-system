@@ -111,6 +111,9 @@ function showSection(sectionId) {
     case 'materials':
       loadMaterials();
       break;
+    case 'teachers':
+      loadTeachers();
+      break;
   }
 }
 
@@ -403,6 +406,30 @@ async function loadMaterials() {
 
   } catch (error) {
     materialsGrid.innerHTML = '<p>Error loading materials</p>';
+  }
+}
+
+// -------------------------
+// Load teachers for parent's children
+// -------------------------
+async function loadTeachers() {
+  const teachersGrid = document.getElementById('teachersGrid');
+  teachersGrid.innerHTML = `<div class="loading-message"><div class="spinner"></div><p>Loading teachers...</p></div>`;
+  try {
+    const teachers = await fetchWithErrorHandling(`api/parent/teachers?parent_id=${parent.user_id}`, 'Failed to load teachers');
+    if (!teachers || teachers.length === 0) {
+      teachersGrid.innerHTML = '<p>No teachers found for your children.</p>';
+      return;
+    }
+    teachersGrid.innerHTML = teachers.map(teacher => `
+      <div class="teacher-card">
+        <h3><i class="fas fa-chalkboard-teacher"></i> ${teacher.username}</h3>
+        <div class="teacher-info"><strong>ID:</strong> ${teacher.teacher_id}</div>
+        <div class="teacher-info"><strong>Email:</strong> ${teacher.email}</div>
+      </div>
+    `).join('');
+  } catch (error) {
+    teachersGrid.innerHTML = '<p>Error loading teachers.</p>';
   }
 }
 

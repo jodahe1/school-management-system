@@ -256,3 +256,16 @@ exports.updateProfile = async (userId, updateData) => {
         throw error;
     }
 };
+
+// Get Teachers for Parent's Children
+exports.getTeachersForParentChildren = async (parent_id) => {
+    const query = `
+        SELECT DISTINCT u.user_id AS teacher_id, u.username, u.email, u.role, u.created_at
+        FROM students s
+        JOIN class_teacher_subject cts ON s.class_id = cts.class_id
+        JOIN users u ON cts.teacher_id = u.user_id
+        WHERE s.parent_id = $1 AND u.role = 'teacher';
+    `;
+    const result = await db.query(query, [parent_id]);
+    return result.rows;
+};

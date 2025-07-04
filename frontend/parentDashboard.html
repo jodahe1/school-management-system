@@ -24,6 +24,7 @@
         <li><a href="#grades"><i class="fas fa-chart-line"></i> Grades</a></li>
         <li><a href="#materials"><i class="fas fa-book"></i> Materials</a></li>
         <li><a href="edit-me-parent.html"><i class="fas fa-user-edit"></i> Edit Me</a></li>
+        <li><a href="#teachers"><i class="fas fa-chalkboard-teacher"></i> Teachers</a></li>
       </ul>
     </nav>
   </aside>
@@ -45,7 +46,7 @@
       <!-- Dashboard Section -->
       <section id="dashboard" class="dashboard-section">
         <h2><i class="fas fa-users"></i> My Children</h2>
-        <div class="dashboard-layout">
+        <div class="dashboard-flex-row">
           <!-- Parent Info Card -->
           <div class="parent-info-card">
             <div class="parent-info-header">
@@ -154,6 +155,17 @@
           <div class="loading-message">
             <div class="spinner"></div>
             <p>Loading materials...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Teachers Section -->
+      <section id="teachers" class="dashboard-section section-hidden">
+        <h2><i class="fas fa-chalkboard-teacher"></i> Teachers</h2>
+        <div class="teachers-grid" id="teachersGrid">
+          <div class="loading-message">
+            <div class="spinner"></div>
+            <p>Loading teachers...</p>
           </div>
         </div>
       </section>
