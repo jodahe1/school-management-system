@@ -421,13 +421,34 @@ async function loadTeachers() {
       teachersGrid.innerHTML = '<p>No teachers found for your children.</p>';
       return;
     }
-    teachersGrid.innerHTML = teachers.map(teacher => `
-      <div class="teacher-card">
+    teachersGrid.innerHTML = teachers.map((teacher, idx) => `
+      <div class="teacher-card" data-teacher-idx="${idx}">
         <h3><i class="fas fa-chalkboard-teacher"></i> ${teacher.username}</h3>
         <div class="teacher-info"><strong>ID:</strong> ${teacher.teacher_id}</div>
         <div class="teacher-info"><strong>Email:</strong> ${teacher.email}</div>
       </div>
     `).join('');
+    // Add click handlers for chat
+    teachers.forEach((teacher, idx) => {
+      const card = teachersGrid.querySelector(`.teacher-card[data-teacher-idx='${idx}']`);
+      if (card) {
+        card.addEventListener('click', function() {
+          // Set parent as user
+          localStorage.setItem('user', JSON.stringify({
+            userId: parent.user_id,
+            userType: 'parent',
+            userName: parent.username
+          }));
+          // Set teacher as chat target
+          localStorage.setItem('chatTarget', JSON.stringify({
+            userId: teacher.teacher_id,
+            userType: 'teacher',
+            userName: teacher.username
+          }));
+          window.location.href = 'chat.html';
+        });
+      }
+    });
   } catch (error) {
     teachersGrid.innerHTML = '<p>Error loading teachers.</p>';
   }
@@ -719,3 +740,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Make functions globally available
 window.showChildDetails = showChildDetails;
 window.closeModal = closeModal;
+
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('chat-with-teacher-btn')) {
+    const teacherId = e.target.getAttribute('data-teacher-id');
+    const teacherName = e.target.getAttribute('data-teacher-name');
+    // Set parent as current user
+    const parent = JSON.parse(localStorage.getItem('parent'));
+    localStorage.setItem('user', JSON.stringify({
+      userId: parent.parent_id,
+      userType: 'parent',
+      userName: `${parent.first_name} ${parent.last_name}`
+    }));
+    // Set chat target as teacher
+    localStorage.setItem('chatTarget', JSON.stringify({
+      userId: teacherId,
+      userType: 'teacher',
+      userName: teacherName
+    }));
+    window.location.href = 'chat.html';
+  }
+});
