@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Student Announcements Table</title>
+    <link rel="stylesheet" href="./css/studentAnnounces.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="profile">
+                <h3 id="sidebarStudentName">[Student Name]</h3>
+                <p id="sidebarStudentId">ID: Loading...</p>
+                <p id="sidebarStudentClass">Class: Loading...</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="studentDashboard.html#dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li class="active"><a href="#"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+                    <li><a href="studentDashboard.html#grades"><i class="fas fa-chart-line"></i> Grades</a></li>
+                    <li><a href="studentDashboard.html#attendance"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+                    <li><a href="studentDashboard.html#materials"><i class="fas fa-book"></i> Materials</a></li>
+                    <li><a href="studentDashboard.html#not-submitted-assignments"><i class="fas fa-clock"></i> Not Submitted</a></li>
+                    <li><a href="studentDashboard.html#submitted-assignments"><i class="fas fa-check-circle"></i> Submitted</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <h2>Student Announcements</h2>
+            <div class="sort-bar">
+                <label for="sortDate">Sort by Date:</label>
+                <select id="sortDate">
+                    <option value="desc">Newest First</option>
+                    <option value="asc">Oldest First</option>
+                </select>
+            </div>
+            <div id="announcementsTableContainer"><p>Loading...</p></div>
+        </main>
+    </div>
+    <script src="./js/studentAnnounces.js"></script>
+</body>
+</html> 

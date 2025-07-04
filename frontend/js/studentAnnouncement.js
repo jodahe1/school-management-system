@@ -28,6 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Set welcome message next to Student Announcements
+    const welcomeStudentEl = document.getElementById('welcomeStudent');
+    if (welcomeStudentEl && student.student_id) {
+        welcomeStudentEl.textContent = `Welcome Student ${student.student_id}`;
+    }
+
     // DOM Elements
     const announcementList = document.getElementById('announcementList');
     const filterSubject = document.getElementById('filterSubject');
