@@ -171,7 +171,9 @@ exports.getProfile = async (req, res) => {
 // Update profile
 exports.updateProfile = async (req, res) => {
     try {
-        const { user_id, currentPassword, newPassword, firstName, lastName, email, phoneNumber } = req.body;
+        // Accept parent_id or user_id for compatibility
+        const user_id = req.body.user_id || req.body.parent_id;
+        const { currentPassword, newPassword, firstName, lastName, email, phoneNumber } = req.body;
         
         // If password change is requested, validate current password
         if (currentPassword && newPassword) {

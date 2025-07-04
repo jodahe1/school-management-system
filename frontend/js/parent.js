@@ -678,6 +678,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.location.href = 'chat.html';
     });
   }
+
+  // Add event listener for Edit Me button
+  const editMeBtn = document.querySelector('a[href="edit-me-parent.html"]');
+  if (editMeBtn) {
+    editMeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = 'edit-me-parent.html';
+    });
+  }
 });
 
 // Make functions globally available
