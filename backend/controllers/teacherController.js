@@ -385,6 +385,23 @@ const updateProfile = async (req, res) => {
     }
 };
 
+// Get Student and Parent Details
+const getStudentAndParentDetails = async (req, res) => {
+    try {
+        const { student_id } = req.query;
+        if (!student_id) {
+            return res.status(400).json({ message: 'student_id is required' });
+        }
+        const details = await teacherModel.getStudentAndParentDetails(student_id);
+        if (!details) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+        res.status(200).json(details);
+    } catch (error) {
+        res.status(500).json({ message: 'Database error', error: error.message });
+    }
+};
+
 module.exports = {
     loginTeacher,
     getProfile,
@@ -406,5 +423,6 @@ module.exports = {
     getFirstTimeInfo,
     completeSetup,
     submissionsOverviewComingSoon,
-    updateProfile
+    updateProfile,
+    getStudentAndParentDetails
 };

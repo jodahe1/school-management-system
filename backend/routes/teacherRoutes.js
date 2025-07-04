@@ -20,6 +20,7 @@ router.get('/schedule', teacherController.getSchedule);
 router.get('/classes', teacherController.getTeacherClasses);
 router.get('/students', teacherController.getClassStudents);
 router.get('/student', teacherController.getStudentDetails);
+router.get('/student-parent-details', teacherController.getStudentAndParentDetails);
 
 // Attendance
 router.post('/attendance', teacherController.recordAttendance);

@@ -392,11 +392,44 @@ async function showStudentDetails(studentId) {
     const student = studentsData.find(s => s.student_id === studentId);
     if (!student) return;
     
+    // Fetch parent info from backend
+    let parentInfo = null;
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/teacher/student-parent-details?student_id=${studentId}`);
+        if (response.ok) {
+            parentInfo = await response.json();
+        }
+    } catch (err) {
+        parentInfo = null;
+    }
+    
     // Update modal content
     document.getElementById('modalStudentName').textContent = `${student.first_name} ${student.last_name}`;
     document.getElementById('modalStudentId').textContent = student.student_id;
     document.getElementById('modalStudentEmail').textContent = student.email;
     document.getElementById('modalStudentClass').textContent = document.getElementById('currentClassName').textContent;
+
+    // Add parent info below student name
+    let parentInfoHtml = '';
+    if (parentInfo && parentInfo.parent_id) {
+        parentInfoHtml = `
+            <div class="info-item"><span class="info-label">Parent ID:</span> <span class="info-value">${parentInfo.parent_id}</span></div>
+            <div class="info-item"><span class="info-label">Parent Email:</span> <span class="info-value">${parentInfo.parent_email || 'N/A'}</span></div>
+            <div class="info-item"><span class="info-label">Parent Name:</span> <span class="info-value">${parentInfo.parent_username || 'N/A'}</span></div>
+        `;
+    } else {
+        parentInfoHtml = `<div class="info-item"><span class="info-label">Parent:</span> <span class="info-value">Not available</span></div>`;
+    }
+    
+    // Insert parent info just below student name
+    const modalStudentNameElem = document.getElementById('modalStudentName');
+    let parentInfoElem = document.getElementById('modalParentInfo');
+    if (!parentInfoElem) {
+        parentInfoElem = document.createElement('div');
+        parentInfoElem.id = 'modalParentInfo';
+        modalStudentNameElem.insertAdjacentElement('afterend', parentInfoElem);
+    }
+    parentInfoElem.innerHTML = parentInfoHtml;
     
     // Open modal
     openModal('studentModal');
@@ -933,7 +966,18 @@ function chatWithStudent() {
 function chatWithParent() {
     const student = getCurrentStudent();
     if (!student) return;
-    if (!student.parent_id || !student.parent_first_name) {
+    // Get parent info from modal
+    const parentInfoElem = document.getElementById('modalParentInfo');
+    if (!parentInfoElem) {
+        showToast('Parent info not available', true);
+        return;
+    }
+    // Extract parent_id and parent_username from the modal
+    const parentIdMatch = parentInfoElem.innerHTML.match(/Parent ID:<\/span> <span class="info-value">(\d+)<\/span>/);
+    const parentNameMatch = parentInfoElem.innerHTML.match(/Parent Name:<\/span> <span class="info-value">([^<]*)<\/span>/);
+    const parentId = parentIdMatch ? parentIdMatch[1] : null;
+    const parentName = parentNameMatch ? parentNameMatch[1] : null;
+    if (!parentId || !parentName || parentName === 'N/A') {
         showToast('Parent info not available', true);
         return;
     }
@@ -943,9 +987,9 @@ function chatWithParent() {
         userName: `${teacher.first_name} ${teacher.last_name}`
     }));
     localStorage.setItem('chatTarget', JSON.stringify({
-        userId: student.parent_id,
+        userId: parseInt(parentId),
         userType: 'parent',
-        userName: `${student.parent_first_name} ${student.parent_last_name}`
+        userName: parentName
     }));
     window.location.href = 'chat.html';
 }

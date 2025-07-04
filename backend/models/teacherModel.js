@@ -426,6 +426,23 @@ const completeSetup = async (userId, updateData) => {
     }
 };
 
+// Fetch Student and Parent Details for Teacher
+const getStudentAndParentDetails = async (student_id) => {
+    const query = `
+        SELECT 
+            s.student_id, su.username AS student_username, su.email AS student_email,
+            s.first_name AS student_first_name, s.last_name AS student_last_name,
+            s.date_of_birth,
+            pu.user_id AS parent_id, pu.username AS parent_username, pu.email AS parent_email, pu.role AS parent_role, pu.created_at AS parent_created_at, pu.password_reset_required AS parent_password_reset_required, pu.deleted_at AS parent_deleted_at
+        FROM students s
+        JOIN users su ON s.student_id = su.user_id
+        LEFT JOIN users pu ON s.parent_id = pu.user_id
+        WHERE s.student_id = $1;
+    `;
+    const result = await pool.query(query, [student_id]);
+    return result.rows[0];
+};
+
 module.exports = {
     verifyTeacher,
     getTeacherProfile,
@@ -448,5 +465,6 @@ module.exports = {
     completeSetup,
     getStudentGrades,
     getTeacherMaterials,
-    getTeacherAssignments
+    getTeacherAssignments,
+    getStudentAndParentDetails
 };
