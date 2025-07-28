@@ -1,25 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parent Payment - Stripe</title>
-    <link rel="stylesheet" href="css/parent-payment.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Gateway</title>
+  <link rel="stylesheet" href="./css/payment.css">
 </head>
 <body>
-    <div class="payment-container">
-        <h2>Parent Payment Portal</h2>
-        <div class="parent-info">
-            <p><strong>Parent Name:</strong> Abebe</p>
-            <p><strong>Child Name:</strong> Belay Abebe</p>
-        </div>
-        <form id="payment-form">
-            <label for="amount">Amount (USD):</label>
-            <input type="number" id="amount" name="amount" min="1" required>
-            <button type="submit">Pay with Stripe</button>
-        </form>
-        <div id="payment-message"></div>
-    </div>
-    <!-- Stripe.js would be included here in a real integration -->
+  <div class="container">
+    <h1>Make Payment</h1>
+    <form id="paymentForm">
+      <label for="parent_id">Parent ID:</label>
+      <input type="text" id="parent_id" name="parent_id" required>
+
+      <label for="student_id">Student ID:</label>
+      <input type="text" id="student_id" name="student_id" required>
+
+      <label for="amount">Amount (e.g., 100.00):</label>
+      <input type="number" step="0.01" id="amount" name="amount" required>
+
+      <label for="currency">Currency (e.g., USD):</label>
+      <input type="text" id="currency" name="currency" value="USD" required>
+
+      <label for="payment_method">Payment Method ID:</label>
+      <input type="text" id="payment_method" name="payment_method" placeholder="Stripe Payment Method ID" required>
+
+      <button type="submit" id="submitButton">Pay Now</button>
+    </form>
+
+    <div id="message"></div>
+  </div>
+
+  <script src="./js/payment.js"></script>
 </body>
-</html> 
+</html>
