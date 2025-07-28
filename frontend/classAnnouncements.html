@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Class Announcements</title>
-    <link rel="stylesheet" href="./css/teacherstyles2.css">
+    <link rel="stylesheet" href=".//css/class_announcement_css.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
 </head>
@@ -13,10 +13,10 @@
         <button id="backToClass" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Class</button>
     </div>
     <main class="main-center">
-        <div class="card">
+        <div class="announcement-section">
             <h2><i class="fas fa-bullhorn"></i> Create Announcement</h2>
             <div id="greeting-message" style="margin-bottom: 1rem; font-weight: 600; color: var(--primary-dark);"></div>
-            <form id="announcementForm" class="dashboard-form">
+            <form id="announcementForm" class="announcement-form">
                 <div class="form-group">
                     <label for="announcement-class">Class:</label>
                     <select id="announcement-class" required>
@@ -44,10 +44,10 @@
                 <button type="submit" class="btn-primary">Post Announcement</button>
             </form>
         </div>
-        <div class="card announcements-table-card">
+        <div class="announcements-section">
             <h2><i class="fas fa-bell"></i> Recent Announcements</h2>
             <div class="table-container">
-                <table class="dashboard-table">
+                <table class="announcements-table">
                     <thead>
                         <tr>
                             <th>Title</th>
