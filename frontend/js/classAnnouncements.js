@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Set greeting message below the announcement title
     const greetingDiv = document.getElementById('greeting-message');
     if (greetingDiv) {
-        greetingDiv.textContent = `Hi teacher with id ${teacher.user_id} and this is class with id ${preselectedClassId || '[not selected]'}`;
+        greetingDiv.textContent = `Wellcome to announcment page selcet class and subject to announce `;
     }
 
     // Back button functionality

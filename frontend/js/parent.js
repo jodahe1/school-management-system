@@ -624,7 +624,7 @@ if (loginForm) {
 if (logoutButton) {
   logoutButton.addEventListener('click', () => {
     localStorage.removeItem('parent');
-    window.location.href = 'parentLogin.html';
+    window.location.href = 'landingpage.html';
   });
 }
 

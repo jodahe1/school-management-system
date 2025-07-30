@@ -34,47 +34,46 @@
     <header>
       <h1>Parent Dashboard</h1>
       <div class="header-actions">
-        <a href="parentChat.html" class="btn" id="chatBtn">
+        <!-- <a href="parentChat.html" class="btn" id="chatBtn">
           <i class="fas fa-comments"></i> Chat
           <span class="notification-badge" id="messageBadge">0</span>
-        </a>
+        </a> -->
         <button id="logoutButton" class="btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
       </div>
     </header>
 
     <main class="dashboard-content">
-      <!-- Dashboard Section -->
-      <section id="dashboard" class="dashboard-section">
-        <h2><i class="fas fa-users"></i> My Children</h2>
-        <div class="dashboard-flex-row">
-          <!-- Parent Info Card -->
-          <div class="parent-info-card">
-            <div class="parent-info-header">
-              <i class="fas fa-user-circle"></i>
-              <h3>Parent Information</h3>
+      <!-- Parent Info Section (full width) -->
+      <section id="parent-info-section" class="full-width-section">
+        <div class="parent-info-card">
+          <div class="parent-info-header">
+            <i class="fas fa-user-circle"></i>
+            <h2>Parent Information</h2>
+          </div>
+          <div class="parent-info-content">
+            <div class="info-item">
+              <span class="info-label">Name:</span>
+              <span class="info-value" id="dashboardParentName">Loading...</span>
             </div>
-            <div class="parent-info-content">
-              <div class="info-item">
-                <span class="info-label">Name:</span>
-                <span class="info-value" id="dashboardParentName">Loading...</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">ID:</span>
-                <span class="info-value" id="dashboardParentId">Loading...</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Viewing:</span>
-                <span class="info-value" id="dashboardViewingChild">All Children</span>
-              </div>
+            <div class="info-item">
+              <span class="info-label">ID:</span>
+              <span class="info-value" id="dashboardParentId">Loading...</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Viewing:</span>
+              <span class="info-value" id="dashboardViewingChild">All Children</span>
             </div>
           </div>
-          
-          <!-- Children Grid -->
-          <div class="children-grid" id="childrenGrid">
-            <div class="loading-message">
-              <div class="spinner"></div>
-              <p>Loading children profiles...</p>
-            </div>
+        </div>
+      </section>
+
+      <!-- Children Info Section (full width, below parent info) -->
+      <section id="children-info-section" class="full-width-section">
+        <h2><i class="fas fa-users"></i> My Children</h2>
+        <div class="children-grid" id="childrenGrid">
+          <div class="loading-message">
+            <div class="spinner"></div>
+            <p>Loading children profiles...</p>
           </div>
         </div>
       </section>
