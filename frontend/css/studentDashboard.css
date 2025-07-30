@@ -41,7 +41,7 @@ body.dashboard-page {
 /* Sidebar Styles */
 .sidebar {
   width: 280px;
-  background: rgba(2, 132, 199, 0.95);
+ background: #2d3e50;
   backdrop-filter: var(--backdrop-blur);
   color: white;
   padding: 2rem 0;

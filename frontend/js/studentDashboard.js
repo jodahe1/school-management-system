@@ -408,10 +408,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('refreshSubmitted')?.addEventListener('click', fetchSubmittedAssignments);
 
   // Logout functionality
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    localStorage.removeItem('student');
-    window.location.href = 'studentLogin.html';
-  });
+ document.getElementById('logoutBtn')?.addEventListener('click', () => {
+  // Clear localStorage/sessionStorage if needed
+  localStorage.clear();
+  // Redirect to landing page
+  window.location.href = 'landingpage.html';
+});
 });
 
 // Subject color map for teacher cards
